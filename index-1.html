@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Penyempurna Foto — Studio V23 Ultra Realism Prompt</title>
+<style>
+:root{
+  --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
+  --line:rgba(20,30,26,.1);--acc:#0f766e;--acc-hi:#14b8a6;--accink:#ffffff;--soft:rgba(15,118,110,.1);
+  --chk1:#e6e9e8;--chk2:#f5f7f6;--shadow:0 12px 32px -8px rgba(15,25,22,.08);
+  --spring:cubic-bezier(.22,1,.36,1);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c0f0e;--bg-elev:#151a18;--panel:rgba(22,28,26,.78);--ink:#eef3f1;--mute:#8c9b96;
+    --line:rgba(255,255,255,.09);--acc:#2dd4bf;--acc-hi:#5eead4;--accink:#06201d;--soft:rgba(45,212,191,.13);
+    --chk1:#131816;--chk2:#191f1d;--shadow:0 16px 40px -10px rgba(0,0,0,.55)
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c0f0e;--bg-elev:#151a18;--panel:rgba(22,28,26,.78);--ink:#eef3f1;--mute:#8c9b96;
+  --line:rgba(255,255,255,.09);--acc:#2dd4bf;--acc-hi:#5eead4;--accink:#06201d;--soft:rgba(45,212,191,.13);
+  --chk1:#131816;--chk2:#191f1d;--shadow:0 16px 40px -10px rgba(0,0,0,.55)
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  transition:background .35s var(--spring),color .35s var(--spring);
+  overflow-x:hidden
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+
+/* Ambient background glow */
+.ambient{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden
+}
+.ambient::before,.ambient::after{
+  content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,var(--soft) 0%,transparent 70%);filter:blur(40px);
+  animation:floatOrb 14s ease-in-out infinite alternate
+}
+.ambient::before{top:-120px;left:-100px}
+.ambient::after{bottom:-140px;right:-100px;animation-delay:-7s}
+@keyframes floatOrb{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(35px,25px) scale(1.12)}
+}
+
+/* Top Navbar */
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:15;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:var(--panel);border-bottom:1px solid var(--line);
+  transition:background .35s var(--spring)
+}
+.topbar-in{
+  max-width:1180px;margin:0 auto;padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--acc),var(--acc-hi));
+  color:var(--accink);display:grid;place-items:center;
+  box-shadow:0 4px 12px var(--soft);flex:none
+}
+.logo svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+h1{font:700 17px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.02em;margin:0}
+.brand p{color:var(--mute);margin:1px 0 0;font-size:12px}
+.theme-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--ink);display:grid;place-items:center;
+  cursor:pointer;transition:transform .2s var(--spring),background .2s
+}
+.theme-btn:active{transform:scale(.9)}
+.theme-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* Studio Workspace Layout */
+.workspace{
+  position:relative;z-index:1;max-width:1180px;margin:0 auto;
+  padding:14px 14px 104px;display:grid;grid-template-columns:1fr;gap:16px;align-items:start
+}
+@media (min-width:860px){
+  .workspace{
+    grid-template-columns:minmax(0,1.25fr) minmax(360px,420px);
+    padding:20px 20px 40px;gap:22px
+  }
+  .stage-col{position:sticky;top:72px}
+}
+
+/* Canvas Stage */
+.stage{
+  position:sticky;top:calc(57px + env(safe-area-inset-top,0px));z-index:8;
+  background:var(--panel);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--line);border-radius:18px;padding:12px;
+  box-shadow:var(--shadow);text-align:center;
+  transition:all .35s var(--spring)
+}
+@media (min-width:860px){
+  .stage{position:relative;top:0;padding:16px}
+}
+.canvas-box{
+  position:relative;border-radius:12px;overflow:hidden;
+  background-color:var(--chk2);
+  background-image:
+    linear-gradient(45deg,var(--chk1) 25%,transparent 25%),
+    linear-gradient(-45deg,var(--chk1) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,var(--chk1) 75%),
+    linear-gradient(-45deg,transparent 75%,var(--chk1) 75%);
+  background-size:18px 18px;
+  background-position:0 0,0 9px,9px -9px,-9px 0;
+  border:1px solid var(--line);min-height:150px;
+  display:flex;align-items:center;justify-content:center;
+  transition:min-height .35s var(--spring)
+}
+.stage.has-img .canvas-box{min-height:auto}
+.stage.busy .canvas-box::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);
+  animation:shimmerScan 1.15s infinite linear
+}
+@keyframes shimmerScan{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+
+canvas{
+  max-width:100%;max-height:38vh;width:auto;height:auto;border-radius:10px;
+  display:block;margin:0 auto;touch-action:none;
+  transition:max-height .35s var(--spring),transform .25s var(--spring)
+}
+@media (min-width:860px){
+  canvas{max-height:64vh}
+}
+.stage.sm #cv{max-height:18vh}
+
+.empty{
+  padding:28px 18px;color:var(--mute);font-size:13.5px;max-width:340px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  animation:fadeSlideUp .45s var(--spring)
+}
+.empty-ico{
+  width:44px;height:44px;border-radius:14px;background:var(--soft);color:var(--acc);
+  display:grid;place-items:center;animation:pulseSoft 2.6s ease-in-out infinite
+}
+.empty-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+@keyframes pulseSoft{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+.status-bar{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  color:var(--mute);font-size:12px;margin:9px 0 0;min-height:18px
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--acc);display:none
+}
+.stage.busy .status-dot{display:inline-block;animation:blinkDot .8s infinite alternate}
+@keyframes blinkDot{from{opacity:.3;transform:scale(.8)}to{opacity:1;transform:scale(1.2)}}
+
+.sbtn{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.mini{
+  padding:7px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--ink);font:500 12.5px/1 inherit;
+  cursor:pointer;transition:all .2s var(--spring)
+}
+.mini:hover{border-color:var(--acc);transform:translateY(-1px)}
+.mini:active{transform:scale(.95)}
+.mini[aria-pressed="true"]{background:var(--acc);color:var(--accink);border-color:var(--acc);box-shadow:0 4px 12px var(--soft)}
+
+/* Controls Column & Sliding Pill Tabs */
+.controls-col{min-width:0}
+.tabs{
+  position:relative;display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:14px;
+  box-shadow:var(--shadow)
+}
+.tab-pill{
+  position:absolute;top:4px;bottom:4px;left:4px;
+  width:calc((100% - 8px)/5);border-radius:10px;
+  background:var(--acc);box-shadow:0 4px 14px var(--soft);
+  transition:transform .34s var(--spring);pointer-events:none;z-index:0
+}
+.tabs button{
+  position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:0;background:none;color:var(--mute);padding:8px 2px 7px;border-radius:10px;
+  font:500 11.5px/1 inherit;cursor:pointer;transition:color .25s var(--spring),transform .18s
+}
+.tabs button:active{transform:scale(.94)}
+.tabs svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--spring)}
+.tabs button[aria-selected="true"]{color:var(--accink);font-weight:600}
+.tabs button[aria-selected="true"] svg{transform:translateY(-1px) scale(1.06)}
+
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-within{outline:2px solid var(--acc);outline-offset:2px}
+
+/* Section Entrance Animation */
+section:not([hidden]){animation:panelIn .32s var(--spring) both}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(10px) scale(.99)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes fadeSlideUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Dropzone */
+.drop{
+  display:flex;align-items:center;gap:14px;min-height:78px;
+  border:1.5px dashed var(--line);border-radius:16px;
+  background:var(--panel);backdrop-filter:blur(12px);
+  padding:12px 14px;cursor:pointer;margin-bottom:12px;
+  box-shadow:var(--shadow);
+  transition:border-color .25s,transform .25s var(--spring),background .25s
+}
+.drop:hover{border-color:var(--acc);transform:translateY(-2px)}
+.drop:active{transform:scale(.985)}
+.drop.ok{border-style:solid;border-color:var(--acc)}
+.drop input{display:none}
+.drop .plus{
+  display:grid;place-items:center;width:52px;height:52px;border-radius:12px;
+  background:var(--soft);color:var(--acc);font-size:24px;font-weight:400;flex:none;
+  transition:transform .25s var(--spring)
+}
+.drop:hover .plus{transform:rotate(90deg) scale(1.05)}
+.drop .th{
+  width:52px;height:52px;border-radius:12px;object-fit:cover;flex:none;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);animation:popIn .3s var(--spring)
+}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.drop span{display:block;min-width:0}
+.drop strong{display:block;font-size:14.5px;font-weight:600}
+.drop small{display:block;color:var(--mute);font-size:12.5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Cards & Sliders */
+.ctl{
+  background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:16px;padding:6px 16px 10px;
+  box-shadow:var(--shadow);margin-bottom:12px
+}
+.ctl h2{
+  font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--acc);margin:12px 0 4px
+}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row label{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:500}
+.row output{
+  color:var(--acc);background:var(--soft);padding:2px 8px;border-radius:999px;
+  font-size:12px;font-weight:600;font-variant-numeric:tabular-nums
+}
+.row small{display:block;color:var(--mute);font-size:12px;margin-top:4px;line-height:1.4}
+
+/* Custom Range Slider with Live Fill */
+.row input[type="range"]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;
+  background:linear-gradient(to right,var(--acc) 0%,var(--acc) var(--val,50%),var(--line) var(--val,50%),var(--line) 100%);
+  margin:10px 0 2px;cursor:pointer;outline:none
+}
+.row input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--bg-elev);border:2.5px solid var(--acc);
+  box-shadow:0 2px 8px rgba(0,0,0,.22);transition:transform .18s var(--spring),background .18s
+}
+.row input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+.row input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.25);background:var(--acc)}
+.row input[type="range"]::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--bg-elev);
+  border:2.5px solid var(--acc);box-shadow:0 2px 8px rgba(0,0,0,.22);transition:transform .18s var(--spring)
+}
+
+.row select{
+  width:100%;margin:8px 0 2px;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);
+  font:inherit;font-size:14px;cursor:pointer;transition:border-color .2s
+}
+.row select:hover{border-color:var(--acc)}
+
+/* Presets & Segmented Controls */
+.prow{display:flex;gap:8px;margin-top:8px}
+.prow input{
+  flex:1;min-width:0;padding:9px 12px;border-radius:10px;
+  border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);
+  font:inherit;font-size:13.5px;transition:border-color .2s
+}
+.prow input:focus{border-color:var(--acc)}
+.prow .mini{margin:0;border-radius:10px;padding:9px 16px;background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}
+.chip{
+  border:1px solid var(--line);background:var(--soft);color:var(--ink);
+  border-radius:999px;padding:6px 13px;font:500 12.5px/1 inherit;cursor:pointer;
+  transition:all .2s var(--spring);animation:popIn .25s var(--spring)
+}
+.chip:hover{border-color:var(--acc);transform:translateY(-1px)}
+.chip:active{transform:scale(.94)}
+.chip.x{margin-left:-9px;padding:6px 10px;color:var(--mute);background:var(--bg-elev)}
+
+.seg{
+  display:flex;gap:4px;background:var(--panel);backdrop-filter:blur(12px);
+  border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:12px;
+  box-shadow:var(--shadow)
+}
+.seg button{
+  flex:1;border:0;background:none;color:var(--mute);padding:10px 6px;border-radius:10px;
+  font:500 13.5px/1 inherit;cursor:pointer;transition:all .25s var(--spring)
+}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accink);font-weight:600;box-shadow:0 4px 12px var(--soft)}
+.act2{display:flex;gap:8px;margin:10px 0}
+.act2 .mini{flex:1;margin:0;padding:10px;border-radius:12px}
+
+.note{
+  font-size:12.5px;color:var(--mute);margin:10px 2px 0;line-height:1.5;
+  background:var(--soft);padding:10px 12px;border-radius:12px;border:1px solid var(--line)
+}
+#autoinfo{margin-bottom:12px;color:var(--ink);animation:fadeSlideUp .35s var(--spring)}
+
+/* Floating Action Bar */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:14;
+  background:var(--panel);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))
+}
+.bar div{max-width:640px;margin:0 auto;display:flex;gap:8px}
+.bar button{
+  padding:12px 8px;white-space:nowrap;border-radius:12px;
+  border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);
+  font:600 13.5px/1 inherit;cursor:pointer;flex:1;
+  transition:transform .2s var(--spring),box-shadow .2s,background .2s,border-color .2s
+}
+.bar button:hover{transform:translateY(-1.5px)}
+.bar button:active{transform:scale(.96)}
+.bar #auto{border-color:var(--acc);color:var(--acc);background:var(--soft)}
+.bar .pri{
+  flex:1.7;background:linear-gradient(135deg,var(--acc),var(--acc-hi));
+  color:var(--accink);border:0;box-shadow:0 6px 18px var(--soft)
+}
+.bar .pri:disabled{opacity:.6;cursor:wait;transform:none}
+
+@media (min-width:860px){
+  .bar{
+    position:sticky;bottom:14px;border:1px solid var(--line);
+    border-radius:16px;padding:10px;margin-top:12px;box-shadow:var(--shadow)
+  }
+  .bar div{max-width:none}
+}
+
+.wrap{position:relative;display:inline-block;max-width:100%;line-height:0}
+#ov{position:absolute;inset:0;width:100%;height:100%;max-height:none;margin:0}
+
+/* V13 studio refresh */
+.studio-intro{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:15px 16px;margin:0 0 14px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(120deg,var(--panel),var(--soft));box-shadow:var(--shadow)
+}
+.studio-intro>div{display:grid;gap:2px;min-width:0}
+.studio-intro strong{font-size:15px;letter-spacing:-.02em}
+.studio-intro small{font-size:11.5px;color:var(--mute)}
+.eyebrow{font-size:9px;letter-spacing:.14em;font-weight:800;color:var(--acc)}
+.local-pill{display:flex;align-items:center;gap:6px;white-space:nowrap;padding:6px 9px;border:1px solid var(--line);border-radius:999px;font-size:10px;color:var(--mute);background:var(--bg-elev)}
+.local-pill i{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+.export-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.export-size{display:grid;gap:3px;flex:1;min-width:130px;font-size:10px;color:var(--mute);font-weight:650}
+.export-size select{width:100%;min-height:36px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);color:var(--ink);font:inherit;font-size:12px}
+.bar{padding:10px}
+.bar>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bar button{min-height:38px;border-radius:11px}
+.bar #reset{background:var(--bg-elev);border:1px solid var(--line);color:var(--ink);padding:0 12px}
+.bar #auto{padding:0 12px}
+.bar .pri{padding:0 15px}
+#autoFace{width:100%;min-height:40px;margin:4px 0 8px}
+@media(max-width:420px){.tabs button{font-size:10px;padding-left:0;padding-right:0}.tabs svg{width:17px;height:17px}.studio-intro{align-items:flex-start}.local-pill{font-size:9px}.bar>div{gap:6px}.export-size{flex-basis:100%}}
+.wrap{transform-origin:0 0}
+.stage.has-img .canvas-box{touch-action:none;overscroll-behavior:contain}
+.canvas-box.hand{cursor:grab}
+/* V17 liquid glass */
+:root{--lg-a:rgba(255,255,255,.55);--lg-b:rgba(255,255,255,.2);--lg-edge:rgba(20,40,35,.09);--lg-hi:rgba(255,255,255,.95);--lg-lo:rgba(15,40,35,.07);--lg-spec:.6;--lg-drop:rgba(15,40,35,.2);--lg-sel:rgba(255,255,255,.85);--orb1:rgba(20,184,166,.42);--orb2:rgba(99,102,241,.3);--orb3:rgba(251,146,60,.22)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lg-a:rgba(255,255,255,.14);--lg-b:rgba(255,255,255,.04);--lg-edge:rgba(255,255,255,.14);--lg-hi:rgba(255,255,255,.4);--lg-lo:rgba(0,0,0,.35);--lg-spec:.22;--lg-drop:rgba(0,0,0,.55);--lg-sel:rgba(255,255,255,.22);--orb1:rgba(45,212,191,.3);--orb2:rgba(129,140,248,.28);--orb3:rgba(251,146,60,.14)}}
+:root[data-theme="dark"]{--lg-a:rgba(255,255,255,.14);--lg-b:rgba(255,255,255,.04);--lg-edge:rgba(255,255,255,.14);--lg-hi:rgba(255,255,255,.4);--lg-lo:rgba(0,0,0,.35);--lg-spec:.22;--lg-drop:rgba(0,0,0,.55);--lg-sel:rgba(255,255,255,.22);--orb1:rgba(45,212,191,.3);--orb2:rgba(129,140,248,.28);--orb3:rgba(251,146,60,.14)}
+.ambient{background:radial-gradient(520px 380px at 90% 14%,var(--orb3),transparent 70%)}
+.ambient::before,.ambient::after{width:520px;height:520px}
+.ambient::before{background:radial-gradient(circle,var(--orb1),transparent 70%)}
+.ambient::after{background:radial-gradient(circle,var(--orb2),transparent 70%)}
+.topbar,.stage,.tabs,.studio-intro,.ctl,.drop,.seg,.bar,.note{
+ position:relative;background:linear-gradient(135deg,var(--lg-a),var(--lg-b));
+ -webkit-backdrop-filter:blur(22px) saturate(190%);backdrop-filter:blur(22px) saturate(190%);
+ border:1px solid var(--lg-edge);
+ box-shadow:inset 0 1px 0 var(--lg-hi),inset 1px 0 0 rgba(255,255,255,.18),inset 0 -1px 0 var(--lg-lo),0 14px 34px -12px var(--lg-drop)}
+.topbar{position:sticky;border-width:0 0 1px}
+.stage{position:sticky}
+.bar{position:fixed}
+.topbar::before,.stage::before,.tabs::before,.studio-intro::before,.ctl::before,.drop::before,.bar::before{
+ content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+ background:radial-gradient(130% 80% at 6% 0%,rgba(255,255,255,var(--lg-spec)),transparent 46%),linear-gradient(180deg,rgba(255,255,255,.12),transparent 28%)}
+.ctl .seg,.ctl .note{-webkit-backdrop-filter:none;backdrop-filter:none}
+.ctl,.studio-intro,.drop,.seg,.note{border-radius:20px}
+.stage{border-radius:24px}
+.tabs{border-radius:20px}
+.note{box-shadow:inset 0 1px 0 var(--lg-hi),0 6px 16px -10px var(--lg-drop)}
+.theme-btn,.mini,.chip,.local-pill,.prow input,.row select,.export-size select,.bar button:not(.pri),.bar #reset,.bar #auto{
+ background:linear-gradient(180deg,var(--lg-a),var(--lg-b));border:1px solid var(--lg-edge);
+ box-shadow:inset 0 1px 0 var(--lg-hi),0 4px 10px -6px var(--lg-drop)}
+.bar #auto{background:linear-gradient(180deg,var(--lg-a),var(--soft))}
+.tab-pill{background:linear-gradient(180deg,var(--lg-sel),var(--lg-a));border:1px solid var(--lg-edge);
+ box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -6px 10px -6px var(--soft),0 6px 16px -6px var(--lg-drop);
+ -webkit-backdrop-filter:blur(8px) saturate(200%);backdrop-filter:blur(8px) saturate(200%);
+ transition:transform .55s cubic-bezier(.34,1.45,.5,1)}
+.tabs button[aria-selected="true"]{color:var(--acc)}
+.seg button[aria-pressed="true"],.mini[aria-pressed="true"]{background:linear-gradient(180deg,var(--lg-sel),var(--lg-a));color:var(--acc);
+ box-shadow:inset 0 1px 0 var(--lg-hi),0 4px 12px -6px var(--lg-drop)}
+.pri,.bar .pri,.prow .mini{background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,0) 52%),linear-gradient(135deg,var(--acc),var(--acc-hi));color:var(--accink);border:0;
+ box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -8px 14px rgba(0,0,0,.1),0 10px 22px -8px var(--acc)}
+#autoFace{border-radius:14px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.row input[type="range"]{box-shadow:inset 0 1px 2px rgba(0,0,0,.2),0 1px 0 var(--lg-hi)}
+.row input[type="range"]::-webkit-slider-thumb{width:24px;height:24px;border:0;background:radial-gradient(circle at 32% 24%,#fff,rgba(255,255,255,.9) 45%,rgba(255,255,255,.68));
+ box-shadow:inset 0 -2px 4px rgba(0,0,0,.14),inset 0 1px 1px #fff,0 3px 10px rgba(0,0,0,.3)}
+.row input[type="range"]:active::-webkit-slider-thumb{background:#fff;transform:scale(1.16)}
+.row input[type="range"]::-moz-range-thumb{width:24px;height:24px;border:0;background:radial-gradient(circle at 32% 24%,#fff,rgba(255,255,255,.75));box-shadow:0 3px 10px rgba(0,0,0,.3)}
+@media (max-width:859px){
+ .workspace{padding-bottom:136px}
+ .bar{left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom,0px));border-radius:26px;padding:8px 10px}
+}
+@media (min-width:860px){.bar{border-radius:22px}}
+@media (prefers-reduced-motion:reduce){.tab-pill{transition:none}.ambient::before,.ambient::after{animation:none}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ .topbar,.stage,.tabs,.studio-intro,.ctl,.drop,.seg,.bar,.note{background:var(--bg-elev)}}
+@media (prefers-reduced-transparency:reduce){
+ .topbar,.stage,.tabs,.studio-intro,.ctl,.drop,.seg,.bar,.note{background:var(--bg-elev);-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* V23 Ultra Realism & Identity Protection */
+.pg-v23{margin-top:12px;padding:13px;border:1px solid var(--lg-edge);border-radius:16px;background:linear-gradient(145deg,var(--lg-a),var(--lg-b))}.pg-v23-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.pg-v23-head strong{font-size:13px}.pg-v23-tag{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--acc);background:var(--lg-sel);padding:4px 8px;border-radius:999px}.pg-v23-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.pg-v23-grid label{display:grid;gap:4px;font-size:11.5px;color:var(--mute)}.pg-v23-locks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}.pg-v23-locks label{display:flex;align-items:center;gap:7px;padding:7px 8px;border:1px solid var(--lg-edge);border-radius:10px;background:var(--lg-b);font-size:12px;color:var(--ink)}.pg-v23-locks input{accent-color:var(--acc);width:16px;height:16px;flex:none}.pg-v23-help{font-size:10.5px;color:var(--mute);line-height:1.4;margin-top:8px}
+.pg-check{margin-top:10px;padding:11px 12px;border:1px solid var(--lg-edge);border-radius:13px;background:var(--lg-b);font-size:12px;line-height:1.5}.pg-check strong{display:block;margin-bottom:4px}.pg-check ul{margin:5px 0 0;padding-left:18px}.pg-check.good{border-color:rgba(46,160,110,.38)}.pg-check.warn{border-color:rgba(220,150,45,.5)}
+/* V22 AI Smart Prompt Builder */
+.tb-actions{display:flex;gap:8px;align-items:center}
+.theme-btn.pgbtn{width:auto;padding:0 14px;border-radius:999px;font-weight:700;font-size:13px;color:var(--acc);white-space:nowrap;cursor:pointer}
+.pg{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,20,18,.4);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pg-sheet{position:relative;width:min(720px,100%);max-height:92vh;overflow:auto;overscroll-behavior:contain;border-radius:28px 28px 0 0;padding:16px 16px calc(22px + env(safe-area-inset-bottom,0px));color:var(--ink);
+ background:linear-gradient(135deg,var(--lg-a),var(--lg-b)),var(--panel);-webkit-backdrop-filter:blur(28px) saturate(190%);backdrop-filter:blur(28px) saturate(190%);
+ border:1px solid var(--lg-edge);box-shadow:inset 0 1px 0 var(--lg-hi),0 -20px 50px -20px var(--lg-drop)}
+@media (min-width:860px){.pg{align-items:center}.pg-sheet{border-radius:28px}}
+.pg-top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.pg-top h2{margin:0 0 4px;font-size:19px}.pg-top p{margin:0;font-size:12.5px;line-height:1.45;color:var(--mute)}
+.pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pg-drop{position:relative;aspect-ratio:3/4;border-radius:20px;overflow:hidden;display:grid;place-items:center;padding:14px;text-align:center;cursor:pointer;font-size:12.5px;color:var(--mute);border:1.5px dashed var(--lg-edge);background:linear-gradient(180deg,var(--lg-a),var(--lg-b))}
+.pg-drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pg-drop:not(.has) img{display:none}.pg-drop.has>span:not(.pg-tag){display:none}
+.pg-tag{position:absolute;left:8px;top:8px;z-index:2;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;color:var(--acc);background:var(--lg-sel);box-shadow:inset 0 1px 0 var(--lg-hi)}
+.pg-h{margin:16px 0 7px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}
+.pg-row{display:flex;flex-wrap:wrap;gap:6px}
+.pg-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:8px}.pg-line b{font-size:12.5px;min-width:86px}
+.pg-an{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.pg-an label{font-size:11.5px;color:var(--mute);display:grid;gap:3px}
+.pg-in{width:100%;min-height:40px;border-radius:12px;padding:0 12px;border:1px solid var(--lg-edge);color:var(--ink);font:inherit;font-size:13.5px;background:linear-gradient(180deg,var(--lg-a),var(--lg-b))}
+.pg-sw{display:flex;gap:5px;margin-top:6px}.pg-sw i{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.5)}
+textarea.pg-in{min-height:250px;padding:12px;font:12.5px/1.55 ui-monospace,Menlo,monospace;resize:vertical}
+.pg-act{display:flex;gap:8px;margin-top:10px}.pg-act button{flex:1;min-height:48px;border-radius:16px;font-weight:700;font-family:inherit;font-size:14px;cursor:pointer}
+.pg-meta{font-size:11.5px;color:var(--mute);margin-top:6px}
+[hidden]{display:none!important}
+
+.pg-locks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pg-locks label{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);padding:8px 10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)}.pg-locks input{accent-color:var(--acc);width:16px;height:16px}
+.pg-an select{min-width:0}.pg-act{flex-wrap:wrap}.pg-act button{min-width:120px}
+
+.pg-smart{margin-top:14px;padding:14px;border:1px solid var(--lg-edge);border-radius:18px;background:linear-gradient(145deg,var(--lg-a),var(--lg-b));box-shadow:0 8px 24px rgba(0,0,0,.045)}
+.pg-smart-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.pg-smart-head strong{display:block;font-size:14px}.pg-smart-head small{display:block;color:var(--mute);font-size:11.5px;line-height:1.4;margin-top:2px}.pg-smart-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:var(--lg-sel);color:var(--acc);font-size:20px;flex:none}
+.pg-smart-note{display:grid;gap:5px;margin-top:9px;font-size:11.5px;color:var(--mute)}.pg-smart-note textarea.pg-in{min-height:76px}
+.pg-smart-status{font-size:11.5px;color:var(--mute);padding:9px 10px;margin-top:9px;border-radius:10px;background:var(--lg-sel);line-height:1.45}
+.pg-advanced{margin-top:14px;border:1px solid var(--lg-edge);border-radius:15px;padding:0 12px 10px}.pg-advanced summary{cursor:pointer;padding:12px 2px;font-size:12.5px;font-weight:700;color:var(--acc);list-style:none}.pg-advanced summary::-webkit-details-marker{display:none}.pg-advanced summary:after{content:'＋';float:right}.pg-advanced[open] summary:after{content:'−'}
+
+
+/* V21 Smart Prompt refinements */
+.pg-prompt-tools{align-items:center;justify-content:space-between;margin:6px 0 9px}
+.pg-manual{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted,#9aa4b2)}
+.pg-manual input{accent-color:var(--accent,#19b5a5)}
+.pg-smart-status.warn{border-color:#d59b35;background:rgba(213,155,53,.09);color:inherit}
+.pg-history-item{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:5px 0}
+.pg-history-item .pg-history-load{flex:1;text-align:left;min-width:130px}
+.pg-history-item .pg-history-delete{color:#d66}
+@media(max-width:560px){.pg-prompt-tools{align-items:stretch;flex-direction:column}.pg-prompt-tools button{width:100%}}
+
+/* V22 One-tap Smart Setup */
+.pg-auto-btn{width:100%;min-height:48px;margin:12px 0 5px;font-weight:750;letter-spacing:.01em}
+.pg-auto-hint{display:block;color:var(--mute);font-size:12px;line-height:1.45;margin:0 0 8px}
+.pg-smart-status.done{border-color:var(--acc);background:var(--soft)}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 16.5v4M16.5 18.5h4"/></svg>
+      </div>
+      <div>
+        <h1>Penyempurna Foto</h1>
+        <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
+      </div>
+    </div>
+    <div class="tb-actions"><button class="theme-btn pgbtn" id="pgBtn" aria-label="Buka pembuat prompt" title="Pembuat prompt">✨ Prompt</button>
+    <button class="theme-btn" id="themeBtn" aria-label="Ganti tema gelap atau terang" title="Ganti tema">
+      <svg id="themeIco" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button></div>
+  </div>
+</header>
+
+<main class="workspace">
+  <div class="stage-col">
+    <div class="stage" id="stage">
+      <div class="canvas-box">
+        <div class="empty" id="empty">
+          <div class="empty-ico">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <span>Mulai dari tab <b>Foto AI</b>, lalu tab <b>Foto asli</b>, kemudian tekan <b>Otomatis</b>.</span>
+        </div>
+        <div class="wrap"><canvas id="cv" width="0" height="0" hidden></canvas><canvas id="ov" hidden></canvas></div>
+      </div>
+      <p class="status-bar"><span class="status-dot"></span><span id="hint" hidden>Tahan gambar untuk melihat versi sebelum.</span></p>
+      <div class="sbtn"><button class="mini" id="cmp" aria-pressed="false" hidden>Bandingkan</button><button class="mini" id="sz" aria-pressed="false" hidden>Kecilkan</button><button class="mini" id="hand" aria-pressed="false" hidden>Geser</button><button class="mini" id="zr" hidden>Zoom 1×</button></div>
+    </div>
+  </div>
+
+  <div class="controls-col">
+    <div class="tabs" role="tablist">
+      <div class="tab-pill" id="tabPill"></div>
+      <button role="tab" id="t1" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 16.5v4M16.5 18.5h4"/></svg><span>Foto AI</span></button>
+      <button role="tab" id="t2" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>Foto asli</span></button>
+      <button role="tab" id="t3" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></svg><span>Kulit</span></button>
+      <button role="tab" id="t4" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg><span>Efek</span></button>
+      <button role="tab" id="t5" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Lindungi</span></button>
+    </div>
+
+    <div class="studio-intro">
+      <div><span class="eyebrow">WORKSPACE • V20 SMART PROMPT</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
+      <span class="local-pill"><i></i> Proses lokal</span>
+    </div>
+    <p class="note" id="autoinfo" hidden></p>
+
+    <section id="p1">
+      <label class="drop" id="d1"><input type="file" accept="image/*" id="f1" multiple><b class="plus">+</b><img class="th" alt="" hidden><span><strong>Foto hasil AI</strong><small>Ketuk untuk memilih satu atau beberapa foto</small></span></label>
+      <p class="note" id="qinfo" hidden></p>
+    </section>
+
+    <section id="p2" hidden>
+      <label class="drop" id="d2"><input type="file" accept="image/*" id="f2"><b class="plus">+</b><img class="th" alt="" hidden><span><strong>Foto asli</strong><small>Sumber kulit, pori, rambut, dan warna</small></span></label>
+      <p class="note" id="info" style="margin:0 0 12px">Pakai foto asli yang tajam dan kulitnya terlihat jelas, idealnya close-up.</p>
+      <div class="ctl" id="ctl" hidden>
+        <h2>Warna</h2>
+        <div class="row"><label for="tone">Warna kulit <output></output></label><input type="range" id="tone" min="0" max="100" value="80"><small>Warna kulit mengikuti foto asli.</small></div>
+        <div class="row"><label for="glob">Coloring keseluruhan <output></output></label><input type="range" id="glob" min="0" max="100" value="60"><small>Nuansa warna dan kontras mengikuti foto asli.</small></div>
+        <h2>Tekstur</h2>
+        <div class="row"><label for="sk">Tekstur kulit dan pori <output></output></label><input type="range" id="sk" min="0" max="200" value="100"><small>Kekuatan butiran kulit sama seperti yang terbaca di foto asli.</small></div>
+        <div class="row"><label for="hr">Tekstur rambut dan kain <output></output></label><input type="range" id="hr" min="0" max="200" value="100"><small>Butiran rambut dan kain, diukur dari area non-kulit foto asli.</small></div>
+        <div class="row"><label for="sharp">Ketajaman detail <output></output></label><input type="range" id="sharp" min="0" max="100" value="20"><small>Mempertajam detail bawaan foto AI agar tidak terlihat licin.</small></div>
+        <div class="row"><label for="detail">Pemulihan mikro-detail <output></output></label><input type="range" id="detail" min="0" max="100" value="18"><small>Menonjolkan detail halus yang memang sudah ada. Tidak menciptakan detail baru.</small></div>
+        <div class="row"><label for="scale">Skala tekstur <output></output></label><input type="range" id="scale" min="50" max="200" value="100"><small>Naikkan jika butiran terlalu halus, turunkan jika terlalu kasar.</small></div>
+      </div>
+      <div class="ctl"><h2>Preset</h2>
+        <div class="prow"><input id="pname" type="text" placeholder="Nama preset baru..." maxlength="24" aria-label="Nama preset"><button id="psave" class="mini">Simpan</button></div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <p class="note">Algoritma membaca butiran dari beberapa area foto asli, memisahkan skala detail halus dan sedang, lalu menerapkannya secara adaptif pada foto AI. Pemulihan mikro-detail hanya memperkuat kontras lokal yang tersedia—bukan generasi detail AI. Mulai dari nilai sedang dan cek hasilnya dengan tahan gambar.</p>
+    </section>
+
+    <section id="p3" hidden>
+      <div class="seg"><button id="bm0" aria-pressed="true">Tambah kulit</button><button id="bm1" aria-pressed="false">Hapus kulit</button></div>
+      <div class="ctl"><div class="row"><label for="bsz">Ukuran kuas <output id="bszo">40</output></label><input type="range" id="bsz" min="10" max="120" value="40"></div></div>
+      <div class="act2"><button class="mini" id="shsk">Sembunyikan warna area</button><button class="mini" id="clrp">Hapus coretan</button></div>
+      <p class="note">Warna hijau menandai area yang diberi tekstur kulit. Deteksi awal berbasis warna hanyalah perkiraan. Tekan <b>Deteksi fitur wajah otomatis</b> di tab Lindungi agar kulit wajah terisi otomatis mengikuti bentuk wajah. Cubit dua jari pada foto untuk zoom. Gunakan <b>Hapus kulit</b> pada mata, alis, bibir, gigi, rambut, dan aksesori agar tekstur kulit tidak diterapkan di sana.</p>
+    </section>
+
+    <section id="p4" hidden>
+      <div class="ctl">
+        <h2>Gaya film</h2>
+        <div class="row"><label for="fst">Gaya warna</label><select id="fst"><option value="0">Tanpa</option><option value="1">Hangat</option><option value="2">Sinematik</option><option value="3">Pudar lembut</option><option value="4">Hitam putih</option></select><small>Meniru warna dan kontras kamera film.</small></div>
+        <div class="row"><label for="flm">Kekuatan gaya <output></output></label><input type="range" id="flm" min="0" max="100" value="60"><small>Seberapa kuat gaya dicampur ke foto. Geser ke 0 untuk mematikan.</small></div>
+        <h2>Lensa</h2>
+        <div class="row"><label for="vig">Vignette tepi <output></output></label><input type="range" id="vig" min="0" max="100" value="25"><small>Pinggir foto sedikit lebih gelap, seperti lensa asli.</small></div>
+        <div class="row"><label for="cab">Aberasi warna <output></output></label><input type="range" id="cab" min="0" max="100" value="20"><small>Tepi benda di sudut foto sedikit berpendar merah dan biru.</small></div>
+        <div class="row"><label for="edg">Tepi kurang tajam <output></output></label><input type="range" id="edg" min="0" max="100" value="15"><small>Sudut foto sedikit kurang fokus.</small></div>
+        <div class="row"><label for="blm">Cahaya menyebar <output></output></label><input type="range" id="blm" min="0" max="100" value="15"><small>Area terang memancarkan cahaya lembut.</small></div>
+      </div>
+      <p class="note">Gaya film dan efek lensa dipakai paling akhir, setelah warna dan tekstur. Cek hasilnya dengan tahan gambar.</p>
+    </section>
+
+    <section id="p5" hidden>
+      <div class="ctl">
+        <h2>Perlindungan fitur wajah</h2>
+        <button class="pri" id="autoFace" type="button">✦ Deteksi fitur wajah otomatis</button>
+        <p class="note" id="faceStatus" aria-live="polite">Deteksi otomatis membantu menandai area mata, alis, hidung, dan bibir. Koneksi internet diperlukan saat pertama kali memuat model.</p>
+        <div class="seg"><button id="bp0" aria-pressed="true">Lindungi area</button><button id="bp1" aria-pressed="false">Hapus perlindungan</button></div>
+        <div class="row"><label for="bps">Ukuran kuas perlindungan <output id="bpso">34</output></label><input type="range" id="bps" min="8" max="140" value="34"><small>Warnai bagian yang tidak boleh menerima sintesis tekstur atau penajaman tambahan.</small></div>
+        <div class="act2"><button class="mini" id="shpr">Sembunyikan area perlindungan</button><button class="mini" id="clpr">Hapus semua perlindungan</button></div>
+      </div>
+      <p class="note"><b>Area biru = dilindungi.</b> Sapukan kuas pada mata, alis, bibir, gigi, lubang hidung, rambut, dan aksesori. Area ini akan dikecualikan dari tekstur sintetis serta pemulihan mikro-detail. Deteksi otomatis menandai mata, alis, hidung, dan bibir; periksa hasilnya lalu koreksi dengan kuas manual.</p>
+      <p class="note">Tips: cubit dua jari untuk zoom dan geser dua jari untuk menggeser foto. Atau nyalakan tombol <b>Geser</b> di bawah foto agar satu jari bisa menggeser. Setelah selesai, kembali ke tab Kulit untuk mengatur area tekstur hijau.</p>
+    </section>
+
+    <div class="bar"><div class="export-row">
+      <label class="export-size" for="upscale">Resolusi ekspor
+        <select id="upscale"><option value="1">1× • ukuran asli</option><option value="2">2× • diperbesar</option><option value="4">4× • diperbesar</option></select>
+      </label>
+      <button id="reset">Atur ulang</button>
+      <button id="auto">✨ Otomatis</button>
+      <button class="pri" id="save">Simpan PNG</button>
+    </div></div>
+  </div>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var MAX=1100,P=48,lim=1100,FULL=2200;
+var ov=$('ov'),cv=$('cv'),ctx=cv.getContext('2d',{willReadFrequently:true});
+var ai=null,real=null,base=null,bf=null,bmicro=null,mk=null,mk0=null,pA=null,pD=null,pProtect=null,pProtectErase=null,protect=null,after=null,dirty=true,cmp=false,split=.5,dr=false,queue=[],brush='add',showSk=true,showProtect=true,tab3=false,tab5=false,protectBrush="add",texS=null,texH=null,texO=null,stA=null,stR=null,colA=null,colKey='',before=false,pend=false;
+var ids=['tone','glob','sk','hr','sharp','detail','scale','vig','cab','edg','blm','fst','flm'],defs={};
+ids.forEach(function(k){defs[k]=$(k).value});
+
+/* Theme Toggle */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('pf_theme',t);
+  $('themeIco').innerHTML=t==='dark'
+    ?'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+var savedTheme=localStorage.getItem('pf_theme');
+if(savedTheme)applyTheme(savedTheme);
+$('themeBtn').onclick=function(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var sysDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  var next=cur?(cur==='dark'?'light':'dark'):(sysDark?'light':'dark');
+  applyTheme(next);
+};
+
+/* Update Slider Badges & Progress Fill */
+function updateFill(el){
+  if(el.type!=='range')return;
+  var min=+el.min||0,max=+el.max||100,val=+el.value||0;
+  el.style.setProperty('--val',((val-min)*100/(max-min))+'%');
+}
+function fmt(){
+  ids.forEach(function(k){
+    var el=$(k),o=el.parentNode.querySelector('output');
+    if(o)o.textContent=el.value+(k=='scale'?'%':'');
+    updateFill(el);
+  });
+  updateFill($('bsz'));
+}
+fmt();
+
+function off(w,h){var c=document.createElement('canvas');c.width=w;c.height=h;return c}
+function lum(r,g,b){return .299*r+.587*g+.114*b}
+function fk(w,h){return Math.max(1,Math.max(w,h)/MAX)}
+function isSkin(r,g,b){var cb=128-.168736*r-.331264*g+.5*b,cr=128+.5*r-.418688*g-.081312*b;return cb>77&&cb<127&&cr>133&&cr<173&&r>60}
+
+/* Lab */
+function f(t){return t>.008856?Math.cbrt(t):7.787*t+16/116}
+function fi(t){var c=t*t*t;return c>.008856?c:(t-16/116)/7.787}
+var LIN=new Float32Array(256);for(var q0=0;q0<256;q0++){var v0=q0/255;LIN[q0]=v0<=.04045?v0/12.92:Math.pow((v0+.055)/1.055,2.4)}
+function lin(v){return LIN[v|0]}
+var GAM=new Uint8Array(4097);for(var q1=0;q1<=4096;q1++){var u0=q1/4096;u0=u0<=.0031308?12.92*u0:1.055*Math.pow(u0,1/2.4)-.055;GAM[q1]=Math.round(Math.max(0,Math.min(1,u0))*255)}
+function gam(v){return GAM[v<=0?0:v>=1?4096:(v*4096)|0]}
+function toLab(r,g,b){r=lin(r);g=lin(g);b=lin(b);var X=f((.4124*r+.3576*g+.1805*b)/.9505),Y=f(.2126*r+.7152*g+.0722*b),Z=f((.0193*r+.1192*g+.9505*b)/1.089);return[116*Y-16,500*(X-Y),200*(Y-Z)]}
+function fromLab(L,a,b){var Y=(L+16)/116,X=fi(a/500+Y)*.9505,Z=fi(Y-b/200)*1.089;Y=fi(Y);return[gam(3.2406*X-1.5372*Y-.4986*Z),gam(-.9689*X+1.8758*Y+.0415*Z),gam(.0557*X-.204*Y+1.057*Z)]}
+function ms(a){var n=a.length,m=[0,0,0],v=[0,0,0],i,k;for(i=0;i<n;i++)for(k=0;k<3;k++)m[k]+=a[i][k];for(k=0;k<3;k++)m[k]/=n;for(i=0;i<n;i++)for(k=0;k<3;k++){var e=a[i][k]-m[k];v[k]+=e*e}return{m:m,s:v.map(function(t){return Math.sqrt(t/n)||1})}}
+function stats(img){
+ var s=220/Math.max(img.width,img.height),w=Math.max(1,Math.round(img.width*s)),h=Math.max(1,Math.round(img.height*s));
+ var c=off(w,h),x=c.getContext('2d');x.drawImage(img,0,0,w,h);var d=x.getImageData(0,0,w,h).data,A=[],K=[];
+ for(var i=0;i<w*h;i++){var l=toLab(d[i*4],d[i*4+1],d[i*4+2]);A.push(l);if(isSkin(d[i*4],d[i*4+1],d[i*4+2]))K.push(l)}
+ return{g:ms(A),k:K.length>150?ms(K):null}
+}
+
+/* tabs & upload */
+$('t1').onclick=function(){setMode(1)};$('t2').onclick=function(){setMode(2)};
+function thumb(img,box){var c=off(104,104),x=c.getContext('2d'),s=Math.max(104/img.width,104/img.height),w=img.width*s,h=img.height*s;x.drawImage(img,(104-w)/2,(104-h)/2,w,h);var t=box.querySelector('.th');t.src=c.toDataURL('image/jpeg',.8);t.hidden=false;box.querySelector('.plus').hidden=true}
+function load(file,cb,box){if(!file)return;var img=new Image();
+ img.onload=function(){URL.revokeObjectURL(img.src);box.classList.add('ok');box.querySelector('small').textContent=file.name;thumb(img,box);cb(img)};
+ img.onerror=function(){box.querySelector('small').textContent='File tidak bisa dibuka. Coba JPG atau PNG.'};
+ img.src=URL.createObjectURL(file)}
+$('f1').onchange=function(e){var fl=Array.prototype.slice.call(e.target.files);if(!fl.length)return;queue=fl;var qi=$('qinfo');qi.hidden=fl.length<2;qi.textContent=fl.length+' foto dipilih. Pratinjau memakai foto pertama. Saat disimpan, semua foto diproses dengan pengaturan yang sama dan diunduh sebagai ZIP.';load(fl[0],function(img){ai=img;pA=pD=null;lim=MAX;resetView();busy('Memproses foto AI, mohon tunggu...',function(){prepAI();buildTex();draw()})},$('d1'))};
+$('f2').onchange=function(e){load(e.target.files[0],function(img){real=img;busy('Membaca tekstur foto asli, mohon tunggu...',function(){stR=stats(img);colKey='';buildTex();draw()})},$('d2'))};
+
+function prepAI(){
+ var s=Math.min(1,lim/Math.max(ai.width,ai.height)),w=Math.round(ai.width*s),h=Math.round(ai.height*s);
+ cv.width=w;cv.height=h;cv.hidden=false;$('stage').classList.add('has-img');$('empty').hidden=true;$('hint').hidden=false;$('cmp').hidden=false;$('sz').hidden=false;$('hand').hidden=false;$('zr').hidden=false;var c=off(w,h),x=c.getContext('2d');x.drawImage(ai,0,0,w,h);base=x.getImageData(0,0,w,h);
+ var m=x.createImageData(w,h),d=base.data,o=m.data;
+ for(var i=0;i<w*h;i++)o[i*4+3]=isSkin(d[i*4],d[i*4+1],d[i*4+2])?255:0;
+ var mc=off(w,h);mc.getContext('2d').putImageData(m,0,0);
+ var bc=off(w,h),bx=bc.getContext('2d');bx.filter='blur('+3*fk(w,h)+'px)';bx.drawImage(mc,0,0);
+ var bd=bx.getImageData(0,0,w,h).data;mk0=new Float32Array(w*h);for(i=0;i<w*h;i++)mk0[i]=bd[i*4+3]/255;pA=rp(pA,w,h);pD=rp(pD,w,h);pProtect=rp(pProtect,w,h);pProtectErase=rp(pProtectErase,w,h);rebuildMask();rebuildProtection();
+ stA=stats(ai);colKey='';
+ var fc=off(w,h),fx=fc.getContext('2d');fx.filter='blur('+1.2*fk(w,h)+'px)';fx.drawImage(c,0,0);bf=fx.getImageData(0,0,w,h).data;
+ var fm=off(w,h),fmctx=fm.getContext('2d');fmctx.filter='blur('+Math.max(.6,.65*fk(w,h))+'px)';fmctx.drawImage(c,0,0);bmicro=fmctx.getImageData(0,0,w,h).data
+}
+
+/* ukur butiran foto asli, lalu buat butiran serupa tanpa menyalin bentuk */
+function gauss(){return(Math.random()+Math.random()+Math.random()+Math.random()-2)*1.73}
+function box(a,w,h,r){var t=new Float32Array(w*h),o=new Float32Array(w*h),x,y,k,s,c=2*r+1,e;
+ for(y=0;y<h;y++){var row=y*w;for(x=0;x<w;x++){s=0;for(k=-r;k<=r;k++){e=x+k;e=e<0?0:e>=w?w-1:e;s+=a[row+e]}t[row+x]=s/c}}
+ for(x=0;x<w;x++)for(y=0;y<h;y++){s=0;for(k=-r;k<=r;k++){e=y+k;e=e<0?0:e>=h?h-1:e;s+=t[e*w+x]}o[y*w+x]=s/c}
+ return o}
+function sd(a){var n=a.length,m=0,v=0,i;for(i=0;i<n;i++)m+=a[i];m/=n;for(i=0;i<n;i++)v+=(a[i]-m)*(a[i]-m);return Math.sqrt(v/n)||1e-4}
+function buildTex(){
+ texS=texH=texO=null;RC=null;if(!real||!base)return;
+ var sc=$('scale').value/100,fz=fk(base.width,base.height),r1=Math.max(1,Math.round(sc*1.2*fz)),r2=r1*3;
+ var s=Math.min(1,2000/Math.max(real.width,real.height)),w=Math.max(1,Math.round(real.width*s)),h=Math.max(1,Math.round(real.height*s));
+ var c=off(w,h),x=c.getContext('2d',{willReadFrequently:true});x.drawImage(real,0,0,w,h);
+ var d=x.getImageData(0,0,w,h).data,n=w*h,L=new Float32Array(n),sk=new Uint8Array(n),i,j;
+ for(i=0;i<n;i++){j=i*4;L[i]=lum(d[j],d[j+1],d[j+2]);sk[i]=isSkin(d[j],d[j+1],d[j+2])?1:0}
+ var b1=box(L,w,h,r1),b2=box(L,w,h,r2),Q=[],tile=Math.max(8,Math.min(P,Math.floor(Math.min(w,h)/3))),y,x0,yy,xx,ix,fr,ml,sa,sb,e1,e2,area;
+ for(y=0;y+tile<=h;y+=tile)for(x0=0;x0+tile<=w;x0+=tile){fr=0;ml=0;sa=0;sb=0;area=tile*tile;
+  for(yy=0;yy<tile;yy++)for(xx=0;xx<tile;xx++){ix=(y+yy)*w+x0+xx;fr+=sk[ix];ml+=L[ix];e1=L[ix]-b1[ix];e2=b1[ix]-b2[ix];sa+=e1*e1;sb+=e2*e2}
+  Q.push({f:fr/area,m:ml/area,a:Math.sqrt(sa/area),b:Math.sqrt(sb/area)})}
+ function percentile(a,p){if(!a.length)return 0;a.sort(function(u,v){return u-v});return a[Math.min(a.length-1,Math.floor((a.length-1)*p))]}
+ function cls(fn){var a=Q.filter(fn);if(a.length<2)return null;
+  return{a:percentile(a.map(function(q){return q.a}),.5),b:percentile(a.map(function(q){return q.b}),.5),n:a.length}}
+ /* Sampel kulit dibuat lebih toleran agar foto close-up tidak gagal hanya karena bayangan/warna. */
+ var cS=cls(function(q){return q.f>=.62&&q.m>28&&q.m<238}),cH=cls(function(q){return q.f<=.08&&q.m<105}),cO=cls(function(q){return q.f<=.08&&q.m>=105});
+ if(!cH)cH=cO;if(!cO)cO=cH;RC={S:cS,H:cH,O:cO};
+ var W=base.width,H=base.height,N=new Float32Array(W*H);for(i=0;i<N.length;i++)N[i]=gauss();
+ var n1=box(N,W,H,r1),n2=box(N,W,H,r2),NA=new Float32Array(W*H),NB=new Float32Array(W*H);
+ for(i=0;i<N.length;i++){NA[i]=N[i]-n1[i];NB[i]=n1[i]-n2[i]}
+ var da=sd(NA),db=sd(NB);
+ function mkT(cc){if(!cc)return null;var o=new Float32Array(W*H),ka=Math.min(18,cc.a/da),kb=Math.min(12,cc.b/db);for(var q=0;q<o.length;q++)o[q]=ka*NA[q]+kb*NB[q];return o}
+ texS=mkT(cS);texH=mkT(cH);texO=mkT(cO);
+ $('info').textContent=(cS?'Butiran kulit terbaca dari foto asli. ':'Butiran kulit belum cukup jelas; gunakan foto asli close-up dengan fokus baik. ')+(cH||cO?'Butiran area non-kulit terbaca.':'Butiran rambut/kain belum cukup terbaca.');
+}
+
+/* gaya film */
+var FS=[null,
+ {f:10,s:.95,c:1.03,sh:[0,3,2],hi:[10,4,-8]},
+ {f:6,s:1.05,c:1.12,sh:[-8,2,10],hi:[10,3,-8]},
+ {f:26,s:.78,c:.94,sh:[-2,2,4],hi:[3,3,0]},
+ {f:6,s:0,c:1.15,sh:[0,0,0],hi:[0,0,0]}];
+function grade(out){
+ var G0=FS[+$('fst').value],k=$('flm').value/100;
+ if(!G0||!k)return;
+ var d=out.data,n=out.width*out.height,i,j,c,o,L,u,sh,hi,v,a=G0.f/255;
+ for(i=0;i<n;i++){j=i*4;L=d[j]*.299+d[j+1]*.587+d[j+2]*.114;u=L/255;sh=(1-u)*(1-u);hi=u*u;
+  for(c=0;c<3;c++){o=d[j+c];v=L+(o-L)*G0.s;v=128+(v-128)*G0.c+G0.sh[c]*sh+G0.hi[c]*hi;v=G0.f+v*(1-a);d[j+c]=o+k*(v-o)}}
+}
+
+/* efek lensa kamera */
+function bil(s,w,h,x,y,c){if(x<0)x=0;else if(x>w-1.001)x=w-1.001;if(y<0)y=0;else if(y>h-1.001)y=h-1.001;var x0=x|0,y0=y|0,fx=x-x0,fy=y-y0,i=(y0*w+x0)*4+c;return(s[i]*(1-fx)+s[i+4]*fx)*(1-fy)+(s[i+w*4]*(1-fx)+s[i+w*4+4]*fx)*fy}
+function lens(out){
+ var v=$('vig').value/100,ca=$('cab').value/100,ed=$('edg').value/100,bl=$('blm').value/100,w=out.width,h=out.height;
+ if(!(v||ca||ed||bl)||w<4||h<4)return;
+ var d=out.data,n=w*h,f=fk(w,h),cx=(w-1)/2,cy=(h-1)/2,mr=Math.sqrt(cx*cx+cy*cy)||1,i,j,x,y,dx,dy,r,t;
+ function blurred(src,px){var c1=off(w,h),c2=off(w,h),k2=c2.getContext('2d');c1.getContext('2d').putImageData(src,0,0);k2.filter='blur('+px+'px)';k2.drawImage(c1,0,0);return k2.getImageData(0,0,w,h).data}
+ if(ed>0){var E=blurred(out,2.4*f);
+  for(y=0;y<h;y++)for(x=0;x<w;x++){dx=x-cx;dy=y-cy;r=Math.sqrt(dx*dx+dy*dy)/mr;if(r<=.45)continue;t=(r-.45)/.55;t=ed*t*t;j=(y*w+x)*4;d[j]+=t*(E[j]-d[j]);d[j+1]+=t*(E[j+1]-d[j+1]);d[j+2]+=t*(E[j+2]-d[j+2])}}
+ if(ca>0){var S=new Uint8ClampedArray(d),sr=1+ca*.005,sb=1-ca*.005;
+  for(y=0;y<h;y++)for(x=0;x<w;x++){dx=x-cx;dy=y-cy;j=(y*w+x)*4;d[j]=bil(S,w,h,cx+dx*sr,cy+dy*sr,0);d[j+2]=bil(S,w,h,cx+dx*sb,cy+dy*sb,2)}}
+ if(bl>0){var hp=ctx.createImageData(w,h),q=hp.data,L,k;
+  for(i=0;i<n;i++){j=i*4;L=d[j]*.299+d[j+1]*.587+d[j+2]*.114;k=L>170?(L-170)/85:0;q[j]=d[j]*k;q[j+1]=d[j+1]*k;q[j+2]=d[j+2]*k;q[j+3]=255}
+  var G=blurred(hp,12*f),s=bl*.8,c,a,b;
+  for(i=0;i<n;i++){j=i*4;for(c=0;c<3;c++){a=d[j+c];b=G[j+c]*s;if(b>255)b=255;d[j+c]=255-(255-a)*(255-b)/255}}}
+ if(v>0){for(y=0;y<h;y++)for(x=0;x<w;x++){dx=x-cx;dy=y-cy;r=Math.sqrt(dx*dx+dy*dy)/mr;if(r<=.35)continue;t=(r-.35)/.65;t=1-v*.6*t*t;j=(y*w+x)*4;d[j]*=t;d[j+1]*=t;d[j+2]*=t}}
+}
+
+/* tahap warna */
+function color(){
+ var tn=$('tone').value/100,gl=$('glob').value/100,key=tn+'|'+gl+'|'+(real?1:0);
+ if(colA&&key==colKey)return;colKey=key;
+ var d=base.data,n=base.width*base.height;colA=new Uint8ClampedArray(d);
+ if(!real||!stA||!stR||(tn==0&&gl==0))return;
+ var A=stA,B=stR,Ak=A.k&&B.k?A.k:A.g,Bk=A.k&&B.k?B.k:B.g,cl=function(v){return v<.6?.6:v>1.5?1.5:v},rg=[0,1,2].map(function(k){return cl(B.g.s[k]/A.g.s[k])}),rk=[0,1,2].map(function(k){return cl(Bk.s[k]/Ak.s[k])});
+ for(var p=0;p<n;p++){var j=p*4,l=toLab(d[j],d[j+1],d[j+2]),m=mk[p],o=[0,0,0],k;
+  for(k=0;k<3;k++){var tg=(l[k]-A.g.m[k])*rg[k]+B.g.m[k],tk=(l[k]-Ak.m[k])*rk[k]+Bk.m[k];
+   o[k]=l[k]+(1-m)*gl*(tg-l[k])+m*tn*(tk-l[k])}
+  var c=fromLab(o[0],o[1],o[2]);colA[j]=c[0];colA[j+1]=c[1];colA[j+2]=c[2]}
+}
+function run(){
+ color();var w=base.width,h=base.height,n=w*h,out=ctx.createImageData(w,h),o=out.data,sk=$('sk').value/100,hr=$('hr').value/100,sh=$('sharp').value/100*1.5,dt=$('detail').value/100*1.15,bd=base.data,SHF=(7*w+13)%n;
+ for(var p=0;p<n;p++){var j=p*4,prot=protect?protect[p]:0,m=mk[p]*(1-prot),lm=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,wh=lm>=90?0:lm<=50?1:(90-lm)/40,g0=lm/255,wl=(lm<24?lm/24:1)*(1.2-.7*g0*g0),x=p%w,y=(p/w)|0,lx=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,li=y*w+Math.max(0,x-1),ri=y*w+Math.min(w-1,x+1),ui=Math.max(0,y-1)*w+x,di=Math.min(h-1,y+1)*w+x,edge=Math.abs(lx-(bd[li*4]*.299+bd[li*4+1]*.587+bd[li*4+2]*.114))+Math.abs(lx-(bd[ri*4]*.299+bd[ri*4+1]*.587+bd[ri*4+2]*.114))+Math.abs(lx-(bd[ui*4]*.299+bd[ui*4+1]*.587+bd[ui*4+2]*.114))+Math.abs(lx-(bd[di*4]*.299+bd[di*4+1]*.587+bd[di*4+2]*.114)),edgeKeep=1/(1+edge/34),q=p+SHF,a,c;if(q>=n)q-=n;a=((texS?texS[p]*sk*m:0)+(1-m)*hr*((texH?texH[p]*wh:0)+(texO?texO[p]*(1-wh):0)))*wl*edgeKeep*(1-prot);c=((texS?texS[q]*sk*m:0)+(1-m)*hr*((texH?texH[q]*wh:0)+(texO?texO[q]*(1-wh):0)))*.35*wl*edgeKeep*(1-prot);
+  var mr0=bd[j]-bmicro[j],mg0=bd[j+1]-bmicro[j+1],mb0=bd[j+2]-bmicro[j+2],microGate=Math.min(1,Math.max(0,(edge-2)/10)),r=colA[j]+a+c+sh*(bd[j]-bf[j])*(1-prot)+dt*microGate*mr0*(1-prot),g=colA[j+1]+a+sh*(bd[j+1]-bf[j+1])*(1-prot)+dt*microGate*mg0*(1-prot),b=colA[j+2]+a-c*.7+sh*(bd[j+2]-bf[j+2])*(1-prot)+dt*microGate*mb0*(1-prot);
+  o[j]=r<0?0:r>255?255:r;o[j+1]=g<0?0:g>255?255:g;o[j+2]=b<0?0:b>255?255:b;o[j+3]=255}
+ grade(out);lens(out);after=out;dirty=false;if(cmp)paintCmp();else ctx.putImageData(out,0,0)
+}
+function draw(){if(!base)return;if(before)ctx.putImageData(base,0,0);else run()}
+function render(){if(!base)return;dirty=true;if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;draw()})}
+function busy(msg,fn){
+  dirty=true;$('stage').classList.add('busy');$('hint').textContent=msg;
+  requestAnimationFrame(function(){setTimeout(function(){
+    try{fn()}catch(e){$('stage').classList.remove('busy');$('hint').textContent='Terjadi error: '+e.message;return}
+    $('stage').classList.remove('busy');
+    $('hint').textContent=real?'Tahan gambar untuk melihat versi sebelum.':'Foto AI siap. Buka tab Foto asli untuk memilih foto asli.'
+  },16)})
+}
+['sk','hr','sharp','detail','vig','cab','edg','blm','fst','flm'].forEach(function(k){$(k).addEventListener('input',function(){fmt();render()})});
+['tone','glob'].forEach(function(k){$(k).addEventListener('input',fmt);$(k).addEventListener('change',function(){busy('Menyesuaikan warna...',draw)})});
+$('scale').addEventListener('input',fmt);
+$('scale').addEventListener('change',function(){busy('Menyusun ulang tekstur...',function(){buildTex();draw()})});
+function hold(on){if(!base)return;before=on;if(on){draw();return}if(after&&!dirty)ctx.putImageData(after,0,0);else draw()}
+cv.addEventListener('pointerdown',function(e){if(cmp){dr=true;mv(e);if(cv.setPointerCapture)cv.setPointerCapture(e.pointerId)}else hold(true)});
+['pointerup','pointercancel','pointerleave'].forEach(function(e){cv.addEventListener(e,function(){if(cmp)dr=false;else hold(false)})});
+$('reset').onclick=function(){$('autoinfo').hidden=true;ids.forEach(function(k){$(k).value=defs[k]});if(base){pProtect=off(base.width,base.height);pProtectErase=off(base.width,base.height);rebuildProtection()}fmt();busy('Mengatur ulang...',function(){buildTex();drawOv();draw()})};
+
+/* === fitur tambahan === */
+function rp(old,w,h){var c=off(w,h);if(old&&old.width)c.getContext('2d').drawImage(old,0,0,w,h);return c}
+function alphaOf(c,w,h){var b=off(w,h),x=b.getContext('2d');x.filter='blur('+2*fk(w,h)+'px)';x.drawImage(c,0,0);var d=x.getImageData(0,0,w,h).data,o=new Float32Array(w*h);for(var i=0;i<w*h;i++)o[i]=d[i*4+3]/255;return o}
+function rebuildMask(){var w=base.width,h=base.height,n=w*h,i;mk=new Float32Array(mk0);var a=alphaOf(pA,w,h),d=alphaOf(pD,w,h);
+ for(i=0;i<n;i++){var v=mk[i]>a[i]?mk[i]:a[i],z=1-d[i];mk[i]=v<z?v:z}colKey=''}
+function rebuildProtection(){if(!base)return;var w=base.width,h=base.height,n=w*h,a=alphaOf(pProtect,w,h),d=alphaOf(pProtectErase,w,h);protect=new Float32Array(n);for(var i=0;i<n;i++)protect[i]=Math.max(0,Math.min(1,a[i]-d[i]));}
+
+function drawOv(){var w=base.width,h=base.height;ov.width=w;ov.height=h;var x=ov.getContext('2d'),im=x.createImageData(w,h),o=im.data;
+ for(var i=0;i<w*h;i++){var j=i*4;if(showSk){o[j+1]=220;o[j+3]=mk[i]*95}if(showProtect&&protect){var a=protect[i]*155;if(a>o[j+3]){o[j]=40;o[j+1]=125;o[j+2]=255;o[j+3]=a}}}x.putImageData(im,0,0)}
+function setMode(m){
+  [1,2,3,4,5].forEach(function(i){$('t'+i).setAttribute('aria-selected',m==i);$('p'+i).hidden=m!=i});
+  $('tabPill').style.transform='translateX('+((m-1)*100)+'%)';
+  $('ctl').hidden=m!=2;tab3=m==3;tab5=m==5;$('ov').hidden=!((tab3||tab5)&&base);if((tab3||tab5)&&base)drawOv()
+}
+$('sz').onclick=function(){var sm=$('stage').classList.toggle('sm');this.setAttribute('aria-pressed',sm);this.textContent=sm?'Besarkan':'Kecilkan';resetView()};
+$('t3').onclick=function(){setMode(3)};$('t4').onclick=function(){setMode(4)};$('t5').onclick=function(){setMode(5)};
+
+/* kuas */
+var last=null;
+function pt(e){var r=ov.getBoundingClientRect();return[(e.clientX-r.left)*ov.width/r.width,(e.clientY-r.top)*ov.height/r.height,ov.width/r.width]}
+function seg(x,a,b,s,col){x.strokeStyle=col;x.lineWidth=s;x.lineCap='round';x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke()}
+function stroke(a,b){
+ var o=ov.getContext('2d');
+ if(tab5){
+  var s=(+$('bps').value)*a[2],add=protectBrush!='del',m1=(add?pProtect:pProtectErase).getContext('2d'),m2=(add?pProtectErase:pProtect).getContext('2d');
+  m1.globalCompositeOperation='source-over';seg(m1,a,b,s,'#fff');m2.globalCompositeOperation='destination-out';seg(m2,a,b,s,'#fff');m2.globalCompositeOperation='source-over';
+  o.globalCompositeOperation=add?'source-over':'destination-out';seg(o,a,b,s,add?'rgba(40,125,255,.58)':'#000');o.globalCompositeOperation='source-over';
+ }else{
+  var s=(+$('bsz').value)*a[2],add=brush!='del',m1=(add?pA:pD).getContext('2d'),m2=(add?pD:pA).getContext('2d');
+  m1.globalCompositeOperation='source-over';seg(m1,a,b,s,'#fff');m2.globalCompositeOperation='destination-out';seg(m2,a,b,s,'#fff');m2.globalCompositeOperation='source-over';
+  o.globalCompositeOperation=add?'source-over':'destination-out';seg(o,a,b,s,add?'rgba(0,220,0,.45)':'#000');o.globalCompositeOperation='source-over';
+ }
+}
+var pst=null;
+function finishStroke(){if(!last)return;last=null;pst=null;busy(tab5?'Memperbarui perlindungan wajah...':'Memperbarui area kulit...',function(){if(tab5)rebuildProtection();else rebuildMask();drawOv();draw()})}
+ov.addEventListener('pointerdown',function(e){if(gest)return;pst=pt(e);last=null;try{ov.setPointerCapture(e.pointerId)}catch(_){}});
+ov.addEventListener('pointermove',function(e){if(gest)return;var p=pt(e);if(!last){if(!pst||Math.hypot(p[0]-pst[0],p[1]-pst[1])/p[2]<4)return;last=pst;stroke(last,last)}stroke(last,p);last=p});
+['pointerup','pointercancel'].forEach(function(ev){ov.addEventListener(ev,function(){if(gest)return;if(!last&&pst&&ev=='pointerup'){last=pst;stroke(last,last)}pst=null;finishStroke()})});
+function setBrush(b){brush=b;$('bm0').setAttribute('aria-pressed',b!='del');$('bm1').setAttribute('aria-pressed',b=='del')}
+$('bm0').onclick=function(){setBrush('add')};$('bm1').onclick=function(){setBrush('del')};
+$('bsz').addEventListener('input',function(){$('bszo').textContent=this.value;updateFill(this)});
+$('shsk').onclick=function(){showSk=!showSk;this.textContent=showSk?'Sembunyikan warna area':'Tampilkan warna area';if(base)drawOv()};
+$('clrp').onclick=function(){if(!base)return;pA=off(base.width,base.height);pD=off(base.width,base.height);busy('Menghapus coretan...',function(){rebuildMask();drawOv();draw()})};
+/* Deteksi landmark wajah opsional menggunakan MediaPipe Tasks Vision. */
+var faceTaskPromise=null;
+async function getFaceTask(){
+ if(faceTaskPromise)return faceTaskPromise;
+ faceTaskPromise=(async function(){
+  var vision=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');
+  var files=await vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+  return await vision.FaceLandmarker.createFromOptions(files,{
+   baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'CPU'},
+   runningMode:'IMAGE',numFaces:8,minFaceDetectionConfidence:.45,minFacePresenceConfidence:.45,minTrackingConfidence:.45
+  });
+ })().catch(function(e){faceTaskPromise=null;throw e});
+ return faceTaskPromise;
+}
+function facePoly(c,lm,ids,w,h,pad){
+ var pts=ids.map(function(i){return lm[i]}).filter(Boolean);if(pts.length<3)return;
+ c.beginPath();c.moveTo(pts[0].x*w,pts[0].y*h);
+ for(var i=1;i<pts.length;i++)c.lineTo(pts[i].x*w,pts[i].y*h);
+ c.closePath();c.fill();if(pad>0){c.lineWidth=pad*2;c.lineJoin='round';c.lineCap='round';c.stroke()}
+}
+$('autoFace').onclick=async function(){
+ if(!base){$('faceStatus').textContent='Pilih foto hasil AI terlebih dahulu.';return}
+ var btn=this,old=btn.textContent;btn.disabled=true;btn.textContent='Memuat model deteksi...';
+ $('faceStatus').textContent='Menyiapkan model landmark wajah. Koneksi internet diperlukan saat pertama kali.';
+ try{
+  var task=await getFaceTask(),w=base.width,h=base.height,temp=off(w,h);
+  temp.getContext('2d').putImageData(base,0,0);
+  var faces=task.detect(temp).faceLandmarks||[];
+  if(!faces.length){$('faceStatus').textContent='Wajah belum terdeteksi. Coba foto dengan wajah lebih jelas dan tidak tertutup.';return}
+  var mask=off(w,h),mc=mask.getContext('2d');mc.fillStyle='#fff';mc.strokeStyle='#fff';
+  var eyeL=[33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246];
+  var eyeR=[362,382,381,380,374,373,390,249,263,466,388,387,386,385,384,398];
+  var browL=[70,63,105,66,107,55,65,52,53,46],browR=[300,293,334,296,336,285,295,282,283,276];
+  var lips=[61,146,91,181,84,17,314,405,321,375,291,308,324,318,402,317,14,87,178,88,95,78];
+  var nose=[1,2,98,327,168,6,197,195,5,4,45,275,440,344,278,294,19,94];
+  for(var f=0;f<faces.length;f++){
+   var lm=faces[f],xs=lm.map(function(q){return q.x*w}),pad=Math.max(2,(Math.max.apply(null,xs)-Math.min.apply(null,xs))*.012);
+   facePoly(mc,lm,eyeL,w,h,pad);facePoly(mc,lm,eyeR,w,h,pad);
+   facePoly(mc,lm,browL,w,h,pad*1.5);facePoly(mc,lm,browR,w,h,pad*1.5);
+   facePoly(mc,lm,lips,w,h,pad*1.7);facePoly(mc,lm,nose,w,h,pad*1.5);faceSkin(lm,w,h,pad,[eyeL,eyeR],[browL,browR],lips);
+  }
+  pProtect=mask;pProtectErase=off(w,h);rebuildMask();rebuildProtection();drawOv();draw();
+  $('faceStatus').textContent=faces.length+' wajah terdeteksi. Mata, alis, hidung, dan bibir ditandai biru (dilindungi). Kulit wajah ditandai hijau di tab Kulit. Periksa lalu koreksi dengan kuas bila perlu.';
+ }catch(e){
+  $('faceStatus').textContent='Deteksi otomatis gagal: '+(e&&e.message?e.message:'model tidak dapat dimuat')+'. Periksa koneksi atau gunakan kuas manual.';
+ }finally{btn.disabled=false;btn.textContent=old}
+};
+function setProtectBrush(b){protectBrush=b;$('bp0').setAttribute('aria-pressed',b!='del');$('bp1').setAttribute('aria-pressed',b=='del')}
+$('bp0').onclick=function(){setProtectBrush('add')};$('bp1').onclick=function(){setProtectBrush('del')};
+$('bps').addEventListener('input',function(){$('bpso').textContent=this.value;updateFill(this)});
+$('shpr').onclick=function(){showProtect=!showProtect;this.textContent=showProtect?'Sembunyikan area perlindungan':'Tampilkan area perlindungan';if(base)drawOv()};
+$('clpr').onclick=function(){if(!base)return;pProtect=off(base.width,base.height);pProtectErase=off(base.width,base.height);busy('Menghapus area perlindungan...',function(){rebuildProtection();drawOv();draw()})};
+
+
+/* kulit wajah otomatis dari bentuk wajah */
+var OVAL=[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+function faceSkin(lm,w,h,pad,eyes,brows,lips){
+ var a=pA.getContext('2d'),d=pD.getContext('2d');
+ a.fillStyle=a.strokeStyle=d.fillStyle=d.strokeStyle='#fff';
+ d.globalCompositeOperation='destination-out';facePoly(d,lm,OVAL,w,h,0);d.globalCompositeOperation='source-over';
+ facePoly(a,lm,OVAL,w,h,0);
+ a.globalCompositeOperation='destination-out';
+ [[eyes[0],pad],[eyes[1],pad],[brows[0],pad*1.5],[brows[1],pad*1.5],[lips,pad*1.7]].forEach(function(q){facePoly(a,lm,q[0],w,h,q[1]);facePoly(d,lm,q[0],w,h,q[1])});
+ a.globalCompositeOperation='source-over'
+}
+
+/* zoom dan geser kanvas: cubit dua jari, roda mouse, atau tombol Geser */
+var box0=document.querySelector('.canvas-box'),wrap=document.querySelector('.wrap'),vz=1,vx=0,vy=0,hand=false,ptrs={},gest=false,gs=null,pan1=null,ZMAX=6;
+function ptList(){return Object.keys(ptrs).map(function(k){return ptrs[k]})}
+function span(t,w,b,o){var lo=w>=b?b-w:0,hi=w>=b?0:b-w;return Math.max(lo-o,Math.min(hi-o,t))}
+function setView(z,x,y){
+ vz=Math.max(1,Math.min(ZMAX,z));
+ if(vz==1){vx=vy=0}else{vx=span(x,wrap.offsetWidth*vz,box0.clientWidth,wrap.offsetLeft);vy=span(y,wrap.offsetHeight*vz,box0.clientHeight,wrap.offsetTop)}
+ wrap.style.transform=vz==1?'':'translate('+vx+'px,'+vy+'px) scale('+vz+')';
+ $('zr').textContent='Zoom '+(Math.round(vz*10)/10)+'×'
+}
+function resetView(){ptrs={};gest=false;gs=null;pan1=null;setView(1,0,0)}
+function zoomAt(cx,cy,z1){var r=box0.getBoundingClientRect(),fx=cx-r.left-box0.clientLeft-wrap.offsetLeft,fy=cy-r.top-box0.clientTop-wrap.offsetTop;z1=Math.max(1,Math.min(ZMAX,z1));var k=z1/vz;setView(z1,fx-k*(fx-vx),fy-k*(fy-vy))}
+function startGest(){
+ gest=true;pan1=null;dr=false;if(last)finishStroke();pst=null;last=null;if(before)hold(false);
+ var a=ptList();gs={d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1,mx:(a[0].x+a[1].x)/2,my:(a[0].y+a[1].y)/2,z:vz,tx:vx,ty:vy}
+}
+function pinchMove(){
+ var a=ptList(),r=box0.getBoundingClientRect(),ox=r.left+box0.clientLeft+wrap.offsetLeft,oy=r.top+box0.clientTop+wrap.offsetTop,
+ d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1,mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,z1=Math.max(1,Math.min(ZMAX,gs.z*d/gs.d)),
+ lx=(gs.mx-ox-gs.tx)/gs.z,ly=(gs.my-oy-gs.ty)/gs.z;
+ setView(z1,mx-ox-z1*lx,my-oy-z1*ly)
+}
+box0.addEventListener('pointerdown',function(e){
+ if(!base)return;
+ if(e.pointerType=='mouse'){ptrs={};gest=false}
+ ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+ var n=ptList().length;
+ if(n==2){startGest();e.stopPropagation();return}
+ if(n>2){e.stopPropagation();return}
+ if(hand){pan1={x:e.clientX,y:e.clientY,tx:vx,ty:vy};e.stopPropagation();try{box0.setPointerCapture(e.pointerId)}catch(_){}}
+},true);
+box0.addEventListener('pointermove',function(e){
+ var p=ptrs[e.pointerId];if(!p)return;p.x=e.clientX;p.y=e.clientY;
+ if(gest){e.stopPropagation();if(gs&&ptList().length>=2)pinchMove();return}
+ if(pan1){e.stopPropagation();setView(vz,pan1.tx+e.clientX-pan1.x,pan1.ty+e.clientY-pan1.y)}
+},true);
+['pointerup','pointercancel'].forEach(function(t){box0.addEventListener(t,function(e){
+ if(!ptrs[e.pointerId])return;delete ptrs[e.pointerId];var n=ptList().length;
+ if(gest){e.stopPropagation();if(n<2)gs=null;if(!n)gest=false;return}
+ if(pan1){e.stopPropagation();pan1=null}
+},true)});
+box0.addEventListener('wheel',function(e){if(!base)return;e.preventDefault();zoomAt(e.clientX,e.clientY,vz*Math.exp(-e.deltaY*.0018))},{passive:false});
+window.addEventListener('resize',function(){setView(vz,vx,vy)});
+$('zr').onclick=resetView;
+$('hand').onclick=function(){hand=!hand;this.setAttribute('aria-pressed',hand);box0.classList.toggle('hand',hand);pan1=null};
+
+/* perbandingan geser */
+function paintCmp(){var w=base.width,h=base.height,sx=Math.round(split*w);ctx.putImageData(after,0,0);ctx.putImageData(base,0,0,0,0,sx,h);
+ ctx.fillStyle='#fff';ctx.fillRect(sx-2,0,4,h);ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(sx+2,0,1,h);ctx.fillRect(sx-3,0,1,h)}
+function mv(e){var r=cv.getBoundingClientRect();split=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));if(after)paintCmp()}
+cv.addEventListener('pointermove',function(e){if(cmp&&dr)mv(e)});
+$('cmp').onclick=function(){cmp=!cmp;this.setAttribute('aria-pressed',cmp);this.textContent=cmp?'Selesai membandingkan':'Bandingkan';
+ $('hint').textContent=cmp?'Geser garis putih: kiri sebelum, kanan sesudah.':'Tahan gambar untuk melihat versi sebelum.';
+ if(!base)return;if(after&&!dirty){if(cmp)paintCmp();else ctx.putImageData(after,0,0)}else draw()};
+
+/* otomatis: isi slider sesuai foto */
+var RC=null;
+function dE(a,b){var t=0,k,e;for(k=0;k<3;k++){e=a.m[k]-b.m[k];t+=e*e}return Math.sqrt(t)}
+function cp(v,a,b){return v<a?a:v>b?b:v}
+function amps(L,sm,w,h,r1){
+ var b1=box(L,w,h,r1),b2=box(L,w,h,r1*3),Q=[],y,x,yy,xx,ix,fr,ml,sa,sb,e1,e2,PP=P*P;
+ for(y=0;y+P<=h;y+=P)for(x=0;x+P<=w;x+=P){fr=0;ml=0;sa=0;sb=0;
+  for(yy=0;yy<P;yy++)for(xx=0;xx<P;xx++){ix=(y+yy)*w+x+xx;fr+=sm[ix];ml+=L[ix];e1=L[ix]-b1[ix];e2=b1[ix]-b2[ix];sa+=e1*e1;sb+=e2*e2}
+  Q.push({f:fr/PP,m:ml/PP,a:Math.sqrt(sa/PP),b:Math.sqrt(sb/PP)})}
+ function cls(fn){var a=Q.filter(fn);if(a.length<3)return null;var A=a.map(function(q){return q.a}).sort(function(u,v){return u-v}),B=a.map(function(q){return q.b}).sort(function(u,v){return u-v}),k=Math.floor(a.length*.35);return{a:A[k],b:B[k]}}
+ var o={S:cls(function(q){return q.f>=.85}),H:cls(function(q){return q.f<=.05&&q.m<80}),O:cls(function(q){return q.f<=.05&&q.m>=80}),G:cls(function(){return true})};
+ if(!o.H)o.H=o.O;if(!o.O)o.O=o.H;return o}
+function ratio(r,a){if(!r||!a)return null;var ka=r.a>0?Math.sqrt(Math.max(0,r.a*r.a-a.a*a.a))/r.a:1,kb=r.b>0?Math.sqrt(Math.max(0,r.b*r.b-a.b*a.b))/r.b:1;return(ka+kb)/2}
+$('auto').onclick=function(){
+ if(!base){$('empty').hidden=false;$('empty').querySelector('span').textContent='Pilih foto hasil AI dulu sebelum memakai Otomatis.';return}
+ busy('Mengukur foto, mohon tunggu...',function(){
+  var w=base.width,h=base.height,n=w*h,d=base.data,L=new Float32Array(n),i,hi=0,v={},k,t,txt;
+  $('scale').value=100;buildTex();
+  for(i=0;i<n;i++){L[i]=lum(d[i*4],d[i*4+1],d[i*4+2]);if(L[i]>200)hi++}
+  var am=amps(L,mk,w,h,Math.max(1,Math.round(1.2*fk(w,h))));
+  v.sharp=cp(Math.round(45-12*(am.G?am.G.a:2)),8,45);v.blm=cp(Math.round(hi/n*400),5,30);v.vig=25;v.cab=20;v.edg=15;
+  if(real&&stA&&stR&&RC){
+   var ds=stA.k&&stR.k?dE(stA.k,stR.k):dE(stA.g,stR.g),dg=dE(stA.g,stR.g),ks=ratio(RC.S,am.S),kk=[ratio(RC.H,am.H),ratio(RC.O,am.O)].filter(function(q){return q!==null});
+   v.tone=cp(Math.round(30+Math.max(0,ds-3)*4),30,85);v.glob=cp(Math.round(15+dg*2.2),15,60);
+   if(ks!==null)v.sk=cp(Math.round(ks*100),35,160);
+   if(kk.length)v.hr=cp(Math.round(kk.reduce(function(a,b){return a+b})/kk.length*100),35,160)}
+  for(k in v)$(k).value=v[k];fmt();
+  txt=real?'Hasil otomatis: warna kulit '+v.tone+', warna keseluruhan '+v.glob+(v.sk!=null?', tekstur kulit '+v.sk:'')+(v.hr!=null?', tekstur rambut dan kain '+v.hr:'')+', ketajaman '+v.sharp+'. Lensa ikut disesuaikan.':'Foto asli belum dipilih, jadi hanya ketajaman dan lensa yang diatur. Pilih foto asli di tab Foto asli lalu tekan Otomatis lagi.';
+  t=$('autoinfo');t.textContent=txt;t.hidden=false;draw()})};
+
+/* preset */
+function loadP(){try{return JSON.parse(localStorage.getItem('pf_presets')||'{}')}catch(e){return{}}}
+function saveP(o){try{localStorage.setItem('pf_presets',JSON.stringify(o))}catch(e){}}
+function drawP(){var o=loadP(),box=$('chips');box.innerHTML='';
+ Object.keys(o).forEach(function(k){var b=document.createElement('button');b.className='chip';b.textContent=k;
+  b.onclick=function(){ids.forEach(function(i){if(o[k][i]!=null)$(i).value=o[k][i]});fmt();busy('Menerapkan preset...',function(){buildTex();draw()})};
+  var x=document.createElement('button');x.className='chip x';x.textContent='×';x.setAttribute('aria-label','Hapus preset '+k);
+  x.onclick=function(){var q=loadP();delete q[k];saveP(q);drawP()};box.appendChild(b);box.appendChild(x)})}
+$('psave').onclick=function(){var n=$('pname').value.trim();if(!n)return;var o=loadP(),v={};ids.forEach(function(i){v[i]=$(i).value});o[n]=v;saveP(o);$('pname').value='';drawP()};
+drawP();
+
+/* simpan resolusi besar, satu atau banyak foto */
+function tick(){return new Promise(function(r){setTimeout(r,30)})}
+function loadImg(file){return new Promise(function(res,rej){var im=new Image();im.onload=function(){URL.revokeObjectURL(im.src);res(im)};im.onerror=rej;im.src=URL.createObjectURL(file)})}
+function dl(bl,name){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function crc(u){var t=crc.t,c,i;if(!t){t=crc.t=[];for(var n=0;n<256;n++){c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}}c=-1;for(i=0;i<u.length;i++)c=t[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0}
+function zip(files){var parts=[],cen=[],pos=0,enc=new TextEncoder();
+ files.forEach(function(f){var nm=enc.encode(f.name),c=crc(f.data),L=f.data.length,h=new DataView(new ArrayBuffer(30)),g=new DataView(new ArrayBuffer(46));
+  h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint32(14,c,true);h.setUint32(18,L,true);h.setUint32(22,L,true);h.setUint16(26,nm.length,true);parts.push(h,nm,f.data);
+  g.setUint32(0,0x02014b50,true);g.setUint16(4,20,true);g.setUint16(6,20,true);g.setUint32(16,c,true);g.setUint32(20,L,true);g.setUint32(24,L,true);g.setUint16(28,nm.length,true);g.setUint32(42,pos,true);cen.push(g,nm);pos+=30+nm.length+L});
+ var cs=0;cen.forEach(function(p){cs+=p.byteLength});
+ var e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,pos,true);
+ return new Blob(parts.concat(cen,[e]),{type:'application/zip'})}
+function exportLimit(img,factor){
+ var mw=img.width,mh=img.height,edge=Math.max(mw,mh),scale=Math.max(1,+factor||1);
+ scale=Math.min(scale,5000/edge,Math.sqrt(18000000/(mw*mh)));
+ return Math.max(1,Math.floor(edge*scale));
+}
+async function exportOne(file,keep){var cur=ai,sp=[pA,pD];if(!keep){ai=await loadImg(file);pA=pD=null}
+ var sc=cmp;cmp=false;lim=exportLimit(ai,$('upscale').value);prepAI();buildTex();before=false;run();cmp=sc;
+ var bl=await new Promise(function(r){cv.toBlob(r,'image/png')});ai=cur;pA=sp[0];pD=sp[1];return bl}
+$('save').onclick=async function(){
+ if(!base){$('empty').hidden=false;$('empty').querySelector('span').textContent='Pilih foto hasil AI dulu sebelum menyimpan.';return}
+ var btn=$('save');if(btn.disabled)return;btn.disabled=true;$('hint').hidden=false;$('stage').classList.add('busy');
+ var list=queue.length?queue:[null];
+ try{var out=[];
+  for(var i=0;i<list.length;i++){$('hint').textContent='Memproses foto '+(i+1)+' dari '+list.length+', mohon tunggu...';await tick();
+   var bl=await exportOne(list[i],i==0);out.push({name:(list[i]?list[i].name.replace(/\.[^.]+$/,''):'foto')+'-disempurnakan.png',blob:bl})}
+  lim=MAX;prepAI();buildTex();draw();if(tab3)drawOv();
+  if(out.length==1)dl(out[0].blob,out[0].name);
+  else{var fs=[];for(var k=0;k<out.length;k++)fs.push({name:out[k].name,data:new Uint8Array(await out[k].blob.arrayBuffer())});dl(zip(fs),'foto-disempurnakan.zip')}
+  $('hint').textContent='Selesai. Ekspor '+$('upscale').value+'× tersimpan.'
+ }catch(e){$('hint').textContent='Gagal menyimpan: '+e.message;lim=MAX;try{prepAI();buildTex();draw()}catch(e2){}}
+ $('stage').classList.remove('busy');btn.disabled=false};
+})();
+</script>
+<div class="pg" id="pg" hidden role="dialog" aria-modal="true" aria-label="Pembuat prompt profesional"><div class="pg-sheet">
+<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V23</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button class="theme-btn" id="pgClose" aria-label="Tutup">✕</button></div>
+<div class="pg-grid">
+<label class="pg-drop" id="pgDa"><input type="file" accept="image/*" id="pgFa" hidden><span class="pg-tag">Foto 1 · Asli</span><img id="pgIa" alt=""><span>Ketuk untuk pilih foto asli</span></label>
+<label class="pg-drop" id="pgDb"><input type="file" accept="image/*" id="pgFb" hidden><span class="pg-tag">Foto 2 · Referensi</span><img id="pgIb" alt=""><span>Ketuk untuk pilih foto referensi</span></label>
+</div>
+<section class="pg-smart" aria-label="AI Smart Prompt Builder">
+ <div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Atur tujuan edit, lalu sistem menyusun prompt secara otomatis berdasarkan foto dan pilihanmu.</small></div></div>
+ <div class="pg-an">
+  <label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
+  <label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
+  <label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option value="balanced" selected>Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
+  <label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
+ </div>
+ <label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" rows="3" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi."></textarea></label>
+ <button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Atur Otomatis &amp; Sempurnakan Prompt</button>
+ <small class="pg-auto-hint">Cukup pilih tujuan edit. Pengaturan lanjutan akan disesuaikan otomatis; kamu tidak perlu mengatur satu per satu.</small>
+ <div class="pg-smart-status" id="pgSmartStatus">Siap. Unggah foto asli dan foto referensi untuk analisis warna serta karakter visual.</div>
+</section>
+<section class="pg-v23" aria-label="Pengaturan V23 Ultra Realism">
+ <div class="pg-v23-head"><strong>✦ V23 · Ultra Realism &amp; Identity Lock</strong><span class="pg-v23-tag">V23</span></div>
+ <div class="pg-v23-grid">
+  <label>Skin texture<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detailed</option><option value="ultra" selected>Ultra · micro-detail</option></select></label>
+  <label>Camera realism<select class="pg-in" id="pgCameraRealism"><option value="smartphone" selected>Smartphone</option><option value="dslr">DSLR</option><option value="film">Analog film</option></select></label>
+ </div>
+ <div class="pg-h">Identity locks · bagian yang dipertahankan</div>
+ <div class="pg-v23-locks">
+  <label><input type="checkbox" id="pgV23Face" checked> Face</label>
+  <label><input type="checkbox" id="pgV23Hands" checked> Hands</label>
+  <label><input type="checkbox" id="pgV23Body" checked> Body</label>
+  <label><input type="checkbox" id="pgV23Hair" checked> Hair</label>
+  <label><input type="checkbox" id="pgV23Light" checked> Light</label>
+  <label><input type="checkbox" id="pgV23Bg" checked> Background</label>
+ </div>
+ <div class="pg-v23-help">Ultra menambahkan detail pori, mikro-tekstur, rambut halus, dan ketidaksempurnaan kulit yang wajar—tanpa efek kulit plastik atau penajaman berlebihan. Kunci diterapkan ke prompt, bukan mengunci piksel secara otomatis.</div>
+</section>
+<details class="pg-advanced"><summary>Pengaturan manual lanjutan (opsional)</summary>
+<h4 class="pg-h">Yang ingin diganti</h4><div class="pg-row" id="pgItems"></div>
+<h4 class="pg-h">Pengaturan</h4>
+<div class="pg-line"><b>Bahasa</b><div class="pg-row"><button class="mini" data-g="lang" data-v="en" aria-pressed="true">English (disarankan)</button><button class="mini" data-g="lang" data-v="id" aria-pressed="false">Indonesia</button></div></div>
+<div class="pg-line"><b>Panjang</b><div class="pg-row"><button class="mini" data-g="len" data-v="full" aria-pressed="true">Lengkap</button><button class="mini" data-g="len" data-v="short" aria-pressed="false">Ringkas</button></div></div>
+<div class="pg-line"><b>Kemiripan</b><div class="pg-row"><button class="mini" data-g="sim" data-v="exact" aria-pressed="true">Persis referensi</button><button class="mini" data-g="sim" data-v="insp" aria-pressed="false">Terinspirasi</button></div></div>
+<h4 class="pg-h">Analisis otomatis (bisa diedit)</h4>
+<input class="pg-in" id="pgCol" placeholder="Warna referensi, mis. navy blue, white"><div class="pg-sw" id="pgSw"></div>
+<div class="pg-an">
+<label>Motif referensi<select class="pg-in" id="pgP"><option value="solid">Polos</option><option value="tex">Tekstur / motif halus</option><option value="busy">Motif / grafis ramai</option><option value="logo">Ada logo / tulisan</option></select></label>
+<label>Kecerahan foto asli<select class="pg-in" id="pgB"><option value="0">Redup</option><option value="1" selected>Sedang</option><option value="2">Terang</option></select></label>
+<label>Suhu warna foto asli<select class="pg-in" id="pgW"><option value="0">Hangat</option><option value="1" selected>Netral</option><option value="2">Dingin</option></select></label>
+<label>Kontras foto asli<select class="pg-in" id="pgC"><option value="0">Lembut</option><option value="1">Kuat</option></select></label>
+</div>
+<h4 class="pg-h">Advanced · Pose & ekspresi</h4>
+<div class="pg-an">
+<label>Pose tubuh<select class="pg-in" id="pgPose"><option value="keep">Pertahankan pose foto 1</option><option value="ref">Ikuti pose foto 2</option><option value="standing">Berdiri natural</option><option value="sitting">Duduk natural</option><option value="back">Membelakangi kamera</option><option value="walking">Sedang berjalan</option><option value="custom">Ikuti instruksi detail</option></select></label>
+<label>Ekspresi wajah<select class="pg-in" id="pgExpr"><option value="keep">Pertahankan ekspresi asli</option><option value="neutral">Natural / netral</option><option value="smile">Senyum tipis natural</option><option value="serious">Serius / tenang</option><option value="custom">Sesuai detail tambahan</option></select></label>
+<label>Sudut kamera<select class="pg-in" id="pgAngle"><option value="keep">Pertahankan sudut asli</option><option value="eye">Eye-level</option><option value="low">Low angle</option><option value="high">High angle</option><option value="over">Over-the-shoulder</option><option value="close">Close-up</option><option value="wide">Wide shot</option></select></label>
+<label>Framing<select class="pg-in" id="pgFrame"><option value="keep">Pertahankan framing asli</option><option value="full">Full body</option><option value="three">Three-quarter body</option><option value="half">Half body</option><option value="portrait">Portrait close-up</option></select></label>
+<label>Gaya fotografi<select class="pg-in" id="pgStyle"><option value="natural">Natural realistic photography</option><option value="phone">Smartphone photography</option><option value="dslr">Professional DSLR photography</option><option value="street">Street photography</option><option value="cinema">Cinematic photography</option><option value="film">35mm film look</option><option value="editorial">Editorial fashion photography</option></select></label>
+<label>Pencahayaan<select class="pg-in" id="pgLight"><option value="auto">Ikuti pencahayaan foto 1</option><option value="day">Natural daylight</option><option value="gold">Golden hour</option><option value="soft">Soft diffused light</option><option value="studio">Studio softbox lighting</option><option value="back">Natural backlight</option><option value="moody">Moody low-key lighting</option></select></label>
+<label>Lensa / depth of field<select class="pg-in" id="pgLens"><option value="auto">Sesuai foto asli</option><option value="wide">Wide-angle perspective</option><option value="35">35mm natural perspective</option><option value="50">50mm standard lens</option><option value="85">85mm portrait lens</option><option value="bokeh">Shallow depth of field / bokeh</option></select></label>
+<label>Rasio hasil<select class="pg-in" id="pgRatio"><option value="source">Pertahankan rasio foto 1</option><option value="1:1">1:1</option><option value="4:5">4:5</option><option value="3:4">3:4</option><option value="9:16">9:16</option><option value="16:9">16:9</option><option value="3:2">3:2</option></select></label>
+</div>
+<h4 class="pg-h">Kunci perlindungan · bagian yang tidak boleh berubah</h4>
+<div class="pg-row pg-locks">
+<label><input type="checkbox" id="pgLockFace" checked> Wajah & identitas</label><label><input type="checkbox" id="pgLockBody" checked> Proporsi tubuh</label><label><input type="checkbox" id="pgLockHair" checked> Rambut / hijab</label><label><input type="checkbox" id="pgLockBg" checked> Background</label><label><input type="checkbox" id="pgLockClothes"> Pakaian lain</label><label><input type="checkbox" id="pgLockFrame" checked> Framing & kamera</label>
+</div>
+<h4 class="pg-h">Detail tambahan</h4><textarea class="pg-in" id="pgEx" rows="3" placeholder="Jelaskan posisi tangan, arah kepala, detail logo, suasana, atau perubahan spesifik..."></textarea>
+</details>
+<h4 class="pg-h">Prompt utama · otomatis</h4><div class="pg-row pg-prompt-tools"><label class="pg-manual"><input type="checkbox" id="pgManual"> Kunci edit manual (jangan timpa perubahan saya)</label><button class="mini" id="pgRegen" type="button">↻ Buat ulang prompt</button></div><textarea class="pg-in" id="pgOut" spellcheck="false"></textarea>
+<div class="pg-meta" id="pgMeta"></div>
+<div class="pg-check good" id="pgQuality" aria-live="polite"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
+<h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" spellcheck="false" rows="4"></textarea>
+<div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" id="pgShare" hidden>Bagikan</button></div>
+<div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
+<div class="pg-meta" id="pgHistoryOut" hidden></div>
+<div class="pg-meta">Cara pakai: unggah Foto 1 dan Foto 2, pilih tujuan edit, lalu salin prompt utama dan negative prompt ke aplikasi AI editor. Analisis warna, kecerahan, kontras, dan pola sederhana dilakukan lokal di browser. Sistem tidak mengenali semua objek seperti model vision dan tidak menjalankan pengeditan gambar.</div>
+</div></div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},S={A:null,B:null,cols:[],lang:'en',len:'full',sim:'exact',on:{top:1},dirty:false,ratio:'',ori:0,u:{}};
+var IT={
+top:['Kaos / baju','top (shirt/t-shirt)','atasan (kaos/baju)','neckline, collar, sleeve length, fit, hem, seams and the exact print, logo or text placement','garis leher, kerah, panjang lengan, potongan, ujung bawah, jahitan, serta posisi persis sablon, logo, atau tulisan','fabric folds, wrinkles and drape that follow the pose and body shape, with natural shadows under the collar and arms','lipatan, kerutan, dan jatuhnya kain mengikuti pose dan bentuk tubuh, dengan bayangan alami di bawah kerah dan lengan'],
+jacket:['Jaket','jacket / outerwear','jaket / outerwear','collar, zipper or buttons, pockets, length, fit and material sheen','kerah, resleting atau kancing, saku, panjang, potongan, dan kilau bahan','correct layering over the inner clothing and natural folds at the elbows and shoulders','lapisan yang benar di atas pakaian dalam dan lipatan alami di siku dan bahu'],
+pants:['Celana / rok','pants / bottom wear','celana / rok','cut, length, waistband, pockets, stitching and fabric pattern','potongan, panjang, pinggang, saku, jahitan, dan motif kain','natural creases at the knees and hips that follow the pose','kerutan alami di lutut dan pinggul sesuai pose'],
+hair:['Gaya rambut','hairstyle','gaya rambut','length, parting, volume, texture and hair color','panjang, belahan, volume, tekstur, dan warna rambut','a clean natural hairline with individual strands and highlights matching the scene','garis rambut rapi dan alami dengan helai halus serta highlight sesuai pencahayaan'],
+hat:['Topi / hijab','headwear (hat/cap/hijab)','penutup kepala (topi/hijab)','shape, fit, color, fabric and any logo','bentuk, ukuran, warna, bahan, dan logo','a natural fit on the head with a soft shadow on the forehead and hairline','pas alami di kepala dengan bayangan lembut di dahi dan garis rambut'],
+glasses:['Kacamata','eyeglasses','kacamata','frame shape, color, thickness and lens tint','bentuk bingkai, warna, ketebalan, dan warna lensa','correct placement on the nose bridge with subtle lens reflections and soft shadows','posisi tepat di batang hidung dengan pantulan lensa halus dan bayangan lembut'],
+shoes:['Sepatu','footwear','alas kaki','model, color, sole, laces and material','model, warna, sol, tali, dan bahan','correct perspective and contact shadows on the ground','perspektif benar dan bayangan kontak di lantai'],
+acc:['Aksesori','accessory (watch/necklace/bag)','aksesori (jam/kalung/tas)','shape, color, material and size','bentuk, warna, bahan, dan ukuran','realistic scale, reflections and contact shadows on the body','skala realistis, pantulan, dan bayangan kontak di tubuh'],
+bg:['Latar belakang','background','latar belakang','the setting, colors, depth and atmosphere','suasana, warna, kedalaman, dan atmosfer','clean edges around hair and body, matching light direction and color temperature, natural depth of field','tepi rapi di sekitar rambut dan tubuh, arah cahaya dan suhu warna sesuai, depth of field alami'],
+grade:['Warna & suasana','color grading','gradasi warna','tone, contrast, saturation and mood','tone, kontras, saturasi, dan suasana','consistent grading across skin, clothing and background without clipped highlights','gradasi konsisten di kulit, pakaian, dan latar tanpa highlight terbakar'],
+pose:['Pose tubuh','body pose','pose tubuh','body orientation, posture, arm and hand placement, head angle and weight distribution','arah tubuh, postur, posisi lengan dan tangan, sudut kepala, serta distribusi tumpuan tubuh','anatomically natural posture, believable balance and consistent perspective','postur anatomis yang natural, keseimbangan masuk akal, dan perspektif konsisten']};
+function pix(im,n){var r=im.naturalWidth/im.naturalHeight,w=r>=1?n:Math.max(8,Math.round(n*r)),h=r>=1?Math.max(8,Math.round(n/r)):n,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,w,h);return{d:x.getImageData(0,0,w,h).data,w:w,h:h}}
+function cname(r,g,b,id){
+ var mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/510,d=mx-mn,s=d?d/255/(1-Math.abs(2*l-1)):0,h=0,k,nm;
+ if(d){h=mx==r?((g-b)/d)%6:mx==g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}
+ if(l>.9&&s<.3)return id?'putih':'white';if(l<.12)return id?'hitam':'black';
+ if(s<.14)return l<.35?(id?'abu-abu tua':'dark gray'):l>.72?(id?'abu-abu muda':'light gray'):(id?'abu-abu':'gray');
+ k=h<15||h>=345?0:h<40?1:h<65?2:h<165?3:h<200?4:h<250?5:h<290?6:7;
+ nm=[['red','merah'],['orange','oranye'],['yellow','kuning'],['green','hijau'],['teal','toska'],['blue','biru'],['purple','ungu'],['pink','merah muda']][k];
+ if(k==0&&l>.7)nm=['pink','merah muda'];if(k==0&&l<.3)nm=['maroon','merah marun'];
+ if(k==1&&l<.42)nm=['brown','cokelat'];if(k==2&&l>.8)nm=['cream','krem'];if(k==2&&l<.4)nm=['olive','hijau zaitun'];
+ if(k==5&&l<.3)nm=['navy blue','biru dongker'];
+ var sp=['navy blue','maroon','brown','olive','cream','pink'].indexOf(nm[0])>-1,lt=!sp&&l>.75,dk=!sp&&l<.3;
+ return id?nm[1]+(lt?' muda':dk?' tua':''):(lt?'light ':dk?'dark ':'')+nm[0]}
+function palette(im){var P=pix(im,64),D=P.d,H={},T=0,i,x,y,w=P.w,h=P.h,out=[];
+ for(y=0;y<h;y++)for(x=0;x<w;x++){i=(y*w+x)*4;if(D[i+3]<128)continue;var c=(D[i]>>4)<<8|(D[i+1]>>4)<<4|D[i+2]>>4,q=Math.abs(x/w-.5)<.3&&Math.abs(y/h-.5)<.35?3:1,o=H[c]||(H[c]={w:0,r:0,g:0,b:0});o.w+=q;o.r+=D[i]*q;o.g+=D[i+1]*q;o.b+=D[i+2]*q;T+=q}
+ var L=Object.keys(H).map(function(k){var o=H[k];return{w:o.w/T,r:o.r/o.w,g:o.g/o.w,b:o.b/o.w}}).sort(function(a,b){return b.w-a.w});
+ L.forEach(function(c){if(out.length<3&&c.w>.03&&out.every(function(p){return Math.hypot(p.r-c.r,p.g-c.g,p.b-c.b)>70}))out.push(c)});
+ if(!out.length&&L.length)out.push(L[0]);return out}
+function pattern(im){var P=pix(im,64),D=P.d,w=P.w,h=P.h,s=0,n=0,x,y,g=function(a,b){var i=(b*w+a)*4;return D[i]*.3+D[i+1]*.59+D[i+2]*.11};
+ for(y=Math.floor(h*.25);y<h*.75;y++)for(x=Math.floor(w*.25);x<w*.75;x++){s+=Math.abs(g(x+1,y)-g(x,y))+Math.abs(g(x,y+1)-g(x,y));n++}
+ var m=s/n/255;return m<.03?'solid':m<.07?'tex':'busy'}
+function stats(im){var P=pix(im,48),D=P.d,n=P.w*P.h,r=0,b=0,s=0,s2=0,i,l;
+ for(i=0;i<D.length;i+=4){l=D[i]*.3+D[i+1]*.59+D[i+2]*.11;s+=l;s2+=l*l;r+=D[i];b+=D[i+2]}
+ var m=s/n,sd=Math.sqrt(Math.max(0,s2/n-m*m)),wm=(r-b)/n,A=im.naturalWidth/im.naturalHeight,
+ R=[[1,'1:1'],[.8,'4:5'],[.75,'3:4'],[.667,'2:3'],[.5625,'9:16'],[1.778,'16:9'],[1.333,'4:3'],[1.5,'3:2']].sort(function(a,b){return Math.abs(a[0]-A)-Math.abs(b[0]-A)})[0][1];
+ return{b:m<85?0:m<165?1:2,w:wm>12?0:wm<-12?2:1,c:sd>62?1:0,ratio:R,ori:A>1.15?0:A<.87?1:2}}
+function fillCol(){if(!S.dirty)$('pgCol').value=S.cols.map(function(c){return cname(c.r,c.g,c.b,S.lang=='id')}).join(', ');
+ $('pgSw').innerHTML=S.cols.map(function(c){return '<i style="background:rgb('+Math.round(c.r)+','+Math.round(c.g)+','+Math.round(c.b)+')"></i>'}).join('')}
+function v23LockNames(L){var a=[];[['pgV23Face','face and personal identity','wajah dan identitas'],['pgV23Hands','hands, finger count and hand anatomy','tangan, jumlah jari, dan anatomi tangan'],['pgV23Body','body shape and proportions','bentuk dan proporsi tubuh'],['pgV23Hair','hairstyle, hairline or head covering','gaya rambut, garis rambut, atau penutup kepala'],['pgV23Light','original light direction, exposure and color temperature','arah cahaya, exposure, dan suhu warna asli'],['pgV23Bg','original background and surroundings','background dan lingkungan asli']].forEach(function(x){if($(x[0]).checked)a.push(L?x[2]:x[1])});return a}
+function skinPrompt(L,v){if(v==='ultra')return L?'Pertahankan tekstur kulit asli dari foto 1 secara ultra-realistis: pori-pori alami sesuai skala dan area wajah, mikro-tekstur tidak seragam, garis halus, rambut halus, lipatan dan ketidaksempurnaan kecil yang wajar; jangan menciptakan pori palsu atau pola tekstur berulang. Jaga variasi warna kulit organik, tanpa smoothing, efek plastik, beauty filter, atau oversharpening.':'Preserve image 1 original skin texture in ultra-realistic detail: naturally scaled pores appropriate to each facial area, non-uniform microtexture, subtle lines, vellus hairs, natural folds and minor imperfections; do not invent fake pores or repeated texture patterns. Keep organic skin-tone variation, with no smoothing, plastic effect, beauty filter or oversharpening.';if(v==='detailed')return L?'Pertahankan detail kulit yang jelas dan alami, pori-pori halus serta tekstur asli tanpa smoothing berlebihan.':'Keep clear natural skin detail, subtle pores and original texture without excessive smoothing.';return L?'Pertahankan tekstur kulit asli secara natural dan jangan mengubah karakter kulit.':'Preserve the original natural skin texture and do not alter its character.'}
+function cameraPrompt(L,v){return v==='smartphone'?(L?'Tampilan foto smartphone asli: pemrosesan komputasional yang halus, ketajaman natural, detail realistis, noise/grain sensor yang wajar, warna kulit akurat, dynamic range alami, tanpa HDR berlebihan atau efek kamera studio.':'Authentic smartphone photo rendering: subtle computational photography, natural sharpness, realistic detail, plausible sensor grain/noise, accurate skin tones, natural dynamic range, no excessive HDR or artificial studio-camera look.') :v==='dslr'?(L?'Rendering fotografi DSLR yang realistis dengan detail optik natural dan depth of field yang masuk akal.':'Realistic DSLR photographic rendering with natural optical detail and plausible depth of field.'):(L?'Karakter film analog yang halus, grain organik, dan warna natural.':'Subtle analog film character, organic grain and natural color response.')}
+function activeV23Locks(L){var names=v23LockNames(L);if(S.on.hair)names=names.filter(function(x){return x.indexOf(L?'gaya rambut':'hairstyle')<0});if(S.on.bg)names=names.filter(function(x){return x.indexOf(L?'background dan lingkungan':'original background and surroundings')<0});return names}
+function build(){
+ var L=S.lang=='id'?1:0,t=function(a,b){return L?b:a},keys=Object.keys(IT).filter(function(k){return S.on[k]}),
+ ex=[$('pgSmartEx').value.trim(),$('pgEx').value.trim()].filter(Boolean).join('\n'),col=$('pgCol').value.trim(),pat=$('pgP').value,B=+$('pgB').value,W=+$('pgW').value,C=+$('pgC').value,
+ pt=pat=='solid'?t('solid color, no pattern','warna polos tanpa motif'):pat=='tex'?t('fine texture or subtle pattern','tekstur halus atau motif tipis'):pat=='busy'?t('bold pattern or graphics','motif atau grafis ramai'):t('contains a logo, print or text that must be reproduced accurately','ada logo, sablon, atau tulisan yang harus ditiru akurat'),
+ lt=L?'cahaya '+['redup','sedang','terang'][B]+', '+['hangat','netral','dingin'][W]+', kontras '+['lembut','kuat'][C]:['dim','medium-bright','bright'][B]+', '+['warm','neutral','cool'][W]+' light with '+['soft','strong'][C]+' contrast',
+ rt=S.A?S.ratio+' ('+(L?['lanskap','potret','persegi']:['landscape','portrait','square'])[S.ori]+')':t('the same as image 1','sama dengan foto 1'),
+ skin=$('pgSkinTexture').value,camera=$('pgCameraRealism').value;
+ if(!keys.length)return 'Pilih dulu apa yang ingin diganti di bagian "Yang ingin diganti".';
+ function task(k){var n=IT[k][1+L];
+  if(k=='bg')return t('Replace the background of image 1 with the setting shown in image 2','Ganti latar belakang foto 1 dengan suasana yang ada di foto 2');
+  if(k=='grade'&&$('pgGoal').value=='style')return t('Apply the overall photographic style and visual mood of image 2 to image 1','Terapkan gaya fotografi dan suasana visual foto 2 pada foto 1');
+  if(k=='grade')return t('Apply the color grading, tone and mood of image 2 to image 1','Terapkan gradasi warna, tone, dan suasana foto 2 ke foto 1');
+  if(k=='pose')return t('Adjust only the body pose in image 1 to match the pose shown in image 2','Ubah hanya pose tubuh pada foto 1 agar mengikuti pose pada foto 2');
+  return t('Replace the '+n+' worn by the person in image 1 with the '+n+' shown in image 2','Ganti '+n+' yang dipakai orang di foto 1 dengan '+n+' yang ada di foto 2')}
+ var P=[];
+ if(S.len=='short'){
+  var ps=$('pgPose').value,es=$('pgExpr').value,ag=$('pgAngle').value,fr=$('pgFrame').value,st=$('pgStyle').value,li=$('pgLight').value,le=$('pgLens').value,ra=$('pgRatio').value;
+  var compact=t('Edit image 1 (my original photo) using image 2 as reference: ','Edit foto 1 (foto asli saya) dengan referensi foto 2: ')+keys.map(task).join('; ')+'. '+(col?t('Reference colors: ','Warna referensi: ')+col+(S.B?', '+pt:'')+'. ':'')+t('Preserve all selected identity locks: ','Pertahankan semua kunci identitas yang dipilih: ')+activeV23Locks(L).join(', ')+'. '+skinPrompt(L,skin)+' '+cameraPrompt(L,camera)+' '+({keep:t('Keep original pose. ','Pertahankan pose asli. '),ref:t('Match the pose from image 2 only. ','Ikuti pose foto 2 saja. '),standing:t('Natural standing pose. ','Pose berdiri natural. '),sitting:t('Natural sitting pose. ','Pose duduk natural. '),back:t('Subject facing away from camera. ','Subjek membelakangi kamera. '),walking:t('Natural walking pose. ','Pose berjalan natural. '),custom:''}[ps])+({keep:t('Keep original expression. ','Pertahankan ekspresi asli. '),neutral:t('Natural neutral expression. ','Ekspresi netral natural. '),smile:t('Subtle closed-mouth smile. ','Senyum tipis dengan mulut tertutup. '),serious:t('Calm expression. ','Ekspresi tenang. '),custom:''}[es])+({keep:'',eye:'Eye-level. ',low:'Low angle. ',high:'High angle. ',over:'Over-the-shoulder. ',close:'Close-up. ',wide:'Wide shot. '}[ag])+({keep:'',full:'Full-body framing. ',three:'Three-quarter framing. ',half:'Half-body framing. ',portrait:'Portrait close-up. '}[fr])+(camera==='smartphone'?'Authentic smartphone photography. ':camera==='dslr'?'Realistic DSLR photography. ':'Subtle analog film photography. ')+(($('pgV23Light').checked||li==='auto')?t('Preserve original lighting from image 1. ','Pertahankan pencahayaan asli foto 1. '):({day:'Natural daylight. ',gold:'Golden-hour lighting. ',soft:'Soft diffused lighting. ',studio:'Studio softbox lighting. ',back:'Natural backlight. ',moody:'Moody lighting. '}[li]||''))+({auto:'',wide:'Wide-angle lens. ',35:'35mm lens. ',50:'50mm lens. ',85:'85mm portrait lens. ',bokeh:'Shallow depth of field and natural bokeh. '}[le])+t('Keep framing and aspect ratio ','Pertahankan framing dan rasio ')+(ra=='source'?rt:ra)+'. '+t('Photorealistic, natural texture and lighting, no artifacts or watermark.','Fotorealistis, tekstur dan pencahayaan natural, tanpa artefak atau watermark.')+(ex?' '+ex:'');
+  var shortLocks=activeV23Locks(L);if($('pgLockFace').checked&&!$('pgV23Face').checked)shortLocks.push(t('face and identity','wajah dan identitas'));if($('pgLockBody').checked&&!$('pgV23Body').checked)shortLocks.push(t('body proportions','proporsi tubuh'));if($('pgLockHair').checked&&!$('pgV23Hair').checked&&!S.on.hair)shortLocks.push(t('hair or head covering','rambut atau penutup kepala'));if($('pgLockBg').checked&&!$('pgV23Bg').checked&&!S.on.bg)shortLocks.push(t('background','latar belakang'));if($('pgLockClothes').checked)shortLocks.push(t('other clothing','pakaian lain'));if(shortLocks.length)compact+=' '+t('Do not change: ','Jangan ubah: ')+shortLocks.join(', ')+'.';
+  return compact;
+ }
+ P.push(t('Edit image 1 (my original photo) using image 2 as the reference.','Edit foto 1 (foto asli saya) dengan foto 2 sebagai referensi.'),'',t('TASK','TUGAS'),
+  '- '+t('Use image 2 only as a visual reference for the selected edit. Do not copy its face, identity, body, background or any unselected attributes.','Gunakan foto 2 hanya sebagai referensi visual untuk bagian yang dipilih. Jangan menyalin wajah, identitas, tubuh, background, atau bagian lain yang tidak dipilih.'));
+ keys.forEach(function(k){P.push('- '+task(k)+'. '+(S.sim=='exact'?t('Reproduce it as exactly as possible, including: ','Tiru semirip mungkin, termasuk: '):t('Use it as inspiration, keeping the same overall look and adapting: ','Jadikan inspirasi, pertahankan tampilan umumnya dan sesuaikan: '))+IT[k][3+L]+'.')});
+ if(col||S.B){P.push('',t('REFERENCE DETAILS (image 2)','DETAIL REFERENSI (foto 2)'));if(col)P.push('- '+t('Dominant colors: ','Warna dominan: ')+col);P.push('- '+t('Pattern: ','Motif: ')+pt)}
+ P.push('',t('KEEP UNCHANGED (image 1)','PERTAHANKAN (foto 1)'),
+  '- '+t("The person's face, identity, skin tone, expression and body proportions",'Wajah, identitas, warna kulit, ekspresi, dan proporsi tubuh orang tersebut')+(keys.indexOf('pose')>=0||$('pgPose').value!='keep'?'':t(', pose', ', pose')),
+  '- '+t('Everything not mentioned in the task ('+(S.on.bg?'other clothing, accessories':'other clothing, accessories, background')+')','Semua yang tidak disebut di tugas ('+(S.on.bg?'pakaian lain, aksesori':'pakaian lain, aksesori, latar belakang')+')'),
+  '- '+t('Framing, camera angle and aspect ratio: ','Framing, sudut kamera, dan rasio: ')+rt,'',
+  t('REALISM','REALISME'),'- '+t('Match the lighting of image 1: ','Samakan pencahayaan foto 1: ')+lt+t('. Blend colors, shadows and highlights so the edit looks shot in the same photo.','. Padukan warna, bayangan, dan highlight agar hasil terlihat seperti satu foto yang sama.'),'- '+skinPrompt(L,skin),'- '+cameraPrompt(L,camera));
+ keys.forEach(function(k){P.push('- '+IT[k][5+L].replace(/^./,function(m){return m.toUpperCase()})+'.')});
+ P.push('- '+t('Photorealistic result, natural texture, no visible cut lines, sharpness and grain consistent with image 1.','Hasil fotorealistis, tekstur natural, tanpa garis potongan terlihat, ketajaman dan grain konsisten dengan foto 1.'),'',
+  t('AVOID','HINDARI'),'- '+t('Altering the face or identity, extra or distorted fingers, warped text or logos, color shifts outside the edited area, blur, watermark, cartoon or CGI look','Mengubah wajah atau identitas, jari berlebih atau cacat, tulisan/logo melengkung, perubahan warna di luar area edit, blur, watermark, tampilan kartun atau CGI'));
+ if(ex)P.push('',t('EXTRA DETAILS','DETAIL TAMBAHAN'),'- '+ex);
+ var val=function(id){return $(id).value}, chosen=function(id){return val(id)};
+ var pose={keep:t('Keep the original pose from image 1 unchanged.','Pertahankan pose asli foto 1.'),ref:t('Match the body pose, arm and hand placement, head angle and posture from image 2 only.','Ikuti pose, posisi lengan dan tangan, sudut kepala, serta postur dari foto 2 saja.'),standing:t('Use a natural standing pose.','Gunakan pose berdiri yang natural.'),sitting:t('Use a natural seated pose.','Gunakan pose duduk yang natural.'),back:t('Show the subject facing away from the camera.','Tampilkan subjek membelakangi kamera.'),walking:t('Use a natural candid walking pose.','Gunakan pose berjalan yang natural.'),custom:t('Follow the exact pose instructions in the additional details.','Ikuti instruksi pose secara spesifik pada detail tambahan.')}[chosen('pgPose')];
+ var expr={keep:t('Preserve the original facial expression.','Pertahankan ekspresi wajah asli.'),neutral:t('Use a relaxed, natural neutral expression.','Gunakan ekspresi netral yang santai dan natural.'),smile:t('Use a subtle, natural closed-mouth smile.','Gunakan senyum tipis natural dengan mulut tertutup.'),serious:t('Use a calm, composed expression.','Gunakan ekspresi tenang.'),custom:t('Follow the expression described in the additional details.','Ikuti ekspresi yang dijelaskan pada detail tambahan.')}[chosen('pgExpr')];
+ var angle={keep:t('Keep the original camera angle.','Pertahankan sudut kamera asli.'),eye:'Eye-level camera angle.',low:'Low-angle camera perspective.',high:'High-angle camera perspective.',over:'Over-the-shoulder camera angle.',close:'Close-up composition.',wide:'Wide-shot composition.'}[chosen('pgAngle')];
+ var frame={keep:t('Keep the original framing.','Pertahankan framing asli.'),full:'Full-body framing.',three:'Three-quarter body framing.',half:'Half-body framing.',portrait:'Portrait close-up framing.'}[chosen('pgFrame')];
+ var style=chosen('pgStyle'),light=chosen('pgLight'),lens=chosen('pgLens'),ratio=chosen('pgRatio');
+ P.push('',t('POSE, EXPRESSION & COMPOSITION','POSE, EKSPRESI & KOMPOSISI'),'- '+pose,'- '+expr,'- '+angle,'- '+frame,
+ '',t('CAMERA & VISUAL STYLE','KAMERA & GAYA VISUAL'),'- '+(camera==='smartphone'?t('Authentic natural smartphone photography, subtle computational processing and realistic phone-camera detail.','Fotografi smartphone natural yang autentik, pemrosesan komputasional halus, dan detail kamera ponsel yang realistis.'):camera==='dslr'?t('Realistic DSLR photographic rendering with plausible optical depth and natural lens detail.','Rendering fotografi DSLR realistis dengan depth optik masuk akal dan detail lensa natural.'):t('Subtle analog film character with organic grain and natural color response.','Karakter film analog halus dengan grain organik dan respons warna natural.')),
+ '- '+(($('pgV23Light').checked||light==='auto')?t('Preserve the original light direction, exposure, white balance and shadow character from image 1; do not relight the subject.','Pertahankan arah cahaya, exposure, white balance, dan karakter bayangan asli foto 1; jangan mengubah pencahayaan subjek.'):{day:'Natural daylight.',gold:'Warm golden-hour sunlight.',soft:'Soft diffused lighting.',studio:'Professional softbox studio lighting.',back:'Natural backlighting.',moody:'Moody low-key lighting.'}[light]),
+ '- '+({auto:t('Use a lens perspective consistent with image 1.','Gunakan perspektif lensa yang sesuai foto 1.'),wide:'Wide-angle perspective with natural proportions.',35:'Natural 35mm lens perspective.',50:'Standard 50mm lens perspective.',85:'85mm portrait lens perspective.',bokeh:'Shallow depth of field with natural optical bokeh.'}[lens]),
+ '- '+t('Output aspect ratio: ','Rasio hasil: ')+(ratio=='source'?rt:ratio));
+ var locks=activeV23Locks(L);if($('pgLockFace').checked&&locks.indexOf(t('face and personal identity','wajah dan identitas'))<0)locks.push(t('face, facial features and identity','wajah, fitur wajah, dan identitas'));if($('pgLockBody').checked&&locks.indexOf(t('body shape and proportions','bentuk dan proporsi tubuh'))<0)locks.push(t('body proportions and build','proporsi dan bentuk tubuh'));if($('pgLockHair').checked&&!S.on.hair&&locks.indexOf(t('hairstyle, hairline or head covering','gaya rambut, garis rambut, atau penutup kepala'))<0)locks.push(t('hairstyle or head covering','gaya rambut atau penutup kepala'));if($('pgLockBg').checked&&!S.on.bg&&locks.indexOf(t('original background and surroundings','background dan lingkungan asli'))<0)locks.push(t('original background and surroundings','background dan lingkungan asli'));if($('pgLockClothes').checked)locks.push(t('all clothing not explicitly selected for editing','semua pakaian yang tidak secara khusus dipilih untuk diedit'));if($('pgLockFrame').checked&&chosen('pgAngle')=='keep'&&chosen('pgFrame')=='keep')locks.push(t('original camera framing and viewpoint','framing dan sudut pandang kamera asli'));
+ if(locks.length)P.push('',t('PROTECTION LOCKS','KUNCI PERLINDUNGAN'),'- '+t('Do not alter: ','Jangan mengubah: ')+locks.join(', ')+'.');
+ P.push('',t('OUTPUT: one high-resolution edited version of image 1 only.','HASIL: satu versi foto 1 yang sudah diedit, resolusi tinggi.'));
+ return P.join('\n')}
+function negative(){var L=S.lang=='id';return (L?'wajah berubah, identitas berbeda, perubahan yang tidak diminta, anatomi tidak wajar, jari berlebih atau menyatu, tangan cacat, anggota tubuh tambahan, proporsi tubuh berubah, mata tidak simetris, kulit plastik, tekstur terlalu halus, oversharpening, blur, noise berlebihan, bayangan tidak konsisten, pencahayaan palsu, tepi potongan, halo, objek tambahan, logo atau tulisan salah, watermark, artefak, kartun, ilustrasi, CGI, render 3D':'changed face, different identity, unintended edits, unnatural anatomy, extra or fused fingers, deformed hands, extra limbs, altered body proportions, asymmetrical eyes, plastic skin, over-smoothed texture, oversharpening, blur, excessive noise, inconsistent shadows, artificial lighting, cutout edges, halos, extra objects, incorrect logo or text, watermark, artifacts, cartoon, illustration, CGI, 3D render')+(L?', kulit lilin, pori-pori palsu, tekstur kulit berulang, kulit terlalu tajam, perubahan pencahayaan atau background yang tidak diminta':', waxy skin, fake pores, repeated skin texture, crunchy skin sharpening, unintended lighting or background changes')}
+function gen(){
+ var v=build(),manual=$('pgManual')&&$('pgManual').checked;
+ if(!manual)$('pgOut').value=v;
+ $('pgNeg').value=negative();
+ $('pgMeta').textContent=$('pgOut').value.length+' karakter · negative prompt '+$('pgNeg').value.length+' karakter'+(manual?' · edit manual terkunci':'');
+ var st=$('pgSmartStatus');if(st){var msg=smartStatus();st.textContent=msg;st.classList.toggle('warn',msg.indexOf('⚠')>=0)}qualityCheck();
+}
+function open_(){$('pg').hidden=false;document.body.style.overflow='hidden';gen()}
+function close_(){$('pg').hidden=true;document.body.style.overflow=''}
+function pick(fid,key,did,iid){$(fid).onchange=function(){var f=this.files&&this.files[0],inp=this;if(!f)return;var u=URL.createObjectURL(f),im=new Image();
+ im.onload=function(){if(S.u[key])URL.revokeObjectURL(S.u[key]);S.u[key]=u;S[key]=im;$(iid).src=u;$(did).classList.add('has');
+  if(key=='A'){var st=stats(im);S.ratio=st.ratio;S.ori=st.ori;$('pgB').value=st.b;$('pgW').value=st.w;$('pgC').value=st.c}
+  else{S.cols=palette(im);S.dirty=false;$('pgP').value=pattern(im);fillCol()}
+  $('pgSmartStatus').textContent=smartStatus();gen()};
+ im.onerror=function(){URL.revokeObjectURL(u);$('pgMeta').textContent='Foto tidak bisa dibaca, coba foto lain.'};
+ im.src=u;inp.value=''}}
+$('pgItems').innerHTML=Object.keys(IT).map(function(k){return '<button class="mini" data-k="'+k+'" aria-pressed="'+(k=='top')+'">'+IT[k][0]+'</button>'}).join('');
+applySmartGoal();
+pick('pgFa','A','pgDa','pgIa');pick('pgFb','B','pgDb','pgIb');
+$('pgBtn').onclick=open_;$('pgClose').onclick=close_;
+function applySmartGoal(){
+ var g=$('pgGoal').value,map={top:['top'],jacket:['jacket'],pants:['pants'],fulloutfit:['top','jacket','pants','hat','shoes'],hat:['hat'],hair:['hair'],glasses:['glasses'],shoes:['shoes'],accessory:['acc'],pose:['pose'],background:['bg'],color:['grade'],style:['grade']};
+ if(g!=='custom'){S.on={};(map[g]||[]).forEach(function(k){S.on[k]=1});$('pgItems').querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',!!S.on[b.dataset.k])});
+ if(g==='pose')$('pgPose').value='ref';
+ if(g==='background')$('pgLockBg').checked=false;
+ if(g==='hair')$('pgLockHair').checked=false;
+ if(g==='color'||g==='style')$('pgPose').value='keep';
+ }
+ $('pgSmartStatus').textContent=smartStatus();gen()
+}
+function getPromptConflicts(){
+ var w=[],g=$('pgGoal').value,cam=$('pgCameraRealism').value,style=$('pgStyle').value,light=$('pgLight').value;
+ if(g==='hair'&&$('pgV23Hair').checked)w.push('Kunci rambut otomatis dikecualikan karena rambut sedang dipilih untuk diedit.');
+ if(g==='background'&&$('pgV23Bg').checked)w.push('Kunci background otomatis dikecualikan karena background sedang dipilih untuk diganti.');
+ if($('pgV23Light').checked&&light!=='auto')w.push('Light Lock aktif: pilihan pencahayaan manual diabaikan agar cahaya foto asli tetap terjaga.');
+ if((cam==='smartphone'&&['dslr','film'].includes(style))||(cam==='dslr'&&style==='film')||(cam==='film'&&['dslr','phone'].includes(style)))w.push('Camera Realism menjadi acuan utama; gaya kamera manual yang bertentangan diselaraskan otomatis.');
+ if($('pgLockFace').checked&&$('pgExpr').value!=='keep')w.push('Ekspresi boleh berubah, tetapi identitas dan ciri wajah tetap dipertahankan.');
+ if($('pgLockFrame').checked&&($('pgAngle').value!=='keep'||$('pgFrame').value!=='keep'))w.push('Framing Lock hanya berlaku jika sudut dan framing dipertahankan; pilihan komposisi manual menjadi prioritas.');
+ if($('pgLockClothes').checked&&(S.on.top||S.on.jacket||S.on.pants||S.on.hat||S.on.shoes))w.push('Pakaian yang dipilih untuk diedit dikecualikan dari Clothing Lock; pakaian lainnya tetap dilindungi.');
+ return w;
+}
+function smartStatus(){
+ var a=S.A?'Foto asli terbaca':'Foto asli belum dipilih',b=S.B?'Foto referensi terbaca':'Foto referensi belum dipilih',goal=$('pgGoal').selectedOptions[0].text,w=getPromptConflicts();
+ return a+' · '+b+' · Tujuan: '+goal+'. '+(S.B?'Warna dan pola dianalisis secara lokal.':'Unggah foto referensi untuk analisis warna dan pola.')+(w.length?' ⚠ '+w.join(' '):'');
+}
+function qualityCheck(){
+ var w=getPromptConflicts(),notes=[];
+ if(!S.A)notes.push('Unggah Foto 1 agar rasio dan karakter foto asli dapat dianalisis.');
+ if(!S.B)notes.push('Unggah Foto 2 agar warna dan pola referensi dapat dianalisis.');
+ if($('pgSkinTexture').value==='ultra')notes.push('Skin Texture Ultra aktif dengan perlindungan terhadap pori palsu dan tekstur berulang.');
+ if($('pgV23Hands').checked)notes.push('Anatomi tangan dan jumlah lima jari diminta tetap konsisten.');
+ if(w.length)notes=notes.concat(w);
+ var el=$('pgQuality');if(!el)return;el.className='pg-check '+(w.length?'warn':'good');
+ el.innerHTML='<strong>'+(w.length?'⚠ Pemeriksaan menemukan hal yang perlu diperhatikan':'✓ Pemeriksaan kualitas prompt')+'</strong><ul>'+notes.map(function(x){return '<li>'+x.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})+'</li>'}).join('')+'</ul>';
+ if(!notes.length)el.innerHTML+='<span>Pengaturan konsisten dan siap disalin.</span>';
+}
+
+function autoConfigure(){
+ var g=$('pgGoal').value;
+ if(g!=='custom')applySmartGoal();
+ if(g==='custom'&&!Object.keys(S.on).some(function(k){return S.on[k]})){
+  S.on.top=1;
+  $('pgItems').querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',!!S.on[b.dataset.k])});
+ }
+ S.lang='en';S.len='full';S.sim='exact';
+ $('pgSmartLang').value='en';$('pgSmartSim').value='exact';
+ document.querySelectorAll('[data-g="lang"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v==='en')});
+ document.querySelectorAll('[data-g="len"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v==='full')});
+ document.querySelectorAll('[data-g="sim"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v==='exact')});
+ $('pgProtect').value='balanced';
+ $('pgLockFace').checked=true;$('pgLockBody').checked=true;
+ $('pgLockHair').checked=true;$('pgLockBg').checked=true;
+ ['pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg'].forEach(function(id){$(id).checked=true});
+ $('pgSkinTexture').value='ultra';$('pgCameraRealism').value='smartphone';
+ $('pgLockClothes').checked=true;$('pgLockFrame').checked=true;
+ if(g==='background')$('pgLockBg').checked=false;
+ if(g==='hair')$('pgLockHair').checked=false;
+ $('pgPose').value=(g==='pose'?'ref':'keep');
+ $('pgExpr').value='keep';$('pgAngle').value='keep';$('pgFrame').value='keep';
+ $('pgStyle').value='natural';$('pgLight').value='auto';$('pgLens').value='auto';$('pgRatio').value='source';
+ $('pgManual').checked=false;
+ gen();
+ var status=$('pgSmartStatus');
+ status.classList.add('done');
+ status.textContent='✓ Pengaturan otomatis selesai. Tujuan edit: '+$('pgGoal').selectedOptions[0].text+
+  '. Semua opsi lanjutan sudah diatur dengan preset aman; prompt utama dan negative prompt telah diperbarui.'+
+  (S.A&&S.B?' Kedua foto sudah dimuat.':' Unggah foto asli dan foto referensi agar analisis lokal dapat digunakan.');
+}
+$('pgAutoSetup').addEventListener('click',autoConfigure);
+
+$('pgGoal').addEventListener('change',function(){ $('pgSmartStatus').classList.remove('done'); applySmartGoal(); });
+$('pgSmartSim').addEventListener('change',function(){S.sim=this.value;document.querySelectorAll('[data-g="sim"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.sim)});gen()});
+$('pgSmartLang').addEventListener('change',function(){S.lang=this.value;document.querySelectorAll('[data-g="lang"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.lang)});fillCol();gen()});
+$('pgProtect').addEventListener('change',function(){var v=this.value,sets=v==='strong'?[1,1,1,1,1,1]:v==='balanced'?[1,1,1,1,0,1]:[1,1,0,0,0,0],ids=['pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'];ids.forEach(function(id,i){$(id).checked=!!sets[i]});['pgV23Face','pgV23Body','pgV23Hair','pgV23Bg'].forEach(function(id,i){$(id).checked=!!sets[[0,1,2,3][i]]});$('pgV23Hands').checked=!!sets[0];$('pgV23Light').checked=!!sets[3];gen()});
+$('pgSmartEx').addEventListener('input',gen);
+$('pgManual').addEventListener('change',function(){if(!this.checked)gen();else $('pgMeta').textContent='Edit manual dikunci · perubahan pengaturan tidak akan menimpa prompt'});
+$('pgRegen').onclick=function(){$('pgManual').checked=false;gen();$('pgMeta').textContent='Prompt berhasil dibuat ulang · '+$('pgOut').value.length+' karakter'};
+$('pgOut').addEventListener('input',function(){if(!$('pgManual').checked){$('pgManual').checked=true;$('pgMeta').textContent='Edit manual otomatis dikunci agar tidak tertimpa.'}});
+
+$('pg').addEventListener('click',function(e){if(e.target===$('pg'))return close_();
+ var b=e.target.closest('button[data-k],button[data-g]');if(!b)return;
+ if(b.dataset.k){S.on[b.dataset.k]=!S.on[b.dataset.k];b.setAttribute('aria-pressed',!!S.on[b.dataset.k])}
+ else{var g=b.dataset.g;S[g]=b.dataset.v;[].forEach.call($('pg').querySelectorAll('[data-g="'+g+'"]'),function(x){x.setAttribute('aria-pressed',x===b)});if(g=='lang')fillCol()}
+ gen()});
+document.addEventListener('keydown',function(e){if(e.key=='Escape'&&!$('pg').hidden)close_()});
+['pgEx','pgB','pgW','pgC','pgP','pgSkinTexture','pgCameraRealism','pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg','pgPose','pgExpr','pgAngle','pgFrame','pgStyle','pgLight','pgLens','pgRatio','pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'].forEach(function(id){$(id).addEventListener('input',gen);$(id).addEventListener('change',gen)});
+$('pgCol').addEventListener('input',function(){S.dirty=true;gen()});
+$('pgCopy').onclick=function(){var v=$('pgOut').value,btn=this,ok=function(){btn.textContent='Tersalin ✓';setTimeout(function(){btn.textContent='Salin prompt'},1600)};
+ function fb(){$('pgOut').select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Salin manual'}}
+ try{navigator.clipboard.writeText(v).then(ok,fb)}catch(e){fb()}};
+if(navigator.share){$('pgShare').hidden=false;$('pgShare').onclick=function(){navigator.share({text:$('pgOut').value}).catch(function(){})}}
+$('pgCopyAll').onclick=function(){var v=$('pgOut').value+'\n\nNEGATIVE PROMPT:\n'+$('pgNeg').value;try{navigator.clipboard.writeText(v).then(function(){$('pgCopyAll').textContent='Semua tersalin ✓'},function(){$('pgOut').value=v;$('pgOut').select();document.execCommand('copy')})}catch(e){$('pgOut').value=v;$('pgOut').select();document.execCommand('copy')}};
+function readHistory(){try{return JSON.parse(localStorage.getItem('penyempurnaPromptHistory')||'[]')}catch(e){return []}}
+$('pgSave').onclick=function(){var h=readHistory();h.unshift({date:new Date().toLocaleString(),prompt:$('pgOut').value,negative:$('pgNeg').value});h=h.slice(0,12);try{localStorage.setItem('penyempurnaPromptHistory',JSON.stringify(h));$('pgHistoryOut').hidden=false;$('pgHistoryOut').textContent='Prompt berhasil disimpan di perangkat. Total riwayat: '+h.length}catch(e){$('pgHistoryOut').hidden=false;$('pgHistoryOut').textContent='Penyimpanan browser tidak tersedia.'}};
+$('pgHistory').onclick=function(){
+ var h=readHistory(),el=$('pgHistoryOut');el.hidden=false;el.innerHTML='';
+ if(!h.length){el.textContent='Belum ada riwayat prompt.';return}
+ h.forEach(function(item,i){
+  var wrap=document.createElement('div');wrap.className='pg-history-item';
+  var load=document.createElement('button');load.className='mini pg-history-load';load.textContent=(i+1)+'. '+(item.date||'Prompt tersimpan');load.onclick=function(){$('pgManual').checked=true;$('pgOut').value=item.prompt||'';$('pgNeg').value=item.negative||'';$('pgMeta').textContent='Memuat riwayat · '+$('pgOut').value.length+' karakter · edit manual terkunci'};
+  var del=document.createElement('button');del.className='mini pg-history-delete';del.textContent='Hapus';del.type='button';del.onclick=function(){var list=readHistory();list.splice(i,1);try{localStorage.setItem('penyempurnaPromptHistory',JSON.stringify(list));$('pgHistory').click()}catch(e){el.textContent='Tidak dapat memperbarui riwayat browser.'}};
+  wrap.appendChild(load);wrap.appendChild(del);el.appendChild(wrap)
+ });
+ var clear=document.createElement('button');clear.className='mini';clear.textContent='Hapus semua riwayat';clear.type='button';clear.onclick=function(){try{localStorage.removeItem('penyempurnaPromptHistory');$('pgHistory').click()}catch(e){el.textContent='Tidak dapat menghapus riwayat.'}};el.appendChild(clear)
+};
+
+})();
+</script>
+</body>
+</html>
