@@ -1,7 +1,7 @@
 {
-  "name": "Penyempurna Foto V34",
-  "short_name": "Foto V34",
-  "description": "Sempurnakan foto dengan workspace adaptif dan mode performa Smooth atau Ringan.",
+  "name": "Penyempurna Foto V35",
+  "short_name": "Foto V35",
+  "description": "Studio foto dengan pratinjau perbandingan sebelum dan sesudah secara langsung.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",

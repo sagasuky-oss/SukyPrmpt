@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V34</title>
+<title>Penyempurna Foto — Studio V35</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -723,6 +723,19 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 })();
 </script>
 
+
+<style id="v35-live-preview">
+/* V35 Studio Preview: accessible live before/after split control. */
+.v35-preview{display:grid;grid-template-columns:1fr;gap:7px;margin:10px 2px 2px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--bg-elev) 88%,var(--soft));text-align:left}
+.v35-preview[hidden]{display:none!important}
+.v35-preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;font-weight:750;color:var(--ink)}
+.v35-preview-head span:last-child{font-size:10px;color:var(--mute);font-weight:600}
+.v35-range{width:100%;height:24px;margin:0;accent-color:var(--acc);cursor:ew-resize;touch-action:pan-y}
+.v35-preview-foot{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);font-weight:650}
+.v35-preview-tip{font-size:10px;color:var(--mute);line-height:1.4}
+@media(prefers-reduced-motion:reduce){.v35-preview *{transition:none!important}}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="ambient"></div>
@@ -733,7 +746,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V34</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V35</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
@@ -758,6 +771,12 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 </div>
 <p class="status-bar"><span class="status-dot"></span><span hidden="" id="hint">Tahan gambar untuk melihat versi sebelum.</span></p>
 <div class="sbtn"><button aria-pressed="false" class="mini" hidden="" id="cmp">Bandingkan</button><button aria-pressed="false" class="mini" hidden="" id="sz">Kecilkan</button><button aria-pressed="false" class="mini" hidden="" id="hand">Geser</button><button class="mini" hidden="" id="zr">Zoom 1×</button></div>
+<div class="v35-preview" id="v35Preview" hidden aria-label="Kontrol perbandingan sebelum dan sesudah">
+ <div class="v35-preview-head"><span>Pratinjau langsung</span><span id="v35PreviewValue">50% · Sebelum / Sesudah</span></div>
+ <input class="v35-range" id="v35Split" type="range" min="0" max="100" value="50" step="1" aria-label="Geser pembatas foto sebelum dan sesudah" aria-describedby="v35PreviewTip">
+ <div class="v35-preview-foot"><span>Sebelum</span><span>Sesudah</span></div>
+ <div class="v35-preview-tip" id="v35PreviewTip">Geser untuk mengatur bagian foto asli dan hasil penyempurnaan. Tombol Bandingkan akan aktif otomatis.</div>
+</div>
 </div>
 <div class="v24-workflow ctl" id="v24Workflow">
 <h2>Workspace &amp; Proyek</h2>
@@ -1270,6 +1289,8 @@ function paintCmp(){var w=base.width,h=base.height,sx=Math.round(split*w);ctx.pu
  tag('SEBELUM',Math.max(8,Math.round(w*.025)));tag('SESUDAH',Math.max(8,Math.round(w*.975)-ctx.measureText('SESUDAH').width-pad*2))
 }
 function mv(e){var r=cv.getBoundingClientRect();split=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));if(after)paintCmp()}
+window.v35SetCompareSplit=function(value){split=Math.max(0,Math.min(1,Number(value)||0.5));if(cmp&&after&&!dirty)paintCmp()};
+document.addEventListener('v35:split',function(e){window.v35SetCompareSplit(e.detail&&e.detail.value)});
 cv.addEventListener('pointermove',function(e){if(cmp&&dr)mv(e)});
 $('cmp').onclick=function(){cmp=!cmp;this.setAttribute('aria-pressed',cmp);this.textContent=cmp?'Selesai membandingkan':'Bandingkan';
  $('hint').textContent=cmp?'Geser garis putih: kiri sebelum, kanan sesudah.':'Tahan gambar untuk melihat versi sebelum.';
@@ -1924,6 +1945,35 @@ $('pgHistory').onclick=function(){
   bar.addEventListener('toggle',setH,true);
 })();
 </script>
+
+<script id="v35-live-preview-controller">
+(function(){
+ 'use strict';
+ var cv=document.getElementById('cv'),cmpBtn=document.getElementById('cmp');
+ var panel=document.getElementById('v35Preview'),range=document.getElementById('v35Split'),value=document.getElementById('v35PreviewValue');
+ if(!cv||!cmpBtn||!panel||!range)return;
+ function sync(){
+   var ready=!cv.hidden&&cv.width>0&&cv.height>0;
+   panel.hidden=!ready;
+   if(!ready){range.disabled=true;return;}
+   range.disabled=false;
+ }
+ function setSplit(){
+   var pct=Number(range.value); if(!Number.isFinite(pct))pct=50;
+   value.textContent=pct+'% · Sebelum / Sesudah';
+   if(!cmpBtn.getAttribute('aria-pressed')||cmpBtn.getAttribute('aria-pressed')!=='true')cmpBtn.click();
+   // Existing comparison renderer owns the actual image pixels; this input only updates its split position.
+   if(typeof window.v35SetCompareSplit==='function')window.v35SetCompareSplit(pct/100);
+   else cv.dispatchEvent(new CustomEvent('v35:split',{detail:{value:pct/100}}));
+ }
+ range.addEventListener('input',setSplit,{passive:true});
+ var observer=new MutationObserver(sync);observer.observe(cv,{attributes:true,attributeFilter:['hidden','width','height']});
+ sync();
+ // Refresh after image workflows reveal the canvas.
+ document.addEventListener('click',function(){requestAnimationFrame(sync)},{passive:true});
+})();
+</script>
+
 <script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
