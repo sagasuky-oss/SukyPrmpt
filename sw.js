@@ -1,5 +1,5 @@
 // Ubah nomor versi ini setiap kali kamu mengunggah index.html baru.
-const CACHE = 'penyempurna-foto-v36';
+const CACHE = 'penyempurna-foto-v37';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

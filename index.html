@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V36</title>
+<title>Penyempurna Foto — Studio V37</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -746,7 +746,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V36</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V37</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
@@ -1405,7 +1405,7 @@ $('save').onclick=async function(){
 })();
 </script>
 <div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt · V36</h2><p>Buat prompt profesional dengan beberapa pilihan sederhana. Foto diproses secara lokal di browser; fitur ini tidak mengunggah foto.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
+<div class="pg-top"><div><h2>✨ AI Smart Prompt · V37</h2><p>Buat prompt profesional dengan beberapa pilihan sederhana. Foto diproses secara lokal di browser; fitur ini tidak mengunggah foto.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
@@ -1503,7 +1503,7 @@ $('save').onclick=async function(){
 </details>
 <h4 class="pg-h">Prompt utama · otomatis</h4><div class="pg-row pg-prompt-tools"><label class="pg-manual"><input id="pgManual" type="checkbox"/> Kunci edit manual (jangan timpa perubahan saya)</label><button class="mini" id="pgRegen" type="button">↻ Buat ulang prompt</button></div><textarea class="pg-in" id="pgOut" spellcheck="false"></textarea>
 <div class="pg-meta" id="pgMeta"></div>
-<div aria-live="polite" class="pg-check good" id="pgQuality"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
+<div aria-live="polite" class="pg-check good" id="pgQualityCheck"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
 <h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" rows="4" spellcheck="false"></textarea>
 <div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" hidden="" id="pgShare">Bagikan</button></div>
 <div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
@@ -1686,7 +1686,7 @@ function qualityCheck(){
  if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('Precision Clothing Edit aktif: prompt membatasi edit ke area pakaian dan melindungi batas kulit, tangan, rambut, serta aksesori.');
  if($('pgV23Hands').checked)notes.push('Anatomi tangan dan jumlah lima jari diminta tetap konsisten.');
  if(w.length)notes=notes.concat(w);
- var el=$('pgQuality');if(!el)return;el.className='pg-check '+(w.length?'warn':'good');
+ var el=$('pgQualityCheck');if(!el)return;el.className='pg-check '+(w.length?'warn':'good');
  el.innerHTML='<strong>'+(w.length?'⚠ Pemeriksaan menemukan hal yang perlu diperhatikan':'✓ Pemeriksaan kualitas prompt')+'</strong><ul>'+notes.map(function(x){return '<li>'+x.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})+'</li>'}).join('')+'</ul>';
  if(!notes.length)el.innerHTML+='<span>Pengaturan konsisten dan siap disalin.</span>';
 }
