@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V29</title>
+<title>Penyempurna Foto — Studio V30</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -692,6 +692,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <div class="row"><label for="sharp">Ketajaman detail <output></output></label><input id="sharp" max="100" min="0" type="range" value="20"/><small>Mempertajam detail bawaan foto AI agar tidak terlihat licin.</small></div>
 <div class="row"><label for="detail">Pemulihan mikro-detail <output></output></label><input id="detail" max="100" min="0" type="range" value="18"/><small>Menonjolkan detail halus yang memang sudah ada. Tidak menciptakan detail baru.</small></div>
 <div class="row"><label for="scale">Skala tekstur <output></output></label><input id="scale" max="200" min="50" type="range" value="100"/><small>Naikkan jika butiran terlalu halus, turunkan jika terlalu kasar.</small></div>
+<div class="row"><label for="nat">Variasi alami <output></output></label><input id="nat" max="100" min="0" type="range" value="60"/><small>Kekuatan tekstur kulit berubah halus dari area ke area seperti kulit asli. 0 = rata.</small></div>
 </div>
 <div class="ctl"><h2>Preset</h2>
 <div class="prow"><input aria-label="Nama preset" id="pname" maxlength="24" placeholder="Nama preset baru..." type="text"/><button class="mini" id="psave">Simpan</button></div>
@@ -756,7 +757,7 @@ var DEVICE_RAM=Number(navigator.deviceMemory)||0;
 var EXPORT_PIXEL_BUDGET=DEVICE_RAM>0&&DEVICE_RAM<=6?12000000:18000000;
 var ov=$('ov'),cv=$('cv'),ctx=cv.getContext('2d',{willReadFrequently:true});
 var ai=null,real=null,base=null,bf=null,bmicro=null,mk=null,mk0=null,pA=null,pD=null,pProtect=null,pProtectErase=null,protect=null,after=null,dirty=true,cmp=false,split=.5,dr=false,queue=[],brush='add',showSk=true,showProtect=true,tab3=false,tab5=false,protectBrush="add",texS=null,texH=null,texO=null,stA=null,stR=null,colA=null,colKey='',before=false,pend=false;
-var ids=['tone','glob','sk','hr','sharp','detail','scale','vig','cab','edg','blm','fst','flm'],defs={},renderTimer=null;
+var ids=['tone','glob','sk','hr','sharp','detail','scale','nat','vig','cab','edg','blm','fst','flm'],defs={},renderTimer=null;
 ids.forEach(function(k){defs[k]=$(k).value});
 
 /* Theme Toggle */
@@ -821,24 +822,55 @@ function load(file,cb,box){if(!file)return;var img=new Image();
  img.onload=function(){URL.revokeObjectURL(img.src);box.classList.add('ok');box.querySelector('small').textContent=file.name;thumb(img,box);cb(img)};
  img.onerror=function(){box.querySelector('small').textContent='File tidak bisa dibuka. Coba JPG atau PNG.'};
  img.src=URL.createObjectURL(file)}
-$('f1').onchange=function(e){var fl=Array.prototype.slice.call(e.target.files);if(!fl.length)return;queue=fl;var qi=$('qinfo');qi.hidden=fl.length<2;qi.textContent=fl.length+' foto dipilih. Pratinjau memakai foto pertama. Saat disimpan, semua foto diproses dengan pengaturan yang sama dan diunduh sebagai ZIP.';load(fl[0],function(img){ai=img;pA=pD=null;lim=MAX;resetView();busy('Memproses foto AI, mohon tunggu...',function(){prepAI();buildTex();draw()})},$('d1'))};
+$('f1').onchange=function(e){var fl=Array.prototype.slice.call(e.target.files);if(!fl.length)return;queue=fl;var qi=$('qinfo');qi.hidden=fl.length<2;qi.textContent=fl.length+' foto dipilih. Pratinjau memakai foto pertama. Saat disimpan, semua foto diproses dengan pengaturan yang sama dan diunduh sebagai ZIP.';load(fl[0],function(img){ai=img;pA=pD=null;skinModel=null;lim=MAX;resetView();busy('Memproses foto AI, mohon tunggu...',function(){prepAI();buildTex();draw()})},$('d1'))};
 $('f2').onchange=function(e){load(e.target.files[0],function(img){real=img;busy('Membaca tekstur foto asli, mohon tunggu...',function(){stR=stats(img);colKey='';buildTex();draw()})},$('d2'))};
 
+/* model warna kulit dipelajari dari kulit wajah (hasil deteksi wajah) */
+function inv3(M){var a=M[0][0],b=M[0][1],c=M[0][2],d=M[1][0],e=M[1][1],f2=M[1][2],g=M[2][0],h=M[2][1],i=M[2][2],A=e*i-f2*h,B=-(d*i-f2*g),C=d*h-e*g,D=-(b*i-c*h),E=a*i-c*g,F=-(a*h-b*g),G=b*f2-c*e,H=-(a*f2-c*d),I=a*e-b*d,det=a*A+b*B+c*C;if(Math.abs(det)<1e-9)return null;return[[A/det,D/det,G/det],[B/det,E/det,H/det],[C/det,F/det,I/det]]}
+function makeSkinModel(cnv,w,h){
+ var al=cnv.getContext('2d').getImageData(0,0,w,h).data,d=base.data,S=[],i,l;
+ for(i=0;i<w*h;i++){if(al[i*4+3]>230){l=toLab(d[i*4],d[i*4+1],d[i*4+2]);if(l[0]>12&&l[0]<97)S.push(l)}}
+ if(S.length<400)return null;
+ if(S.length>20000){var st=Math.ceil(S.length/20000),T=[];for(i=0;i<S.length;i+=st)T.push(S[i]);S=T}
+ function mean(A){var m=[0,0,0];A.forEach(function(v){m[0]+=v[0];m[1]+=v[1];m[2]+=v[2]});return m.map(function(t){return t/A.length})}
+ function cov(A,m){var C=[[0,0,0],[0,0,0],[0,0,0]],p,q;A.forEach(function(v){var e=[v[0]-m[0],v[1]-m[1],v[2]-m[2]];for(p=0;p<3;p++)for(q=0;q<3;q++)C[p][q]+=e[p]*e[q]});for(p=0;p<3;p++)for(q=0;q<3;q++)C[p][q]/=A.length;return C}
+ function mah(v,m,I){var e=[v[0]-m[0],v[1]-m[1],v[2]-m[2]],t=0,p,q;for(p=0;p<3;p++)for(q=0;q<3;q++)t+=e[p]*I[p][q]*e[q];return t}
+ var m=mean(S),C=cov(S,m);C[0][0]+=4;C[1][1]+=1.5;C[2][2]+=1.5;
+ var I=inv3(C);if(!I)return null;
+ var D=S.map(function(v){return mah(v,m,I)}),so=D.slice().sort(function(u,v){return u-v}),cut=so[Math.floor(so.length*.82)],K=S.filter(function(v,j){return D[j]<=cut});
+ if(K.length<200)return null;
+ m=mean(K);C=cov(K,m);C[0][0]=C[0][0]*2.2+6;C[1][1]=C[1][1]*1.8+2.5;C[2][2]=C[2][2]*1.8+2.5;
+ I=inv3(C);if(!I)return null;
+ return{m:m,I:I}
+}
+function sampleFace(c,lm,w,h,pad,eyes,brows,lips){
+ c.globalCompositeOperation='source-over';c.fillStyle=c.strokeStyle='#fff';facePoly(c,lm,OVAL,w,h,0);
+ c.globalCompositeOperation='destination-out';
+ [[eyes[0],pad*2],[eyes[1],pad*2],[brows[0],pad*2.5],[brows[1],pad*2.5],[lips,pad*2.5]].forEach(function(q){facePoly(c,lm,q[0],w,h,q[1])});
+ c.globalCompositeOperation='source-over'
+}
+function computeMk0(){
+ var w=base.width,h=base.height,n=w*h,m=ctx.createImageData(w,h),d=base.data,o=m.data,sm=skinModel,i,j,l,e0,e1,e2,I,q,wv;
+ for(i=0;i<n;i++){j=i*4;
+  if(sm){l=toLab(d[j],d[j+1],d[j+2]);e0=l[0]-sm.m[0];e1=l[1]-sm.m[1];e2=l[2]-sm.m[2];I=sm.I;
+   q=e0*(I[0][0]*e0+I[0][1]*e1+I[0][2]*e2)+e1*(I[1][0]*e0+I[1][1]*e1+I[1][2]*e2)+e2*(I[2][0]*e0+I[2][1]*e1+I[2][2]*e2);
+   wv=q<=6?1:q>=16?0:(16-q)/10;o[j+3]=wv*255}
+  else o[j+3]=isSkin(d[j],d[j+1],d[j+2])?255:0}
+ var mc=off(w,h);mc.getContext('2d').putImageData(m,0,0);
+ var bc=off(w,h),bx=bc.getContext('2d');bx.filter='blur('+3*fk(w,h)+'px)';bx.drawImage(mc,0,0);
+ var bd=bx.getImageData(0,0,w,h).data;mk0=new Float32Array(n);for(i=0;i<n;i++)mk0[i]=bd[i*4+3]/255
+}
 function prepAI(){
  var s=Math.min(1,lim/Math.max(ai.width,ai.height)),w=Math.round(ai.width*s),h=Math.round(ai.height*s);
  cv.width=w;cv.height=h;cv.hidden=false;$('stage').classList.add('has-img');$('empty').hidden=true;$('hint').hidden=false;$('cmp').hidden=false;$('sz').hidden=false;$('hand').hidden=false;$('zr').hidden=false;var c=off(w,h),x=c.getContext('2d');x.drawImage(ai,0,0,w,h);base=x.getImageData(0,0,w,h);
- var m=x.createImageData(w,h),d=base.data,o=m.data;
- for(var i=0;i<w*h;i++)o[i*4+3]=isSkin(d[i*4],d[i*4+1],d[i*4+2])?255:0;
- var mc=off(w,h);mc.getContext('2d').putImageData(m,0,0);
- var bc=off(w,h),bx=bc.getContext('2d');bx.filter='blur('+3*fk(w,h)+'px)';bx.drawImage(mc,0,0);
- var bd=bx.getImageData(0,0,w,h).data;mk0=new Float32Array(w*h);for(i=0;i<w*h;i++)mk0[i]=bd[i*4+3]/255;pA=rp(pA,w,h);pD=rp(pD,w,h);pProtect=rp(pProtect,w,h);pProtectErase=rp(pProtectErase,w,h);rebuildMask();rebuildProtection();
+ computeMk0();pA=rp(pA,w,h);pD=rp(pD,w,h);pProtect=rp(pProtect,w,h);pProtectErase=rp(pProtectErase,w,h);rebuildMask();rebuildProtection();
  stA=stats(ai);colKey='';
  var fc=off(w,h),fx=fc.getContext('2d');fx.filter='blur('+1.2*fk(w,h)+'px)';fx.drawImage(c,0,0);bf=fx.getImageData(0,0,w,h).data;
  var fm=off(w,h),fmctx=fm.getContext('2d');fmctx.filter='blur('+Math.max(.6,.65*fk(w,h))+'px)';fmctx.drawImage(c,0,0);bmicro=fmctx.getImageData(0,0,w,h).data
 }
 
 /* ukur butiran foto asli, lalu buat butiran serupa tanpa menyalin bentuk */
-var rngS=1;function seedRng(s){rngS=s>>>0}
+var skinModel=null,zf=null;var rngS=1;function seedRng(s){rngS=s>>>0}
 function rnd(){rngS=(rngS+0x6D2B79F5)>>>0;var t=rngS;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}
 function gauss(){return(rnd()+rnd()+rnd()+rnd()-2)*1.73}
 function box(a,w,h,r){var t=new Float32Array(w*h),o=new Float32Array(w*h),x,y,k,s,c=2*r+1,e;
@@ -847,7 +879,7 @@ function box(a,w,h,r){var t=new Float32Array(w*h),o=new Float32Array(w*h),x,y,k,
  return o}
 function sd(a){var n=a.length,m=0,v=0,i;for(i=0;i<n;i++)m+=a[i];m/=n;for(i=0;i<n;i++)v+=(a[i]-m)*(a[i]-m);return Math.sqrt(v/n)||1e-4}
 function buildTex(){
- texS=texH=texO=null;RC=null;if(!real||!base)return;
+ texS=texH=texO=null;zf=null;RC=null;if(!real||!base)return;
  var sc=$('scale').value/100,fz=fk(base.width,base.height),r1=Math.max(1,Math.round(sc*1.2*fz)),r2=r1*3;
  var s=Math.min(1,2000/Math.max(real.width,real.height)),w=Math.max(1,Math.round(real.width*s)),h=Math.max(1,Math.round(real.height*s));
  var c=off(w,h),x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(real,0,0,w,h);
@@ -869,6 +901,11 @@ function buildTex(){
  var da=sd(NA),db=sd(NB);
  function mkT(cc){if(!cc)return null;var o=new Float32Array(W*H),ka=Math.min(18,cc.a/da),kb=Math.min(12,cc.b/db);for(var q=0;q<o.length;q++)o[q]=ka*NA[q]+kb*NB[q];return o}
  texS=mkT(cS);texH=mkT(cH);texO=mkT(cO);
+ if(texS){var mu2=0,k2,v2;for(k2=0;k2<texS.length;k2++){v2=texS[k2];v2=v2<0?v2*1.3:v2*.75;texS[k2]=v2;mu2+=v2}mu2/=texS.length;for(k2=0;k2<texS.length;k2++)texS[k2]-=mu2}
+ seedRng(777);var cs=Math.max(20,Math.round(Math.max(W,H)/28)),gw=Math.ceil(W/cs)+2,gh=Math.ceil(H/cs)+2,G=new Float32Array(gw*gh),gy,gx;
+ for(i=0;i<G.length;i++)G[i]=gauss();G=box(G,gw,gh,1);var gm=0;for(i=0;i<G.length;i++)gm+=G[i];gm/=G.length;var gsd=sd(G);
+ zf=new Float32Array(W*H);
+ for(gy=0;gy<H;gy++){var fy=gy/cs,y0=fy|0,ty=fy-y0;for(gx=0;gx<W;gx++){var fx2=gx/cs,x0=fx2|0,tx=fx2-x0,i0=y0*gw+x0;zf[gy*W+gx]=((G[i0]*(1-tx)+G[i0+1]*tx)*(1-ty)+(G[i0+gw]*(1-tx)+G[i0+gw+1]*tx)*ty-gm)/gsd}}
  $('info').textContent=(cS?'Butiran kulit terbaca dari foto asli. ':'Butiran kulit belum cukup jelas; gunakan foto asli close-up dengan fokus baik. ')+(cH||cO?'Butiran area non-kulit terbaca.':'Butiran rambut/kain belum cukup terbaca.');
 }
 
@@ -917,9 +954,9 @@ function color(){
   var c=fromLab(o[0],o[1],o[2]);colA[j]=c[0];colA[j+1]=c[1];colA[j+2]=c[2]}
 }
 function run(){
- color();var w=base.width,h=base.height,n=w*h,out=ctx.createImageData(w,h),o=out.data,sk=$('sk').value/100,hr=$('hr').value/100,sh=$('sharp').value/100*1.5,dt=$('detail').value/100*1.15,bd=base.data,SHF=(7*w+13)%n;
- for(var p=0;p<n;p++){var j=p*4,prot=protect?protect[p]:0,m=mk[p]*(1-prot),lm=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,wh=lm>=90?0:lm<=50?1:(90-lm)/40,g0=lm/255,wl=(lm<24?lm/24:1)*(1.2-.7*g0*g0),x=p%w,y=(p/w)|0,lx=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,li=y*w+Math.max(0,x-1),ri=y*w+Math.min(w-1,x+1),ui=Math.max(0,y-1)*w+x,di=Math.min(h-1,y+1)*w+x,edge=Math.abs(lx-(bd[li*4]*.299+bd[li*4+1]*.587+bd[li*4+2]*.114))+Math.abs(lx-(bd[ri*4]*.299+bd[ri*4+1]*.587+bd[ri*4+2]*.114))+Math.abs(lx-(bd[ui*4]*.299+bd[ui*4+1]*.587+bd[ui*4+2]*.114))+Math.abs(lx-(bd[di*4]*.299+bd[di*4+1]*.587+bd[di*4+2]*.114)),edgeKeep=1/(1+edge/34),q=p+SHF,a,c;if(q>=n)q-=n;a=((texS?texS[p]*sk*m:0)+(1-m)*hr*((texH?texH[p]*wh:0)+(texO?texO[p]*(1-wh):0)))*wl*edgeKeep*(1-prot);c=((texS?texS[q]*sk*m:0)+(1-m)*hr*((texH?texH[q]*wh:0)+(texO?texO[q]*(1-wh):0)))*.35*wl*edgeKeep*(1-prot);
-  var mr0=bd[j]-bmicro[j],mg0=bd[j+1]-bmicro[j+1],mb0=bd[j+2]-bmicro[j+2],microGate=Math.min(1,Math.max(0,(edge-2)/10)),r=colA[j]+a+c+sh*(bd[j]-bf[j])*(1-prot)+dt*microGate*mr0*(1-prot),g=colA[j+1]+a+sh*(bd[j+1]-bf[j+1])*(1-prot)+dt*microGate*mg0*(1-prot),b=colA[j+2]+a-c*.7+sh*(bd[j+2]-bf[j+2])*(1-prot)+dt*microGate*mb0*(1-prot);
+ color();var w=base.width,h=base.height,n=w*h,out=ctx.createImageData(w,h),o=out.data,sk=$('sk').value/100,hr=$('hr').value/100,sh=$('sharp').value/100*1.5,dt=$('detail').value/100*1.15,bd=base.data,SHF=(7*w+13)%n,nv=$('nat').value/100*.45;
+ for(var p=0;p<n;p++){var j=p*4,prot=protect?protect[p]:0,m=mk[p]*(1-prot),lm=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,wh=lm>=90?0:lm<=50?1:(90-lm)/40,g0=lm/255,wl=(lm<24?lm/24:1)*(1.2-.7*g0*g0),x=p%w,y=(p/w)|0,lx=bd[j]*.299+bd[j+1]*.587+bd[j+2]*.114,li=y*w+Math.max(0,x-1),ri=y*w+Math.min(w-1,x+1),ui=Math.max(0,y-1)*w+x,di=Math.min(h-1,y+1)*w+x,edge=Math.abs(lx-(bd[li*4]*.299+bd[li*4+1]*.587+bd[li*4+2]*.114))+Math.abs(lx-(bd[ri*4]*.299+bd[ri*4+1]*.587+bd[ri*4+2]*.114))+Math.abs(lx-(bd[ui*4]*.299+bd[ui*4+1]*.587+bd[ui*4+2]*.114))+Math.abs(lx-(bd[di*4]*.299+bd[di*4+1]*.587+bd[di*4+2]*.114)),edgeKeep=1/(1+edge/34),q=p+SHF,aS,aN,cS,cN,ek=edgeKeep*(1-prot),sw=zf?1+nv*zf[p]:1,tt=g0<.78?0:g0>.97?1:(g0-.78)/.19,wlS=wl*(1-.5*tt*tt*(3-2*tt));if(sw<.5)sw=.5;if(q>=n)q-=n;aS=texS?texS[p]*sk*m*sw*wlS*ek:0;aN=(1-m)*hr*((texH?texH[p]*wh:0)+(texO?texO[p]*(1-wh):0))*wl*ek;cS=texS?texS[q]*sk*m*sw*wlS*.35*ek:0;cN=(1-m)*hr*((texH?texH[q]*wh:0)+(texO?texO[q]*(1-wh):0))*.35*wl*ek;
+  var mr0=bd[j]-bmicro[j],mg0=bd[j+1]-bmicro[j+1],mb0=bd[j+2]-bmicro[j+2],microGate=Math.min(1,Math.max(0,(edge-2)/10)),r=colA[j]+aN+aS*.72+cN+cS*.72+sh*(bd[j]-bf[j])*(1-prot)+dt*microGate*mr0*(1-prot),g=colA[j+1]+aN+aS+sh*(bd[j+1]-bf[j+1])*(1-prot)+dt*microGate*mg0*(1-prot),b=colA[j+2]+aN+aS-.7*(cN+cS)+sh*(bd[j+2]-bf[j+2])*(1-prot)+dt*microGate*mb0*(1-prot);
   o[j]=r<0?0:r>255?255:r;o[j+1]=g<0?0:g>255?255:g;o[j+2]=b<0?0:b>255?255:b;o[j+3]=255}
  grade(out);lens(out);after=out;dirty=false;if(cmp)paintCmp();else ctx.putImageData(out,0,0)
 }
@@ -938,7 +975,7 @@ function busy(msg,fn){
     $('hint').textContent=real?'Tahan gambar untuk melihat versi sebelum.':'Foto AI siap. Buka tab Foto asli untuk memilih foto asli.'
   },16)})
 }
-['sk','hr','sharp','detail','vig','cab','edg','blm','fst','flm'].forEach(function(k){$(k).addEventListener('input',function(){fmt();render()})});
+['sk','hr','sharp','detail','nat','vig','cab','edg','blm','fst','flm'].forEach(function(k){$(k).addEventListener('input',function(){fmt();render()})});
 ['tone','glob'].forEach(function(k){$(k).addEventListener('input',fmt);$(k).addEventListener('change',function(){busy('Menyesuaikan warna...',draw)})});
 $('scale').addEventListener('input',fmt);
 $('scale').addEventListener('change',function(){busy('Menyusun ulang tekstur...',function(){buildTex();draw()})});
@@ -1020,6 +1057,8 @@ $('autoFace').onclick=async function(){
   var faces=task.detect(temp).faceLandmarks||[];
   if(!faces.length){$('faceStatus').textContent='Wajah belum terdeteksi. Coba foto dengan wajah lebih jelas dan tidak tertutup.';return}
   var mask=off(w,h),mc=mask.getContext('2d');mc.fillStyle='#fff';mc.strokeStyle='#fff';
+  var bigIdx=0,bigW=-1;faces.forEach(function(lm0,ix){var xs0=lm0.map(function(q){return q.x}),ww=Math.max.apply(null,xs0)-Math.min.apply(null,xs0);if(ww>bigW){bigW=ww;bigIdx=ix}});
+  var smp=off(w,h),smc=smp.getContext('2d');
   var eyeL=[33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246];
   var eyeR=[362,382,381,380,374,373,390,249,263,466,388,387,386,385,384,398];
   var browL=[70,63,105,66,107,55,65,52,53,46],browR=[300,293,334,296,336,285,295,282,283,276];
@@ -1029,10 +1068,11 @@ $('autoFace').onclick=async function(){
    var lm=faces[f],xs=lm.map(function(q){return q.x*w}),pad=Math.max(2,(Math.max.apply(null,xs)-Math.min.apply(null,xs))*.012);
    facePoly(mc,lm,eyeL,w,h,pad);facePoly(mc,lm,eyeR,w,h,pad);
    facePoly(mc,lm,browL,w,h,pad*1.5);facePoly(mc,lm,browR,w,h,pad*1.5);
-   facePoly(mc,lm,lips,w,h,pad*1.7);facePoly(mc,lm,nose,w,h,pad*1.5);faceSkin(lm,w,h,pad,[eyeL,eyeR],[browL,browR],lips);
+   facePoly(mc,lm,lips,w,h,pad*1.7);facePoly(mc,lm,nose,w,h,pad*1.5);faceSkin(lm,w,h,pad,[eyeL,eyeR],[browL,browR],lips);if(f===bigIdx)sampleFace(smc,lm,w,h,pad,[eyeL,eyeR],[browL,browR],lips);
   }
+  skinModel=makeSkinModel(smp,w,h);computeMk0();
   pProtect=mask;pProtectErase=off(w,h);rebuildMask();rebuildProtection();drawOv();draw();
-  $('faceStatus').textContent=faces.length+' wajah terdeteksi. Mata, alis, hidung, dan bibir ditandai biru (dilindungi). Kulit wajah ditandai hijau di tab Kulit. Periksa lalu koreksi dengan kuas bila perlu.';
+  $('faceStatus').textContent=faces.length+' wajah terdeteksi. Mata, alis, hidung, dan bibir ditandai biru (dilindungi). Kulit wajah ditandai hijau di tab Kulit. '+(skinModel?'Warna kulit dipelajari dari wajah, jadi leher, tangan, dan lengan lebih akurat terdeteksi, sedangkan benda berwarna mirip tidak ikut. ':'')+'Periksa lalu koreksi dengan kuas bila perlu.';
  }catch(e){
   $('faceStatus').textContent='Deteksi otomatis gagal: '+(e&&e.message?e.message:'model tidak dapat dimuat')+'. Periksa koneksi atau gunakan kuas manual.';
  }finally{btn.disabled=false;btn.textContent=old}
@@ -1175,15 +1215,15 @@ function exportLimit(img,factor){
  return Math.max(1,Math.floor(edge*scale));
 }
 async function exportOne(file,keep){
- var cur=ai,sp=[pA,pD,pProtect,pProtectErase],sc=cmp,oldLim=lim;
+ var cur=ai,sp=[pA,pD,pProtect,pProtectErase,skinModel],sc=cmp,oldLim=lim;
  try{
-  if(!keep){ai=await loadImg(file);pA=pD=pProtect=pProtectErase=null}
+  if(!keep){ai=await loadImg(file);pA=pD=pProtect=pProtectErase=null;skinModel=null}
   cmp=false;lim=exportLimit(ai,$('upscale').value);prepAI();buildTex();before=false;run();
   var mime=($('v24Format')&&$('v24Format').value)||'image/png',quality=+$('v24JpegQuality').value||.85;
   var bl=await new Promise(function(resolve,reject){cv.toBlob(function(b){if(b)resolve(b);else reject(new Error('Browser gagal membuat file gambar.'))},mime,quality)});
   return bl;
  }finally{
-  ai=cur;pA=sp[0];pD=sp[1];pProtect=sp[2];pProtectErase=sp[3];cmp=sc;lim=oldLim;
+  ai=cur;pA=sp[0];pD=sp[1];pProtect=sp[2];pProtectErase=sp[3];skinModel=sp[4];cmp=sc;lim=oldLim;
   if(ai){prepAI();buildTex();draw()}
  }
 }
@@ -1204,7 +1244,7 @@ $('save').onclick=async function(){
 })();
 </script>
 <div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V29</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
+<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V30</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
@@ -1586,7 +1626,7 @@ $('pgHistory').onclick=function(){
  $('v24SaveProject').onclick=async function(){
   try{
    var f1=$('f1')&&$('f1').files[0],f2=$('f2')&&$('f2').files[0];
-   var project={format:'penyempurna-foto-project',version:'29.0',createdAt:new Date().toISOString(),settings:snap(),images:{ai:f1?{name:f1.name,data:await readFile(f1)}:null,reference:f2?{name:f2.name,data:await readFile(f2)}:null},local:{theme:localStorage.getItem('pf_theme'),presets:localStorage.getItem('pf_presets'),promptHistory:localStorage.getItem('penyempurnaPromptHistory')||'[]'}};
+   var project={format:'penyempurna-foto-project',version:'30.0',createdAt:new Date().toISOString(),settings:snap(),images:{ai:f1?{name:f1.name,data:await readFile(f1)}:null,reference:f2?{name:f2.name,data:await readFile(f2)}:null},local:{theme:localStorage.getItem('pf_theme'),presets:localStorage.getItem('pf_presets'),promptHistory:localStorage.getItem('penyempurnaPromptHistory')||'[]'}};
    var blob=new Blob([JSON.stringify(project)],{type:'application/json'}),a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='penyempurna-foto-project.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
    say('Proyek berhasil disimpan sebagai file JSON. Simpan file tersebut agar bisa dibuka kembali.');
   }catch(e){say('Gagal menyimpan proyek: '+e.message)}
@@ -1685,7 +1725,7 @@ $('pgHistory').onclick=function(){
   const ctl=$('ctl');
   if(ctl){
     const rows=Array.from(ctl.querySelectorAll('.row'));
-    const advancedIds=['sharp','detail','scale'];
+    const advancedIds=['sharp','detail','scale','nat'];
     const advanced=rows.filter(r=>r.querySelector('input') && advancedIds.includes(r.querySelector('input').id));
     const wrap=details('Detail tambahan',advanced);
     const heading=Array.from(ctl.querySelectorAll('h2')).find(h=>h.textContent.trim()==='Tekstur');
