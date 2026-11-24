@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V38</title>
+<title>Penyempurna Foto — Studio V39</title>
 <style id="app-styles">
 /* ===== dasar ===== */
 :root{
@@ -688,6 +688,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 .v35-preview-foot{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);font-weight:650}
 .v35-preview-tip{font-size:10px;color:var(--mute);line-height:1.4}
 @media(prefers-reduced-motion:reduce){.v35-preview *{transition:none!important}}
+.pg-more,.pg-grp{margin-top:10px;border:1px solid var(--lg-edge);border-radius:13px;padding:0 12px 8px}.pg-more>summary,.pg-grp>summary{cursor:pointer;padding:11px 2px;font-size:12.5px;font-weight:700;color:var(--ink)}.pg-more[open]>summary,.pg-grp[open]>summary{margin-bottom:6px}
 </style>
 <!-- V25 Stability patch: export scope, export rollback, project theme/history restore. -->
 
@@ -747,7 +748,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V38</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V39</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
@@ -1406,7 +1407,7 @@ $('save').onclick=async function(){
 })();
 </script>
 <div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt · V38</h2><p>Buat prompt profesional dengan beberapa pilihan sederhana. Foto diproses secara lokal di browser; fitur ini tidak mengunggah foto.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
+<div class="pg-top"><div><h2>✨ AI Smart Prompt · V39</h2><p>Buat prompt profesional dengan beberapa pilihan sederhana. Foto diproses secara lokal di browser; fitur ini tidak mengunggah foto.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
@@ -1416,11 +1417,9 @@ $('save').onclick=async function(){
 <div class="pg-an">
 <label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
 <label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
-<label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
+</div><details class="pg-more"><summary>Opsi lainnya (perlindungan, bahasa, kualitas)</summary><div class="pg-an"><label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
 <label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
-<label>Kualitas hasil<select class="pg-in" id="pgQuality"><option value="natural">Natural</option><option value="detailed">Detail tinggi</option><option selected value="ultra">Ultra realistis</option></select></label>
-</div>
-<label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi." rows="3"></textarea></label>
+<label>Kualitas hasil<select class="pg-in" id="pgQuality"><option value="natural">Natural</option><option value="detailed">Detail tinggi</option><option selected value="ultra">Ultra realistis</option></select></label></div></details><label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi." rows="3"></textarea></label>
 <button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Buat Prompt Otomatis</button>
 <small class="pg-auto-hint">Cukup pilih tujuan edit dan kualitas hasil. Sistem mengatur detail teknis secara otomatis.</small>
 <div class="pg-smart-status" id="pgSmartStatus">Siap. Unggah foto asli dan foto referensi untuk analisis warna serta karakter visual.</div>
@@ -1441,7 +1440,7 @@ $('save').onclick=async function(){
 </div>
 <small>Pilih preset untuk mengisi tujuan dan instruksi tambahan. Kamu tetap bisa mengubahnya sebelum membuat prompt.</small>
 </div>
-<section aria-label="Pengaturan V23 Ultra Realism" class="pg-v23">
+<details class="pg-grp"><summary>Realisme &amp; kunci identitas</summary><section aria-label="Pengaturan V23 Ultra Realism" class="pg-v23">
 <div class="pg-v23-head"><strong>✦ V23.3 · Original Pixel &amp; Texture Preservation</strong><span class="pg-v23-tag">V23.3</span></div>
 <div class="pg-v23-grid">
 <label>Skin texture<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detailed</option><option selected="" value="ultra">Ultra · micro-detail</option></select></label>
@@ -1471,13 +1470,13 @@ $('save').onclick=async function(){
 </div>
 <div style="margin-top:7px">Memprioritaskan detail foto asli dan membatasi rekonstruksi hanya pada area yang diedit. Ini instruksi prompt, bukan penguncian piksel otomatis.</div>
 </div>
-</section>
+</section></details>
 <h4 class="pg-h">Yang ingin diganti</h4><div class="pg-row" id="pgItems"></div>
-<h4 class="pg-h">Pengaturan</h4>
+<details class="pg-grp"><summary>Bahasa, panjang &amp; kemiripan</summary>
 <div class="pg-line"><b>Bahasa</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="lang" data-v="en">English (disarankan)</button><button aria-pressed="false" class="mini" data-g="lang" data-v="id">Indonesia</button></div></div>
 <div class="pg-line"><b>Panjang</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="len" data-v="full">Lengkap</button><button aria-pressed="false" class="mini" data-g="len" data-v="short">Ringkas</button></div></div>
 <div class="pg-line"><b>Kemiripan</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="sim" data-v="exact">Persis referensi</button><button aria-pressed="false" class="mini" data-g="sim" data-v="insp">Terinspirasi</button></div></div>
-<h4 class="pg-h">Analisis otomatis (bisa diedit)</h4>
+</details><details class="pg-grp"><summary>Warna &amp; analisis foto</summary>
 <input class="pg-in" id="pgCol" placeholder="Warna referensi, mis. navy blue, white"/><div class="pg-sw" id="pgSw"></div>
 <div class="pg-an">
 <label>Motif referensi<select class="pg-in" id="pgP"><option value="solid">Polos</option><option value="tex">Tekstur / motif halus</option><option value="busy">Motif / grafis ramai</option><option value="logo">Ada logo / tulisan</option></select></label>
@@ -1485,7 +1484,7 @@ $('save').onclick=async function(){
 <label>Suhu warna foto asli<select class="pg-in" id="pgW"><option value="0">Hangat</option><option selected="" value="1">Netral</option><option value="2">Dingin</option></select></label>
 <label>Kontras foto asli<select class="pg-in" id="pgC"><option value="0">Lembut</option><option value="1">Kuat</option></select></label>
 </div>
-<h4 class="pg-h">Advanced · Pose &amp; ekspresi</h4>
+</details><details class="pg-grp"><summary>Pose, kamera &amp; gaya</summary>
 <div class="pg-an">
 <label>Pose tubuh<select class="pg-in" id="pgPose"><option value="keep">Pertahankan pose foto 1</option><option value="ref">Ikuti pose foto 2</option><option value="standing">Berdiri natural</option><option value="sitting">Duduk natural</option><option value="back">Membelakangi kamera</option><option value="walking">Sedang berjalan</option><option value="custom">Ikuti instruksi detail</option></select></label>
 <label>Ekspresi wajah<select class="pg-in" id="pgExpr"><option value="keep">Pertahankan ekspresi asli</option><option value="neutral">Natural / netral</option><option value="smile">Senyum tipis natural</option><option value="serious">Serius / tenang</option><option value="custom">Sesuai detail tambahan</option></select></label>
@@ -1496,16 +1495,16 @@ $('save').onclick=async function(){
 <label>Lensa / depth of field<select class="pg-in" id="pgLens"><option value="auto">Sesuai foto asli</option><option value="wide">Wide-angle perspective</option><option value="35">35mm natural perspective</option><option value="50">50mm standard lens</option><option value="85">85mm portrait lens</option><option value="bokeh">Shallow depth of field / bokeh</option></select></label>
 <label>Rasio hasil<select class="pg-in" id="pgRatio"><option value="source">Pertahankan rasio foto 1</option><option value="1:1">1:1</option><option value="4:5">4:5</option><option value="3:4">3:4</option><option value="9:16">9:16</option><option value="16:9">16:9</option><option value="3:2">3:2</option></select></label>
 </div>
-<h4 class="pg-h">Kunci perlindungan · bagian yang tidak boleh berubah</h4>
+</details><details class="pg-grp"><summary>Kunci perlindungan</summary>
 <div class="pg-row pg-locks">
 <label><input checked="" id="pgLockFace" type="checkbox"/> Wajah &amp; identitas</label><label><input checked="" id="pgLockBody" type="checkbox"/> Proporsi tubuh</label><label><input checked="" id="pgLockHair" type="checkbox"/> Rambut / hijab</label><label><input checked="" id="pgLockBg" type="checkbox"/> Background</label><label><input id="pgLockClothes" type="checkbox"/> Pakaian lain</label><label><input checked="" id="pgLockFrame" type="checkbox"/> Framing &amp; kamera</label>
 </div>
-<h4 class="pg-h">Detail tambahan</h4><textarea class="pg-in" id="pgEx" placeholder="Jelaskan posisi tangan, arah kepala, detail logo, suasana, atau perubahan spesifik..." rows="3"></textarea>
+</details><h4 class="pg-h">Detail tambahan</h4><textarea class="pg-in" id="pgEx" placeholder="Jelaskan posisi tangan, arah kepala, detail logo, suasana, atau perubahan spesifik..." rows="3"></textarea>
 </details>
 <h4 class="pg-h">Prompt utama · otomatis</h4><div class="pg-row pg-prompt-tools"><label class="pg-manual"><input id="pgManual" type="checkbox"/> Kunci edit manual (jangan timpa perubahan saya)</label><button class="mini" id="pgRegen" type="button">↻ Buat ulang prompt</button></div><textarea class="pg-in" id="pgOut" spellcheck="false"></textarea>
 <div class="pg-meta" id="pgMeta"></div>
 <div aria-live="polite" class="pg-check good" id="pgQualityCheck"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
-<h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" rows="4" spellcheck="false"></textarea>
+<details class="pg-more"><summary>Negative prompt (otomatis)</summary><textarea class="pg-in" id="pgNeg" rows="4" spellcheck="false"></textarea></details>
 <div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" hidden="" id="pgShare">Bagikan</button></div>
 <div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
 <div class="pg-meta" hidden="" id="pgHistoryOut"></div>
