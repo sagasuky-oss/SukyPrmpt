@@ -1,5 +1,5 @@
 // Naikkan angka versi ini setiap kali kamu mengunggah index.html baru.
-const CACHE = 'penyempurna-foto-v39';
+const CACHE = 'penyempurna-foto-v42';
 // Model deteksi wajah disimpan terpisah supaya tidak terhapus saat versi aplikasi naik.
 const MODEL_CACHE = 'penyempurna-foto-model';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
