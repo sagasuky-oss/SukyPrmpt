@@ -745,6 +745,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 @media(max-width:560px){.pg-drop{aspect-ratio:1/1}}
 @media(max-width:430px){.pg-an{grid-template-columns:1fr!important}}
 .pg-open-editor{margin-top:8px}.pg-open-editor button{width:100%;min-height:46px;border-radius:16px;font-weight:700}.pg-open-editor small{display:block;margin-top:6px;color:var(--mute);font-size:11px;line-height:1.45}
+.v38-autoall{display:flex;gap:11px;align-items:flex-start;margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);cursor:pointer}.v38-autoall input{width:20px;height:20px;margin-top:2px;accent-color:var(--acc);flex:none}.v38-autoall b{display:block;font-size:13px}.v38-autoall small{display:block;margin-top:3px;color:var(--mute);font-size:11.5px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -820,6 +821,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 <div><span class="eyebrow">RUANG KERJA • PROMPT PINTAR</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
 <span class="local-pill"><i></i> Proses lokal</span>
 </div>
+<label class="v38-autoall"><input checked id="v38AutoAll" type="checkbox"/><span><b>⚡ Mode otomatis penuh</b><small>Setelah Foto AI dan Foto asli dipilih, wajah dideteksi dan semua pengaturan dihitung sendiri. Kamu tinggal periksa lalu Simpan.</small></span></label>
 <p class="note" hidden="" id="autoinfo"></p>
 <section id="p1">
 <label class="drop" id="d1"><input accept="image/*" id="f1" multiple="" type="file"/><b class="plus">+</b><img alt="" class="th" hidden=""/><span><strong>Foto hasil AI</strong><small>Ketuk untuk memilih satu atau beberapa foto</small></span></label>
@@ -2058,6 +2060,47 @@ if('serviceWorker' in navigator && location.protocol!=='file:'){
     if(sel.value!==hit)sel.value=hit;
   }
   L.concat(V).forEach(function(id){var el=$(id);if(el)el.addEventListener('change',sync)});
+})();
+</script>
+<script id="v38-auto-all">
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var tog=$('v38AutoAll');if(!tog)return;
+  try{if(localStorage.getItem('pf_autoall')==='0')tog.checked=false}catch(e){}
+  tog.addEventListener('change',function(){try{localStorage.setItem('pf_autoall',tog.checked?'1':'0')}catch(e){}});
+  function wait(test,ms,every){return new Promise(function(res){var t0=Date.now();(function loop(){var ok=false;try{ok=test()}catch(e){}if(ok||Date.now()-t0>ms)return res(ok);setTimeout(loop,every||300)})()})}
+  function note(t){var n=$('autoinfo');if(n){n.hidden=false;n.textContent=t}}
+  var lastKey='',running=false;
+  function keyOf(){var a=$('f1').files[0],b=$('f2').files[0];return a&&b?[a.name,a.size,a.lastModified,b.name,b.size,b.lastModified].join('|'):''}
+  function ready(){return $('d1').classList.contains('ok')&&$('d2').classList.contains('ok')&&!$('cv').hidden&&!$('stage').classList.contains('busy')}
+  async function pipeline(){
+    running=true;
+    try{
+      note('Otomatis penuh: mendeteksi wajah…');
+      var face=$('autoFace');
+      if(face&&!face.disabled){face.click();await wait(function(){return !face.disabled},45000,400)}
+      var okFace=/terdeteksi/.test($('faceStatus').textContent)&&!/gagal/.test($('faceStatus').textContent);
+      note('Otomatis penuh: menghitung warna dan tekstur…');
+      $('auto').click();
+      await wait(function(){return !$('stage').classList.contains('busy')},30000,300);
+      await new Promise(function(r){setTimeout(r,300)});
+      note('Otomatis penuh selesai. '+(okFace?'Wajah sudah dilindungi. ':'Deteksi wajah dilewati (perlu internet saat pertama kali), kamu bisa memakai kuas di tab Lindungi wajah. ')+'Periksa hasilnya (tahan gambar untuk melihat sebelum), lalu tekan Simpan.');
+    }finally{running=false}
+  }
+  async function check(){
+    if(!tog.checked||running)return;
+    var ok=await wait(ready,20000,400);if(!ok||!tog.checked||running)return;
+    var k=keyOf();if(!k||k===lastKey)return;lastKey=k;pipeline();
+  }
+  ['f1','f2'].forEach(function(id){$(id).addEventListener('change',function(){setTimeout(check,200)})});
+  // Pembuat prompt: otomatis buat prompt saat Foto 1 dan Foto 2 sudah terbaca
+  var da=$('pgDa'),db=$('pgDb'),lastP='';
+  function pgCheck(){
+    if(!tog.checked||!da||!db||!da.classList.contains('has')||!db.classList.contains('has'))return;
+    var k=($('pgIa').src||'')+'|'+($('pgIb').src||'');if(k===lastP)return;lastP=k;
+    setTimeout(function(){var b=$('pgAutoSetup');if(b)b.click()},350);
+  }
+  if(da&&db&&window.MutationObserver){var mo=new MutationObserver(pgCheck);mo.observe(da,{attributes:true,attributeFilter:['class']});mo.observe(db,{attributes:true,attributeFilter:['class']})}
 })();
 </script>
 </body>
