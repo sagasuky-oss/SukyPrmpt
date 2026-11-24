@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V35</title>
+<title>Penyempurna Foto — Studio V36</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -746,7 +746,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V35</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V36</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
@@ -1405,23 +1405,30 @@ $('save').onclick=async function(){
 })();
 </script>
 <div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V32</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
+<div class="pg-top"><div><h2>✨ AI Smart Prompt · V36</h2><p>Buat prompt profesional dengan beberapa pilihan sederhana. Foto diproses secara lokal di browser; fitur ini tidak mengunggah foto.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
 </div>
 <section aria-label="AI Smart Prompt Builder" class="pg-smart">
-<div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Atur tujuan edit, lalu sistem menyusun prompt secara otomatis berdasarkan foto dan pilihanmu.</small></div></div>
+<div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Pilih apa yang ingin diubah. Detail teknis akan diatur otomatis oleh sistem.</small></div></div>
 <div class="pg-an">
 <label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
 <label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
 <label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
 <label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
+<label>Kualitas hasil<select class="pg-in" id="pgQuality"><option value="natural">Natural</option><option value="detailed">Detail tinggi</option><option selected value="ultra">Ultra realistis</option></select></label>
 </div>
 <label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi." rows="3"></textarea></label>
-<button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Atur Otomatis &amp; Sempurnakan Prompt</button>
-<small class="pg-auto-hint">Cukup pilih tujuan edit. Pengaturan lanjutan akan disesuaikan otomatis; kamu tidak perlu mengatur satu per satu.</small>
+<button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Buat Prompt Otomatis</button>
+<small class="pg-auto-hint">Cukup pilih tujuan edit dan kualitas hasil. Sistem mengatur detail teknis secara otomatis.</small>
 <div class="pg-smart-status" id="pgSmartStatus">Siap. Unggah foto asli dan foto referensi untuk analisis warna serta karakter visual.</div>
+
+
+</section>
+
+<details class="pg-advanced"><summary>Pengaturan manual lanjutan (opsional)</summary>
+<div class="pg-meta">Preset cepat dan pengaturan detail tetap tersedia di sini jika kamu membutuhkannya.</div>
 <div class="v24-preset-wrap" id="v24PromptPresets">
 <strong>Quick Prompt Presets</strong>
 <div class="v24-preset-grid">
@@ -1433,8 +1440,6 @@ $('save').onclick=async function(){
 </div>
 <small>Pilih preset untuk mengisi tujuan dan instruksi tambahan. Kamu tetap bisa mengubahnya sebelum membuat prompt.</small>
 </div>
-
-</section>
 <section aria-label="Pengaturan V23 Ultra Realism" class="pg-v23">
 <div class="pg-v23-head"><strong>✦ V23.3 · Original Pixel &amp; Texture Preservation</strong><span class="pg-v23-tag">V23.3</span></div>
 <div class="pg-v23-grid">
@@ -1466,7 +1471,6 @@ $('save').onclick=async function(){
 <div style="margin-top:7px">Memprioritaskan detail foto asli dan membatasi rekonstruksi hanya pada area yang diedit. Ini instruksi prompt, bukan penguncian piksel otomatis.</div>
 </div>
 </section>
-<details class="pg-advanced"><summary>Pengaturan manual lanjutan (opsional)</summary>
 <h4 class="pg-h">Yang ingin diganti</h4><div class="pg-row" id="pgItems"></div>
 <h4 class="pg-h">Pengaturan</h4>
 <div class="pg-line"><b>Bahasa</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="lang" data-v="en">English (disarankan)</button><button aria-pressed="false" class="mini" data-g="lang" data-v="id">Indonesia</button></div></div>
@@ -1504,7 +1508,7 @@ $('save').onclick=async function(){
 <div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" hidden="" id="pgShare">Bagikan</button></div>
 <div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
 <div class="pg-meta" hidden="" id="pgHistoryOut"></div>
-<div class="pg-meta">Cara pakai: unggah Foto 1 dan Foto 2, pilih tujuan edit, lalu salin prompt utama dan negative prompt ke aplikasi AI editor. Analisis warna, kecerahan, kontras, dan pola sederhana dilakukan lokal di browser. Sistem tidak mengenali semua objek seperti model vision dan tidak menjalankan pengeditan gambar.</div>
+<div class="pg-meta">Cara pakai: unggah foto asli dan referensi, pilih tujuan edit, lalu buat dan salin prompt ke aplikasi AI editor. Analisis warna, kecerahan, kontras, dan pola sederhana dilakukan lokal di browser. Sistem tidak mengenali semua objek seperti model vision dan tidak menjalankan pengeditan gambar.</div>
 </div></div>
 <script>
 (function(){
@@ -1978,6 +1982,17 @@ $('pgHistory').onclick=function(){
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
 }
+</script>
+
+<script id="v36-simple-prompt-controls">
+(function(){
+ var q=document.getElementById('pgQuality'),skin=document.getElementById('pgSkinTexture');
+ if(!q||!skin)return;
+ q.value=skin.value||'ultra';
+ q.addEventListener('change',function(){skin.value=q.value;skin.dispatchEvent(new Event('change',{bubbles:true}));
+   var regen=document.getElementById('pgRegen');if(regen)regen.click();
+ });
+})();
 </script>
 </body>
 </html>
