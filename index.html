@@ -571,8 +571,8 @@ h1{letter-spacing:-.035em}
 .stage{border-radius:24px;padding:14px;box-shadow:0 16px 42px rgba(0,0,0,.075);border-color:color-mix(in srgb,var(--line) 75%,var(--acc) 10%)}
 .canvas-box{border-radius:17px;transition:box-shadow .35s var(--spring),border-radius .35s var(--spring)}
 .stage.has-img .canvas-box{box-shadow:0 12px 32px rgba(0,0,0,.12)}
-.controls-col{animation:softEnter .65s var(--spring) both}
-@keyframes softEnter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+.controls-col{animation:softEnter .65s var(--spring) backwards}
+@keyframes softEnter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:none}}
 .tabs{border-radius:17px;padding:5px;box-shadow:0 10px 28px rgba(0,0,0,.055)}
 .tab-pill{border-radius:13px;box-shadow:0 6px 18px var(--soft)}
 .tabs button{min-height:57px;border-radius:13px;transition:color .25s var(--spring),transform .25s var(--spring),background .25s}
@@ -609,6 +609,12 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 @media(min-width:860px){.workspace{gap:24px}.stage{top:82px}.bar{backdrop-filter:blur(20px)}}
 @media(max-width:520px){.workspace{padding:12px 11px 112px;gap:13px}.stage{padding:9px;border-radius:20px}.tabs{margin-bottom:12px}.tabs button{min-height:54px}.ctl{padding-left:14px;padding-right:14px}.bar{padding-left:10px;padding-right:10px}.bar button{font-size:12.5px;min-height:44px}}
 @media(prefers-reduced-motion:reduce){.logo,.bar .pri:not(:disabled){animation:none!important}.controls-col{animation:none!important}}
+
+/* V30: tata letak HP — kolom unggah tidak boleh tertutup bar bawah */
+@media (max-width:859px){
+ .workspace{padding-bottom:calc(var(--bar-h,150px) + 36px + env(safe-area-inset-bottom,0px))!important}
+}
+.stage:not(.has-img){position:relative!important;top:0!important}
 </style>
 
 </head>
@@ -621,7 +627,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V27</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V30</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
@@ -647,7 +653,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <div class="sbtn"><button aria-pressed="false" class="mini" hidden="" id="cmp">Bandingkan</button><button aria-pressed="false" class="mini" hidden="" id="sz">Kecilkan</button><button aria-pressed="false" class="mini" hidden="" id="hand">Geser</button><button class="mini" hidden="" id="zr">Zoom 1×</button></div>
 </div>
 <div class="v24-workflow ctl" id="v24Workflow">
-<h2>V26 Performance · Workspace &amp; Project</h2>
+<h2>Workspace &amp; Proyek</h2>
 <p class="v24-help">Simpan seluruh pengaturan dan foto sumber sebagai file proyek agar bisa dilanjutkan nanti. Riwayat perubahan pengaturan mendukung undo dan redo.</p>
 <div class="v24-actions">
 <button class="mini" disabled="" id="v24Undo" type="button">↶ Undo</button>
@@ -656,7 +662,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <button class="mini" id="v24LoadProject" type="button">Buka proyek</button>
 <input accept=".json,application/json" hidden="" id="v24ProjectFile" type="file"/>
 </div>
-<div aria-live="polite" class="v24-status" id="v24Status" role="status">V24 siap. Perbandingan sebelum/sesudah tersedia melalui tombol Bandingkan di atas.</div>
+<div aria-live="polite" class="v24-status" id="v24Status" role="status">Siap. Perbandingan sebelum/sesudah tersedia melalui tombol Bandingkan di atas.</div>
 <div class="v24-help">Project menyertakan foto AI, foto asli/referensi, pengaturan editor, prompt builder, preset, dan tema. Riwayat undo/redo tidak dimasukkan ke file proyek.</div>
 </div>
 
@@ -671,7 +677,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <button aria-selected="false" id="t5" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg><span>Lindungi</span></button>
 </div>
 <div class="studio-intro">
-<div><span class="eyebrow">WORKSPACE • V20 SMART PROMPT</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
+<div><span class="eyebrow">WORKSPACE • SMART PROMPT</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
 <span class="local-pill"><i></i> Proses lokal</span>
 </div>
 <p class="note" hidden="" id="autoinfo"></p>
@@ -1686,15 +1692,13 @@ $('pgHistory').onclick=function(){
   const guide=document.createElement('div');
   guide.className='simple-guide';
   guide.innerHTML='<strong>Cara pakai</strong><p>1. Pilih <b>Foto AI</b> · 2. Pilih <b>Foto asli</b> · 3. Tekan <b>Otomatis</b> · 4. Simpan hasilnya. Fitur lainnya bisa dibuka bila diperlukan.</p>';
-  const controls=document.querySelector('.controls-col');
-  const tabs=document.querySelector('.tabs');
-  if(controls && tabs) controls.insertBefore(guide,tabs.nextSibling);
+      const p1g=$('p1'); if(p1g) p1g.appendChild(guide);
 
   // Preset cepat: mengatur gaya warna/lensa tanpa mengubah identitas atau tekstur inti.
   const quick=document.createElement('section');
   quick.className='v27-quick';
   quick.innerHTML='<div class="v27-quick-head"><strong>Preset cepat</strong><small>Gaya sekali sentuh</small></div><div class="v27-quick-list" role="group" aria-label="Preset gaya foto"><button type="button" data-v27-preset="natural" aria-pressed="false">Natural</button><button type="button" data-v27-preset="bright" aria-pressed="false">Cerah</button><button type="button" data-v27-preset="warm" aria-pressed="false">Hangat</button><button type="button" data-v27-preset="cinema" aria-pressed="false">Sinematik</button><button type="button" data-v27-preset="mono" aria-pressed="false">Hitam putih</button></div><small class="v27-quick-note">Preset hanya mengubah gaya warna dan efek lensa. Tekstur, wajah, serta foto sumber tetap mengikuti pengaturan utama.</small>';
-  if(guide && guide.parentNode) guide.after(quick);
+  const p4q=$('p4'); if(p4q) p4q.insertBefore(quick,p4q.firstChild);
   const quickValues={
     natural:{fst:0,flm:0,vig:0,cab:0,edg:0,blm:0},
     bright:{fst:1,flm:28,vig:5,cab:0,edg:0,blm:8},
@@ -1775,6 +1779,17 @@ $('pgHistory').onclick=function(){
 })();
 </script>
 
+
+<script>
+(function(){
+  var bar=document.querySelector('.bar');if(!bar)return;
+  function setH(){document.documentElement.style.setProperty('--bar-h',bar.offsetHeight+'px')}
+  setH();
+  if(window.ResizeObserver)new ResizeObserver(setH).observe(bar);
+  window.addEventListener('resize',setH);
+  bar.addEventListener('toggle',setH,true);
+})();
+</script>
 <script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
