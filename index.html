@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V30</title>
+<title>Penyempurna Foto — Studio V32</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -738,6 +738,9 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <p class="note">Tips: cubit dua jari untuk zoom dan geser dua jari untuk menggeser foto. Atau nyalakan tombol <b>Geser</b> di bawah foto agar satu jari bisa menggeser. Setelah selesai, kembali ke tab Kulit untuk mengatur area tekstur hijau.</p>
 </section>
 <div class="bar"><div class="export-row">
+<label class="export-size" for="cropRatio">Rasio potong
+ <select id="cropRatio"><option value="original">Asli · tanpa potong</option><option value="1:1">1:1 · persegi</option><option value="4:5">4:5 · potret</option><option value="9:16">9:16 · story</option><option value="16:9">16:9 · lanskap</option></select>
+</label>
 <label class="export-size" for="upscale">Resolusi ekspor
         <select id="upscale"><option value="1">1× • ukuran asli</option><option value="2">2× • diperbesar</option><option value="4">4× • diperbesar</option></select>
 </label>
@@ -752,6 +755,10 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 <button id="auto">✨ Otomatis</button>
 <button class="pri" id="save">Simpan PNG</button>
 </div></div>
+</div>
+<div class="ctl" id="photoInfo" aria-live="polite" style="margin:10px 0">
+ <h2>Info foto</h2>
+ <p class="note" id="photoInfoText">Pilih foto hasil AI untuk melihat ukuran dan detail file.</p>
 </div>
 </main>
 <script>
@@ -828,7 +835,7 @@ function load(file,cb,box){if(!file)return;var img=new Image();
  img.onload=function(){URL.revokeObjectURL(img.src);box.classList.add('ok');box.querySelector('small').textContent=file.name;thumb(img,box);cb(img)};
  img.onerror=function(){box.querySelector('small').textContent='File tidak bisa dibuka. Coba JPG atau PNG.'};
  img.src=URL.createObjectURL(file)}
-$('f1').onchange=function(e){var fl=Array.prototype.slice.call(e.target.files);if(!fl.length)return;queue=fl;var qi=$('qinfo');qi.hidden=fl.length<2;qi.textContent=fl.length+' foto dipilih. Pratinjau memakai foto pertama. Saat disimpan, semua foto diproses dengan pengaturan yang sama dan diunduh sebagai ZIP.';load(fl[0],function(img){ai=img;pA=pD=null;skinModel=null;lim=MAX;resetView();busy('Memproses foto AI, mohon tunggu...',function(){prepAI();buildTex();draw()})},$('d1'))};
+$('f1').onchange=function(e){var fl=Array.prototype.slice.call(e.target.files);if(!fl.length)return;queue=fl;var qi=$('qinfo');qi.hidden=fl.length<2;qi.textContent=fl.length+' foto dipilih. Pratinjau memakai foto pertama. Saat disimpan, semua foto diproses dengan pengaturan yang sama dan diunduh sebagai ZIP.';load(fl[0],function(img){ai=img;pA=pD=null;skinModel=null;lim=MAX;resetView();updatePhotoInfo(fl[0]);busy('Memproses foto AI, mohon tunggu...',function(){prepAI();buildTex();draw()})},$('d1'))};
 $('f2').onchange=function(e){load(e.target.files[0],function(img){real=img;busy('Membaca tekstur foto asli, mohon tunggu...',function(){stR=stats(img);colKey='';buildTex();draw()})},$('d2'))};
 
 /* model warna kulit dipelajari dari kulit wajah (hasil deteksi wajah) */
@@ -1220,13 +1227,33 @@ function exportLimit(img,factor){
  scale=Math.min(scale,Math.sqrt(EXPORT_PIXEL_BUDGET/(mw*mh)));
  return Math.max(1,Math.floor(edge*scale));
 }
+function updatePhotoInfo(file){
+ var el=$('photoInfoText');if(!el)return;
+ if(!ai){el.textContent='Pilih foto hasil AI untuk melihat ukuran dan detail file.';return}
+ var ow=ai.naturalWidth||ai.width,oh=ai.naturalHeight||ai.height,w=ow,h=oh;
+ var size=file&&file.size?' · '+(file.size/1048576).toFixed(2)+' MB':'';
+ var crop=$('cropRatio').value;
+ if(crop!=='original'){var z=crop.split(':').map(Number),target=z[0]/z[1];if(w/h>target)w=Math.round(h*target);else h=Math.round(w/target)}
+ var factor=+$('upscale').value||1,edge=Math.max(w,h),scale=Math.min(factor,5000/edge,Math.sqrt(18000000/(w*h)),Math.sqrt(EXPORT_PIXEL_BUDGET/(w*h)));
+ el.textContent='Sumber: '+ow+' × '+oh+' px'+size+' · Rasio '+(ow/oh).toFixed(3)+' · Perkiraan ekspor: '+Math.max(1,Math.floor(w*scale))+' × '+Math.max(1,Math.floor(h*scale))+' px.';
+}
+$('cropRatio').addEventListener('change',function(){updatePhotoInfo(queue[0]||null)});
+$('upscale').addEventListener('change',function(){updatePhotoInfo(queue[0]||null)});
 async function exportOne(file,keep){
  var cur=ai,sp=[pA,pD,pProtect,pProtectErase,skinModel],sc=cmp,oldLim=lim;
  try{
   if(!keep){ai=await loadImg(file);pA=pD=pProtect=pProtectErase=null;skinModel=null}
   cmp=false;lim=exportLimit(ai,$('upscale').value);prepAI();buildTex();before=false;run();
   var mime=($('v24Format')&&$('v24Format').value)||'image/png',quality=+$('v24JpegQuality').value||.85;
-  var bl=await new Promise(function(resolve,reject){cv.toBlob(function(b){if(b)resolve(b);else reject(new Error('Browser gagal membuat file gambar.'))},mime,quality)});
+  // Potong tengah sesuai rasio pilihan hanya pada file ekspor; kanvas kerja tetap utuh.
+  var ratioValue=$('cropRatio')?$('cropRatio').value:'original',exportCanvas=cv;
+  if(ratioValue!=='original'){
+   var parts=ratioValue.split(':').map(Number),target=parts[0]/parts[1],sw=cv.width,sh=cv.height,sx=0,sy=0;
+   if(sw/sh>target){var nw=Math.round(sh*target);sx=Math.floor((sw-nw)/2);sw=nw}
+   else{var nh=Math.round(sw/target);sy=Math.floor((sh-nh)/2);sh=nh}
+   exportCanvas=off(sw,sh);var ex=exportCanvas.getContext('2d');ex.imageSmoothingEnabled=true;ex.imageSmoothingQuality='high';ex.drawImage(cv,sx,sy,sw,sh,0,0,sw,sh);
+  }
+  var bl=await new Promise(function(resolve,reject){exportCanvas.toBlob(function(b){if(b)resolve(b);else reject(new Error('Browser gagal membuat file gambar.'))},mime,quality)});
   return bl;
  }finally{
   ai=cur;pA=sp[0];pD=sp[1];pProtect=sp[2];pProtectErase=sp[3];skinModel=sp[4];cmp=sc;lim=oldLim;
@@ -1250,7 +1277,7 @@ $('save').onclick=async function(){
 })();
 </script>
 <div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V30</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
+<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V32</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
