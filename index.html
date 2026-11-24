@@ -1,9 +1,17 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Penyempurna Foto — Studio V23 Ultra Realism Prompt</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#0f766e"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Penyempurna"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
+<title>Penyempurna Foto — Studio V29</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -49,6 +57,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @keyframes floatOrb{
   0%{transform:translate(0,0) scale(1)}
   100%{transform:translate(35px,25px) scale(1.12)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
 /* Top Navbar */
@@ -484,140 +495,268 @@ textarea.pg-in{min-height:250px;padding:12px;font:12.5px/1.55 ui-monospace,Menlo
 .pg-auto-btn{width:100%;min-height:48px;margin:12px 0 5px;font-weight:750;letter-spacing:.01em}
 .pg-auto-hint{display:block;color:var(--mute);font-size:12px;line-height:1.45;margin:0 0 8px}
 .pg-smart-status.done{border-color:var(--acc);background:var(--soft)}
+
+/* V24 Complete */
+.v24-workflow{margin-top:12px;padding:13px 15px}
+.v24-workflow h2{margin-top:2px}
+.v24-help{font-size:11.5px;color:var(--mute);line-height:1.5;margin:6px 0 9px}
+.v24-actions{display:flex;gap:7px;flex-wrap:wrap}
+.v24-actions .mini{flex:1;min-width:92px;margin:0;padding:9px 10px}
+.v24-actions button:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.v24-status{font-size:11.5px;color:var(--acc);padding:8px 10px;border-radius:10px;background:var(--soft);margin:9px 0}
+.v24-preset-wrap{padding:11px 12px;margin:10px 0 12px;border:1px solid var(--lg-edge);border-radius:14px;background:var(--lg-b)}
+.v24-preset-wrap strong{font-size:12px;display:block;margin-bottom:7px;color:var(--ink)}
+.v24-preset-grid{display:flex;flex-wrap:wrap;gap:6px}
+.v24-preset-grid .chip{margin:0}
+.v24-preset-wrap small{display:block;color:var(--mute);font-size:10.5px;margin-top:7px;line-height:1.45}
 </style>
+<!-- V25 Stability patch: export scope, export rollback, project theme/history restore. -->
+
+<style id="simple-ui-overrides">
+/* Tampilan sederhana: fitur dan ID kontrol asli tetap dipertahankan. */
+.simple-guide{margin:0 0 12px;padding:12px 14px;border:1px solid var(--lg-edge);border-radius:15px;background:var(--lg-b);font-size:13px;line-height:1.5;color:var(--ink)}
+.simple-guide strong{display:block;margin-bottom:3px;color:var(--acc);font-size:13px}
+.simple-guide p{margin:0;color:var(--mute)}
+.simple-details{margin:10px 0;padding:0 12px 10px;border:1px solid var(--lg-edge);border-radius:14px;background:var(--lg-b)}
+.simple-details>summary{padding:12px 2px;cursor:pointer;font-size:13px;font-weight:700;color:var(--acc);list-style:none}
+.simple-details>summary::-webkit-details-marker{display:none}
+.simple-details>summary:after{content:"＋";float:right}
+.simple-details[open]>summary:after{content:"−"}
+.simple-details .row:first-child{border-top:1px solid var(--line)}
+.simple-details .ctl{margin:0;padding-left:4px;padding-right:4px;box-shadow:none;background:transparent;border:0}
+.simple-details .note{margin-top:8px}
+#v24Workflow.simple-project{margin-top:12px}
+#v24Workflow.simple-project>summary{list-style:none;cursor:pointer;font-weight:700;color:var(--acc);padding:12px 2px}
+#v24Workflow.simple-project>summary::-webkit-details-marker{display:none}
+#v24Workflow.simple-project>summary:after{content:"＋";float:right}
+#v24Workflow.simple-project[open]>summary:after{content:"−"}
+.simple-export-more{width:100%;margin:0 0 4px}
+.simple-export-more summary{font-size:11px;color:var(--mute);cursor:pointer;text-align:center;padding:5px}
+.simple-export-more .export-size{margin-top:5px}
+@media(max-width:560px){
+ .tabs button span{font-size:10.5px}
+ .studio-intro{display:none}
+ .bar .export-size{min-width:100px}
+}
+
+/* V27 · preset cepat dan label perbandingan */
+.v27-quick{margin:10px 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel,rgba(128,128,128,.06))}
+.v27-quick-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.v27-quick-head strong{font-size:13px;color:var(--ink)}
+.v27-quick-head small{font-size:10px;color:var(--mute)}
+.v27-quick-list{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 5px;scrollbar-width:thin}
+.v27-quick-list button{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);padding:8px 12px;font:600 11px inherit;cursor:pointer}
+.v27-quick-list button[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,var(--card));color:var(--acc)}
+.v27-quick-note{display:block;margin-top:5px;color:var(--mute);font-size:10px;line-height:1.45}
+@media(max-width:560px){.v27-quick{padding:10px}.v27-quick-list button{padding:8px 10px}}
+</style>
+
+
+<style id="v28-visual-refresh">
+/* V28 visual refresh: presentation and motion only; original controls/IDs remain intact. */
+:root{--spring:cubic-bezier(.2,.85,.25,1)}
+body{
+ background:
+  radial-gradient(ellipse at 8% 0%,rgba(20,184,166,.12),transparent 36%),
+  radial-gradient(ellipse at 96% 38%,rgba(59,130,246,.07),transparent 32%),
+  var(--bg);
+ background-attachment:fixed;
+}
+.topbar{background:color-mix(in srgb,var(--bg-elev) 78%,transparent);box-shadow:0 5px 24px rgba(0,0,0,.035)}
+.topbar-in{padding-top:13px;padding-bottom:13px}
+.logo{width:40px;height:40px;border-radius:13px;box-shadow:0 7px 20px var(--soft);animation:brandGlow 5s ease-in-out infinite}
+@keyframes brandGlow{0%,100%{box-shadow:0 5px 16px var(--soft)}50%{box-shadow:0 7px 26px color-mix(in srgb,var(--acc) 30%,transparent)}}
+h1{letter-spacing:-.035em}
+.workspace{gap:19px;padding-top:18px}
+.stage{border-radius:24px;padding:14px;box-shadow:0 16px 42px rgba(0,0,0,.075);border-color:color-mix(in srgb,var(--line) 75%,var(--acc) 10%)}
+.canvas-box{border-radius:17px;transition:box-shadow .35s var(--spring),border-radius .35s var(--spring)}
+.stage.has-img .canvas-box{box-shadow:0 12px 32px rgba(0,0,0,.12)}
+.controls-col{animation:softEnter .65s var(--spring) both}
+@keyframes softEnter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+.tabs{border-radius:17px;padding:5px;box-shadow:0 10px 28px rgba(0,0,0,.055)}
+.tab-pill{border-radius:13px;box-shadow:0 6px 18px var(--soft)}
+.tabs button{min-height:57px;border-radius:13px;transition:color .25s var(--spring),transform .25s var(--spring),background .25s}
+.tabs button:hover{transform:translateY(-2px)}
+.tabs button[aria-selected="true"] svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,.12))}
+.ctl,.drop,.studio-intro,.note,.simple-guide,.v27-quick{border-radius:19px;box-shadow:0 9px 28px rgba(0,0,0,.045);transition:transform .28s var(--spring),border-color .28s,box-shadow .28s}
+.ctl{padding:9px 17px 13px;border-color:color-mix(in srgb,var(--line) 82%,var(--acc) 8%)}
+.ctl h2{font-size:11px;letter-spacing:.09em}
+.row{transition:background .2s,border-color .2s}
+.row input[type="range"]{height:7px}
+.row input[type="range"]::-webkit-slider-thumb{width:20px;height:20px;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+button,.mini,.chip,.theme-btn,.drop,summary{ -webkit-tap-highlight-color:transparent }
+.mini,.chip,.theme-btn,.bar button,.v27-quick-list button{transition:transform .22s var(--spring),box-shadow .22s var(--spring),background .22s,border-color .22s}
+.mini:hover,.chip:hover,.theme-btn:hover,.bar button:hover,.v27-quick-list button:hover{transform:translateY(-2px);box-shadow:0 7px 18px var(--soft)}
+.mini:active,.chip:active,.theme-btn:active,.bar button:active,.v27-quick-list button:active{transform:scale(.96)}
+.bar{background:color-mix(in srgb,var(--bg-elev) 82%,transparent);box-shadow:0 -8px 30px rgba(0,0,0,.055);border-top-color:color-mix(in srgb,var(--line) 75%,var(--acc) 12%)}
+.bar button{min-height:45px;border-radius:14px}
+.bar .pri{box-shadow:0 8px 22px var(--soft)}
+.bar .pri:not(:disabled){background:linear-gradient(115deg,var(--acc),var(--acc-hi),var(--acc));background-size:180% 100%;animation:buttonShine 7s ease-in-out infinite}
+@keyframes buttonShine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.simple-guide{padding:14px 16px;background:linear-gradient(135deg,var(--soft),var(--bg-elev));border:1px solid var(--line)}
+.v27-quick{padding:14px 15px;background:var(--bg-elev);border:1px solid var(--line)}
+.v27-quick-list button{border-radius:999px;padding:9px 13px}
+.v27-quick-list button[aria-pressed="true"]{box-shadow:0 5px 16px var(--soft);transform:translateY(-1px)}
+.simple-details,.simple-project,.simple-export-more{border:1px solid var(--line);border-radius:14px;padding:10px 13px;background:color-mix(in srgb,var(--bg-elev) 85%,var(--soft));transition:border-color .2s,background .2s}
+.simple-details[open],.simple-project[open],.simple-export-more[open]{border-color:color-mix(in srgb,var(--acc) 42%,var(--line));animation:detailOpen .25s var(--spring)}
+@keyframes detailOpen{from{opacity:.75;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+summary{cursor:pointer;font-weight:650;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';color:var(--acc);font-size:19px;font-weight:500;transition:transform .2s}
+details[open]>summary::after{content:'−';transform:rotate(180deg)}
+#autoinfo{border-radius:14px}
+:focus-visible{outline-offset:3px}
+@media(min-width:860px){.workspace{gap:24px}.stage{top:82px}.bar{backdrop-filter:blur(20px)}}
+@media(max-width:520px){.workspace{padding:12px 11px 112px;gap:13px}.stage{padding:9px;border-radius:20px}.tabs{margin-bottom:12px}.tabs button{min-height:54px}.ctl{padding-left:14px;padding-right:14px}.bar{padding-left:10px;padding-right:10px}.bar button{font-size:12.5px;min-height:44px}}
+@media(prefers-reduced-motion:reduce){.logo,.bar .pri:not(:disabled){animation:none!important}.controls-col{animation:none!important}}
+</style>
+
 </head>
 <body>
-<div class="ambient" aria-hidden="true"></div>
-
+<div aria-hidden="true" class="ambient"></div>
 <header class="topbar">
-  <div class="topbar-in">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 16.5v4M16.5 18.5h4"/></svg>
-      </div>
-      <div>
-        <h1>Penyempurna Foto</h1>
-        <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
-      </div>
-    </div>
-    <div class="tb-actions"><button class="theme-btn pgbtn" id="pgBtn" aria-label="Buka pembuat prompt" title="Pembuat prompt">✨ Prompt</button>
-    <button class="theme-btn" id="themeBtn" aria-label="Ganti tema gelap atau terang" title="Ganti tema">
-      <svg id="themeIco" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button></div>
-  </div>
+<div class="topbar-in">
+<div class="brand">
+<div aria-hidden="true" class="logo">
+<svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
+</div>
+<div>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V27</span></h1>
+<p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
+</div>
+</div>
+<div class="tb-actions"><button aria-label="Buka pembuat prompt" class="theme-btn pgbtn" id="pgBtn" title="Pembuat prompt">✨ Prompt</button>
+<button aria-label="Ganti tema gelap atau terang" class="theme-btn" id="themeBtn" title="Ganti tema">
+<svg id="themeIco" viewbox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+</button></div>
+</div>
 </header>
-
 <main class="workspace">
-  <div class="stage-col">
-    <div class="stage" id="stage">
-      <div class="canvas-box">
-        <div class="empty" id="empty">
-          <div class="empty-ico">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          </div>
-          <span>Mulai dari tab <b>Foto AI</b>, lalu tab <b>Foto asli</b>, kemudian tekan <b>Otomatis</b>.</span>
-        </div>
-        <div class="wrap"><canvas id="cv" width="0" height="0" hidden></canvas><canvas id="ov" hidden></canvas></div>
-      </div>
-      <p class="status-bar"><span class="status-dot"></span><span id="hint" hidden>Tahan gambar untuk melihat versi sebelum.</span></p>
-      <div class="sbtn"><button class="mini" id="cmp" aria-pressed="false" hidden>Bandingkan</button><button class="mini" id="sz" aria-pressed="false" hidden>Kecilkan</button><button class="mini" id="hand" aria-pressed="false" hidden>Geser</button><button class="mini" id="zr" hidden>Zoom 1×</button></div>
-    </div>
-  </div>
+<div class="stage-col">
+<div class="stage" id="stage">
+<div class="canvas-box">
+<div class="empty" id="empty">
+<div class="empty-ico">
+<svg viewbox="0 0 24 24"><rect height="18" rx="3" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+</div>
+<span>Mulai dari tab <b>Foto AI</b>, lalu tab <b>Foto asli</b>, kemudian tekan <b>Otomatis</b>.</span>
+</div>
+<div class="wrap"><canvas height="0" hidden="" id="cv" width="0"></canvas><canvas hidden="" id="ov"></canvas></div>
+</div>
+<p class="status-bar"><span class="status-dot"></span><span hidden="" id="hint">Tahan gambar untuk melihat versi sebelum.</span></p>
+<div class="sbtn"><button aria-pressed="false" class="mini" hidden="" id="cmp">Bandingkan</button><button aria-pressed="false" class="mini" hidden="" id="sz">Kecilkan</button><button aria-pressed="false" class="mini" hidden="" id="hand">Geser</button><button class="mini" hidden="" id="zr">Zoom 1×</button></div>
+</div>
+<div class="v24-workflow ctl" id="v24Workflow">
+<h2>V26 Performance · Workspace &amp; Project</h2>
+<p class="v24-help">Simpan seluruh pengaturan dan foto sumber sebagai file proyek agar bisa dilanjutkan nanti. Riwayat perubahan pengaturan mendukung undo dan redo.</p>
+<div class="v24-actions">
+<button class="mini" disabled="" id="v24Undo" type="button">↶ Undo</button>
+<button class="mini" disabled="" id="v24Redo" type="button">↷ Redo</button>
+<button class="mini" id="v24SaveProject" type="button">Simpan proyek</button>
+<button class="mini" id="v24LoadProject" type="button">Buka proyek</button>
+<input accept=".json,application/json" hidden="" id="v24ProjectFile" type="file"/>
+</div>
+<div aria-live="polite" class="v24-status" id="v24Status" role="status">V24 siap. Perbandingan sebelum/sesudah tersedia melalui tombol Bandingkan di atas.</div>
+<div class="v24-help">Project menyertakan foto AI, foto asli/referensi, pengaturan editor, prompt builder, preset, dan tema. Riwayat undo/redo tidak dimasukkan ke file proyek.</div>
+</div>
 
-  <div class="controls-col">
-    <div class="tabs" role="tablist">
-      <div class="tab-pill" id="tabPill"></div>
-      <button role="tab" id="t1" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 16.5v4M16.5 18.5h4"/></svg><span>Foto AI</span></button>
-      <button role="tab" id="t2" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>Foto asli</span></button>
-      <button role="tab" id="t3" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></svg><span>Kulit</span></button>
-      <button role="tab" id="t4" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg><span>Efek</span></button>
-      <button role="tab" id="t5" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Lindungi</span></button>
-    </div>
-
-    <div class="studio-intro">
-      <div><span class="eyebrow">WORKSPACE • V20 SMART PROMPT</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
-      <span class="local-pill"><i></i> Proses lokal</span>
-    </div>
-    <p class="note" id="autoinfo" hidden></p>
-
-    <section id="p1">
-      <label class="drop" id="d1"><input type="file" accept="image/*" id="f1" multiple><b class="plus">+</b><img class="th" alt="" hidden><span><strong>Foto hasil AI</strong><small>Ketuk untuk memilih satu atau beberapa foto</small></span></label>
-      <p class="note" id="qinfo" hidden></p>
-    </section>
-
-    <section id="p2" hidden>
-      <label class="drop" id="d2"><input type="file" accept="image/*" id="f2"><b class="plus">+</b><img class="th" alt="" hidden><span><strong>Foto asli</strong><small>Sumber kulit, pori, rambut, dan warna</small></span></label>
-      <p class="note" id="info" style="margin:0 0 12px">Pakai foto asli yang tajam dan kulitnya terlihat jelas, idealnya close-up.</p>
-      <div class="ctl" id="ctl" hidden>
-        <h2>Warna</h2>
-        <div class="row"><label for="tone">Warna kulit <output></output></label><input type="range" id="tone" min="0" max="100" value="80"><small>Warna kulit mengikuti foto asli.</small></div>
-        <div class="row"><label for="glob">Coloring keseluruhan <output></output></label><input type="range" id="glob" min="0" max="100" value="60"><small>Nuansa warna dan kontras mengikuti foto asli.</small></div>
-        <h2>Tekstur</h2>
-        <div class="row"><label for="sk">Tekstur kulit dan pori <output></output></label><input type="range" id="sk" min="0" max="200" value="100"><small>Kekuatan butiran kulit sama seperti yang terbaca di foto asli.</small></div>
-        <div class="row"><label for="hr">Tekstur rambut dan kain <output></output></label><input type="range" id="hr" min="0" max="200" value="100"><small>Butiran rambut dan kain, diukur dari area non-kulit foto asli.</small></div>
-        <div class="row"><label for="sharp">Ketajaman detail <output></output></label><input type="range" id="sharp" min="0" max="100" value="20"><small>Mempertajam detail bawaan foto AI agar tidak terlihat licin.</small></div>
-        <div class="row"><label for="detail">Pemulihan mikro-detail <output></output></label><input type="range" id="detail" min="0" max="100" value="18"><small>Menonjolkan detail halus yang memang sudah ada. Tidak menciptakan detail baru.</small></div>
-        <div class="row"><label for="scale">Skala tekstur <output></output></label><input type="range" id="scale" min="50" max="200" value="100"><small>Naikkan jika butiran terlalu halus, turunkan jika terlalu kasar.</small></div>
-      </div>
-      <div class="ctl"><h2>Preset</h2>
-        <div class="prow"><input id="pname" type="text" placeholder="Nama preset baru..." maxlength="24" aria-label="Nama preset"><button id="psave" class="mini">Simpan</button></div>
-        <div class="chips" id="chips"></div>
-      </div>
-      <p class="note">Algoritma membaca butiran dari beberapa area foto asli, memisahkan skala detail halus dan sedang, lalu menerapkannya secara adaptif pada foto AI. Pemulihan mikro-detail hanya memperkuat kontras lokal yang tersedia—bukan generasi detail AI. Mulai dari nilai sedang dan cek hasilnya dengan tahan gambar.</p>
-    </section>
-
-    <section id="p3" hidden>
-      <div class="seg"><button id="bm0" aria-pressed="true">Tambah kulit</button><button id="bm1" aria-pressed="false">Hapus kulit</button></div>
-      <div class="ctl"><div class="row"><label for="bsz">Ukuran kuas <output id="bszo">40</output></label><input type="range" id="bsz" min="10" max="120" value="40"></div></div>
-      <div class="act2"><button class="mini" id="shsk">Sembunyikan warna area</button><button class="mini" id="clrp">Hapus coretan</button></div>
-      <p class="note">Warna hijau menandai area yang diberi tekstur kulit. Deteksi awal berbasis warna hanyalah perkiraan. Tekan <b>Deteksi fitur wajah otomatis</b> di tab Lindungi agar kulit wajah terisi otomatis mengikuti bentuk wajah. Cubit dua jari pada foto untuk zoom. Gunakan <b>Hapus kulit</b> pada mata, alis, bibir, gigi, rambut, dan aksesori agar tekstur kulit tidak diterapkan di sana.</p>
-    </section>
-
-    <section id="p4" hidden>
-      <div class="ctl">
-        <h2>Gaya film</h2>
-        <div class="row"><label for="fst">Gaya warna</label><select id="fst"><option value="0">Tanpa</option><option value="1">Hangat</option><option value="2">Sinematik</option><option value="3">Pudar lembut</option><option value="4">Hitam putih</option></select><small>Meniru warna dan kontras kamera film.</small></div>
-        <div class="row"><label for="flm">Kekuatan gaya <output></output></label><input type="range" id="flm" min="0" max="100" value="60"><small>Seberapa kuat gaya dicampur ke foto. Geser ke 0 untuk mematikan.</small></div>
-        <h2>Lensa</h2>
-        <div class="row"><label for="vig">Vignette tepi <output></output></label><input type="range" id="vig" min="0" max="100" value="25"><small>Pinggir foto sedikit lebih gelap, seperti lensa asli.</small></div>
-        <div class="row"><label for="cab">Aberasi warna <output></output></label><input type="range" id="cab" min="0" max="100" value="20"><small>Tepi benda di sudut foto sedikit berpendar merah dan biru.</small></div>
-        <div class="row"><label for="edg">Tepi kurang tajam <output></output></label><input type="range" id="edg" min="0" max="100" value="15"><small>Sudut foto sedikit kurang fokus.</small></div>
-        <div class="row"><label for="blm">Cahaya menyebar <output></output></label><input type="range" id="blm" min="0" max="100" value="15"><small>Area terang memancarkan cahaya lembut.</small></div>
-      </div>
-      <p class="note">Gaya film dan efek lensa dipakai paling akhir, setelah warna dan tekstur. Cek hasilnya dengan tahan gambar.</p>
-    </section>
-
-    <section id="p5" hidden>
-      <div class="ctl">
-        <h2>Perlindungan fitur wajah</h2>
-        <button class="pri" id="autoFace" type="button">✦ Deteksi fitur wajah otomatis</button>
-        <p class="note" id="faceStatus" aria-live="polite">Deteksi otomatis membantu menandai area mata, alis, hidung, dan bibir. Koneksi internet diperlukan saat pertama kali memuat model.</p>
-        <div class="seg"><button id="bp0" aria-pressed="true">Lindungi area</button><button id="bp1" aria-pressed="false">Hapus perlindungan</button></div>
-        <div class="row"><label for="bps">Ukuran kuas perlindungan <output id="bpso">34</output></label><input type="range" id="bps" min="8" max="140" value="34"><small>Warnai bagian yang tidak boleh menerima sintesis tekstur atau penajaman tambahan.</small></div>
-        <div class="act2"><button class="mini" id="shpr">Sembunyikan area perlindungan</button><button class="mini" id="clpr">Hapus semua perlindungan</button></div>
-      </div>
-      <p class="note"><b>Area biru = dilindungi.</b> Sapukan kuas pada mata, alis, bibir, gigi, lubang hidung, rambut, dan aksesori. Area ini akan dikecualikan dari tekstur sintetis serta pemulihan mikro-detail. Deteksi otomatis menandai mata, alis, hidung, dan bibir; periksa hasilnya lalu koreksi dengan kuas manual.</p>
-      <p class="note">Tips: cubit dua jari untuk zoom dan geser dua jari untuk menggeser foto. Atau nyalakan tombol <b>Geser</b> di bawah foto agar satu jari bisa menggeser. Setelah selesai, kembali ke tab Kulit untuk mengatur area tekstur hijau.</p>
-    </section>
-
-    <div class="bar"><div class="export-row">
-      <label class="export-size" for="upscale">Resolusi ekspor
+</div>
+<div class="controls-col">
+<div class="tabs" role="tablist">
+<div class="tab-pill" id="tabPill"></div>
+<button aria-selected="true" id="t1" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg><span>Foto AI</span></button>
+<button aria-selected="false" id="t2" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg><span>Foto asli</span></button>
+<button aria-selected="false" id="t3" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"></path><path d="M14 7l3 3"></path></svg><span>Kulit</span></button>
+<button aria-selected="false" id="t4" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M5 8h14M5 16h14"></path><circle cx="9" cy="8" r="2.2"></circle><circle cx="15" cy="16" r="2.2"></circle></svg><span>Efek</span></button>
+<button aria-selected="false" id="t5" role="tab"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg><span>Lindungi</span></button>
+</div>
+<div class="studio-intro">
+<div><span class="eyebrow">WORKSPACE • V20 SMART PROMPT</span><strong>Restorasi natural dengan bantuan deteksi wajah.</strong><small>Deteksi fitur wajah untuk membantu melindungi mata, alis, hidung, dan bibir.</small></div>
+<span class="local-pill"><i></i> Proses lokal</span>
+</div>
+<p class="note" hidden="" id="autoinfo"></p>
+<section id="p1">
+<label class="drop" id="d1"><input accept="image/*" id="f1" multiple="" type="file"/><b class="plus">+</b><img alt="" class="th" hidden=""/><span><strong>Foto hasil AI</strong><small>Ketuk untuk memilih satu atau beberapa foto</small></span></label>
+<p class="note" hidden="" id="qinfo"></p>
+</section>
+<section hidden="" id="p2">
+<label class="drop" id="d2"><input accept="image/*" id="f2" type="file"/><b class="plus">+</b><img alt="" class="th" hidden=""/><span><strong>Foto asli</strong><small>Sumber kulit, pori, rambut, dan warna</small></span></label>
+<p class="note" id="info" style="margin:0 0 12px">Pakai foto asli yang tajam dan kulitnya terlihat jelas, idealnya close-up.</p>
+<div class="ctl" hidden="" id="ctl">
+<h2>Warna</h2>
+<div class="row"><label for="tone">Warna kulit <output></output></label><input id="tone" max="100" min="0" type="range" value="80"/><small>Warna kulit mengikuti foto asli.</small></div>
+<div class="row"><label for="glob">Coloring keseluruhan <output></output></label><input id="glob" max="100" min="0" type="range" value="60"/><small>Nuansa warna dan kontras mengikuti foto asli.</small></div>
+<h2>Tekstur</h2>
+<div class="row"><label for="sk">Tekstur kulit dan pori <output></output></label><input id="sk" max="200" min="0" type="range" value="100"/><small>Kekuatan butiran kulit sama seperti yang terbaca di foto asli.</small></div>
+<div class="row"><label for="hr">Tekstur rambut dan kain <output></output></label><input id="hr" max="200" min="0" type="range" value="100"/><small>Butiran rambut dan kain, diukur dari area non-kulit foto asli.</small></div>
+<div class="row"><label for="sharp">Ketajaman detail <output></output></label><input id="sharp" max="100" min="0" type="range" value="20"/><small>Mempertajam detail bawaan foto AI agar tidak terlihat licin.</small></div>
+<div class="row"><label for="detail">Pemulihan mikro-detail <output></output></label><input id="detail" max="100" min="0" type="range" value="18"/><small>Menonjolkan detail halus yang memang sudah ada. Tidak menciptakan detail baru.</small></div>
+<div class="row"><label for="scale">Skala tekstur <output></output></label><input id="scale" max="200" min="50" type="range" value="100"/><small>Naikkan jika butiran terlalu halus, turunkan jika terlalu kasar.</small></div>
+</div>
+<div class="ctl"><h2>Preset</h2>
+<div class="prow"><input aria-label="Nama preset" id="pname" maxlength="24" placeholder="Nama preset baru..." type="text"/><button class="mini" id="psave">Simpan</button></div>
+<div class="chips" id="chips"></div>
+</div>
+<p class="note">Algoritma membaca butiran dari beberapa area foto asli, memisahkan skala detail halus dan sedang, lalu menerapkannya secara adaptif pada foto AI. Pemulihan mikro-detail hanya memperkuat kontras lokal yang tersedia—bukan generasi detail AI. Mulai dari nilai sedang dan cek hasilnya dengan tahan gambar.</p>
+</section>
+<section hidden="" id="p3">
+<div class="seg"><button aria-pressed="true" id="bm0">Tambah kulit</button><button aria-pressed="false" id="bm1">Hapus kulit</button></div>
+<div class="ctl"><div class="row"><label for="bsz">Ukuran kuas <output id="bszo">40</output></label><input id="bsz" max="120" min="10" type="range" value="40"/></div></div>
+<div class="act2"><button class="mini" id="shsk">Sembunyikan warna area</button><button class="mini" id="clrp">Hapus coretan</button></div>
+<p class="note">Warna hijau menandai area yang diberi tekstur kulit. Deteksi awal berbasis warna hanyalah perkiraan. Tekan <b>Deteksi fitur wajah otomatis</b> di tab Lindungi agar kulit wajah terisi otomatis mengikuti bentuk wajah. Cubit dua jari pada foto untuk zoom. Gunakan <b>Hapus kulit</b> pada mata, alis, bibir, gigi, rambut, dan aksesori agar tekstur kulit tidak diterapkan di sana.</p>
+</section>
+<section hidden="" id="p4">
+<div class="ctl">
+<h2>Gaya film</h2>
+<div class="row"><label for="fst">Gaya warna</label><select id="fst"><option value="0">Tanpa</option><option value="1">Hangat</option><option value="2">Sinematik</option><option value="3">Pudar lembut</option><option value="4">Hitam putih</option></select><small>Meniru warna dan kontras kamera film.</small></div>
+<div class="row"><label for="flm">Kekuatan gaya <output></output></label><input id="flm" max="100" min="0" type="range" value="60"/><small>Seberapa kuat gaya dicampur ke foto. Geser ke 0 untuk mematikan.</small></div>
+<h2>Lensa</h2>
+<div class="row"><label for="vig">Vignette tepi <output></output></label><input id="vig" max="100" min="0" type="range" value="25"/><small>Pinggir foto sedikit lebih gelap, seperti lensa asli.</small></div>
+<div class="row"><label for="cab">Aberasi warna <output></output></label><input id="cab" max="100" min="0" type="range" value="20"/><small>Tepi benda di sudut foto sedikit berpendar merah dan biru.</small></div>
+<div class="row"><label for="edg">Tepi kurang tajam <output></output></label><input id="edg" max="100" min="0" type="range" value="15"/><small>Sudut foto sedikit kurang fokus.</small></div>
+<div class="row"><label for="blm">Cahaya menyebar <output></output></label><input id="blm" max="100" min="0" type="range" value="15"/><small>Area terang memancarkan cahaya lembut.</small></div>
+</div>
+<p class="note">Gaya film dan efek lensa dipakai paling akhir, setelah warna dan tekstur. Cek hasilnya dengan tahan gambar.</p>
+</section>
+<section hidden="" id="p5">
+<div class="ctl">
+<h2>Perlindungan fitur wajah</h2>
+<button class="pri" id="autoFace" type="button">✦ Deteksi fitur wajah otomatis</button>
+<p aria-live="polite" class="note" id="faceStatus">Deteksi otomatis membantu menandai area mata, alis, hidung, dan bibir. Koneksi internet diperlukan saat pertama kali memuat model.</p>
+<div class="seg"><button aria-pressed="true" id="bp0">Lindungi area</button><button aria-pressed="false" id="bp1">Hapus perlindungan</button></div>
+<div class="row"><label for="bps">Ukuran kuas perlindungan <output id="bpso">34</output></label><input id="bps" max="140" min="8" type="range" value="34"/><small>Warnai bagian yang tidak boleh menerima sintesis tekstur atau penajaman tambahan.</small></div>
+<div class="act2"><button class="mini" id="shpr">Sembunyikan area perlindungan</button><button class="mini" id="clpr">Hapus semua perlindungan</button></div>
+</div>
+<p class="note"><b>Area biru = dilindungi.</b> Sapukan kuas pada mata, alis, bibir, gigi, lubang hidung, rambut, dan aksesori. Area ini akan dikecualikan dari tekstur sintetis serta pemulihan mikro-detail. Deteksi otomatis menandai mata, alis, hidung, dan bibir; periksa hasilnya lalu koreksi dengan kuas manual.</p>
+<p class="note">Tips: cubit dua jari untuk zoom dan geser dua jari untuk menggeser foto. Atau nyalakan tombol <b>Geser</b> di bawah foto agar satu jari bisa menggeser. Setelah selesai, kembali ke tab Kulit untuk mengatur area tekstur hijau.</p>
+</section>
+<div class="bar"><div class="export-row">
+<label class="export-size" for="upscale">Resolusi ekspor
         <select id="upscale"><option value="1">1× • ukuran asli</option><option value="2">2× • diperbesar</option><option value="4">4× • diperbesar</option></select>
-      </label>
-      <button id="reset">Atur ulang</button>
-      <button id="auto">✨ Otomatis</button>
-      <button class="pri" id="save">Simpan PNG</button>
-    </div></div>
-  </div>
-</main>
+</label>
+<label class="export-size">FORMAT
+ <select id="v24Format"><option value="image/png">PNG · kualitas penuh</option><option value="image/jpeg">JPG · ukuran lebih kecil</option></select>
+</label>
+<label class="export-size">KUALITAS JPG
+ <select id="v24JpegQuality"><option value="0.92">92% · tinggi</option><option selected="" value="0.85">85% · seimbang</option><option value="0.75">75% · lebih kecil</option></select>
+</label>
 
+<button id="reset">Atur ulang</button>
+<button id="auto">✨ Otomatis</button>
+<button class="pri" id="save">Simpan PNG</button>
+</div></div>
+</div>
+</main>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
 var MAX=1100,P=48,lim=1100,FULL=2200;
+// V26: cap high-resolution exports according to browser-reported device memory.
+var DEVICE_RAM=Number(navigator.deviceMemory)||0;
+var EXPORT_PIXEL_BUDGET=DEVICE_RAM>0&&DEVICE_RAM<=6?12000000:18000000;
 var ov=$('ov'),cv=$('cv'),ctx=cv.getContext('2d',{willReadFrequently:true});
 var ai=null,real=null,base=null,bf=null,bmicro=null,mk=null,mk0=null,pA=null,pD=null,pProtect=null,pProtectErase=null,protect=null,after=null,dirty=true,cmp=false,split=.5,dr=false,queue=[],brush='add',showSk=true,showProtect=true,tab3=false,tab5=false,protectBrush="add",texS=null,texH=null,texO=null,stA=null,stR=null,colA=null,colKey='',before=false,pend=false;
-var ids=['tone','glob','sk','hr','sharp','detail','scale','vig','cab','edg','blm','fst','flm'],defs={};
+var ids=['tone','glob','sk','hr','sharp','detail','scale','vig','cab','edg','blm','fst','flm'],defs={},renderTimer=null;
 ids.forEach(function(k){defs[k]=$(k).value});
 
 /* Theme Toggle */
@@ -699,7 +838,9 @@ function prepAI(){
 }
 
 /* ukur butiran foto asli, lalu buat butiran serupa tanpa menyalin bentuk */
-function gauss(){return(Math.random()+Math.random()+Math.random()+Math.random()-2)*1.73}
+var rngS=1;function seedRng(s){rngS=s>>>0}
+function rnd(){rngS=(rngS+0x6D2B79F5)>>>0;var t=rngS;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}
+function gauss(){return(rnd()+rnd()+rnd()+rnd()-2)*1.73}
 function box(a,w,h,r){var t=new Float32Array(w*h),o=new Float32Array(w*h),x,y,k,s,c=2*r+1,e;
  for(y=0;y<h;y++){var row=y*w;for(x=0;x<w;x++){s=0;for(k=-r;k<=r;k++){e=x+k;e=e<0?0:e>=w?w-1:e;s+=a[row+e]}t[row+x]=s/c}}
  for(x=0;x<w;x++)for(y=0;y<h;y++){s=0;for(k=-r;k<=r;k++){e=y+k;e=e<0?0:e>=h?h-1:e;s+=t[e*w+x]}o[y*w+x]=s/c}
@@ -709,7 +850,7 @@ function buildTex(){
  texS=texH=texO=null;RC=null;if(!real||!base)return;
  var sc=$('scale').value/100,fz=fk(base.width,base.height),r1=Math.max(1,Math.round(sc*1.2*fz)),r2=r1*3;
  var s=Math.min(1,2000/Math.max(real.width,real.height)),w=Math.max(1,Math.round(real.width*s)),h=Math.max(1,Math.round(real.height*s));
- var c=off(w,h),x=c.getContext('2d',{willReadFrequently:true});x.drawImage(real,0,0,w,h);
+ var c=off(w,h),x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(real,0,0,w,h);
  var d=x.getImageData(0,0,w,h).data,n=w*h,L=new Float32Array(n),sk=new Uint8Array(n),i,j;
  for(i=0;i<n;i++){j=i*4;L[i]=lum(d[j],d[j+1],d[j+2]);sk[i]=isSkin(d[j],d[j+1],d[j+2])?1:0}
  var b1=box(L,w,h,r1),b2=box(L,w,h,r2),Q=[],tile=Math.max(8,Math.min(P,Math.floor(Math.min(w,h)/3))),y,x0,yy,xx,ix,fr,ml,sa,sb,e1,e2,area;
@@ -722,7 +863,7 @@ function buildTex(){
  /* Sampel kulit dibuat lebih toleran agar foto close-up tidak gagal hanya karena bayangan/warna. */
  var cS=cls(function(q){return q.f>=.62&&q.m>28&&q.m<238}),cH=cls(function(q){return q.f<=.08&&q.m<105}),cO=cls(function(q){return q.f<=.08&&q.m>=105});
  if(!cH)cH=cO;if(!cO)cO=cH;RC={S:cS,H:cH,O:cO};
- var W=base.width,H=base.height,N=new Float32Array(W*H);for(i=0;i<N.length;i++)N[i]=gauss();
+ var W=base.width,H=base.height,N=new Float32Array(W*H);seedRng(20260101);for(i=0;i<N.length;i++)N[i]=gauss();
  var n1=box(N,W,H,r1),n2=box(N,W,H,r2),NA=new Float32Array(W*H),NB=new Float32Array(W*H);
  for(i=0;i<N.length;i++){NA[i]=N[i]-n1[i];NB[i]=n1[i]-n2[i]}
  var da=sd(NA),db=sd(NB);
@@ -783,8 +924,13 @@ function run(){
  grade(out);lens(out);after=out;dirty=false;if(cmp)paintCmp();else ctx.putImageData(out,0,0)
 }
 function draw(){if(!base)return;if(before)ctx.putImageData(base,0,0);else run()}
-function render(){if(!base)return;dirty=true;if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;draw()})}
+function render(){
+ if(!base)return;dirty=true;
+ if(renderTimer)clearTimeout(renderTimer);
+ renderTimer=setTimeout(function(){renderTimer=null;if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;draw()})},38);
+}
 function busy(msg,fn){
+  if(renderTimer){clearTimeout(renderTimer);renderTimer=null;}
   dirty=true;$('stage').classList.add('busy');$('hint').textContent=msg;
   requestAnimationFrame(function(){setTimeout(function(){
     try{fn()}catch(e){$('stage').classList.remove('busy');$('hint').textContent='Terjadi error: '+e.message;return}
@@ -958,7 +1104,11 @@ $('hand').onclick=function(){hand=!hand;this.setAttribute('aria-pressed',hand);b
 
 /* perbandingan geser */
 function paintCmp(){var w=base.width,h=base.height,sx=Math.round(split*w);ctx.putImageData(after,0,0);ctx.putImageData(base,0,0,0,0,sx,h);
- ctx.fillStyle='#fff';ctx.fillRect(sx-2,0,4,h);ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(sx+2,0,1,h);ctx.fillRect(sx-3,0,1,h)}
+ ctx.fillStyle='#fff';ctx.fillRect(sx-2,0,4,h);ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(sx+2,0,1,h);ctx.fillRect(sx-3,0,1,h);
+ var fs=Math.max(11,Math.round(Math.min(w,h)*.035)),pad=Math.max(6,Math.round(fs*.55)),hh=fs+pad*1.4;ctx.font='600 '+fs+'px system-ui, sans-serif';ctx.textBaseline='middle';
+ function tag(label,x){var tw=ctx.measureText(label).width,ww=tw+pad*2;ctx.fillStyle='rgba(0,0,0,.62)';ctx.fillRect(x,Math.max(8,Math.round(h*.025)),ww,hh);ctx.fillStyle='#fff';ctx.fillText(label,x+pad,Math.max(8,Math.round(h*.025))+hh/2)}
+ tag('SEBELUM',Math.max(8,Math.round(w*.025)));tag('SESUDAH',Math.max(8,Math.round(w*.975)-ctx.measureText('SESUDAH').width-pad*2))
+}
 function mv(e){var r=cv.getBoundingClientRect();split=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));if(after)paintCmp()}
 cv.addEventListener('pointermove',function(e){if(cmp&&dr)mv(e)});
 $('cmp').onclick=function(){cmp=!cmp;this.setAttribute('aria-pressed',cmp);this.textContent=cmp?'Selesai membandingkan':'Bandingkan';
@@ -1004,7 +1154,7 @@ function drawP(){var o=loadP(),box=$('chips');box.innerHTML='';
   var x=document.createElement('button');x.className='chip x';x.textContent='×';x.setAttribute('aria-label','Hapus preset '+k);
   x.onclick=function(){var q=loadP();delete q[k];saveP(q);drawP()};box.appendChild(b);box.appendChild(x)})}
 $('psave').onclick=function(){var n=$('pname').value.trim();if(!n)return;var o=loadP(),v={};ids.forEach(function(i){v[i]=$(i).value});o[n]=v;saveP(o);$('pname').value='';drawP()};
-drawP();
+window.refreshPresets=drawP;drawP();
 
 /* simpan resolusi besar, satu atau banyak foto */
 function tick(){return new Promise(function(r){setTimeout(r,30)})}
@@ -1021,18 +1171,30 @@ function zip(files){var parts=[],cen=[],pos=0,enc=new TextEncoder();
 function exportLimit(img,factor){
  var mw=img.width,mh=img.height,edge=Math.max(mw,mh),scale=Math.max(1,+factor||1);
  scale=Math.min(scale,5000/edge,Math.sqrt(18000000/(mw*mh)));
+ scale=Math.min(scale,Math.sqrt(EXPORT_PIXEL_BUDGET/(mw*mh)));
  return Math.max(1,Math.floor(edge*scale));
 }
-async function exportOne(file,keep){var cur=ai,sp=[pA,pD];if(!keep){ai=await loadImg(file);pA=pD=null}
- var sc=cmp;cmp=false;lim=exportLimit(ai,$('upscale').value);prepAI();buildTex();before=false;run();cmp=sc;
- var bl=await new Promise(function(r){cv.toBlob(r,'image/png')});ai=cur;pA=sp[0];pD=sp[1];return bl}
+async function exportOne(file,keep){
+ var cur=ai,sp=[pA,pD,pProtect,pProtectErase],sc=cmp,oldLim=lim;
+ try{
+  if(!keep){ai=await loadImg(file);pA=pD=pProtect=pProtectErase=null}
+  cmp=false;lim=exportLimit(ai,$('upscale').value);prepAI();buildTex();before=false;run();
+  var mime=($('v24Format')&&$('v24Format').value)||'image/png',quality=+$('v24JpegQuality').value||.85;
+  var bl=await new Promise(function(resolve,reject){cv.toBlob(function(b){if(b)resolve(b);else reject(new Error('Browser gagal membuat file gambar.'))},mime,quality)});
+  return bl;
+ }finally{
+  ai=cur;pA=sp[0];pD=sp[1];pProtect=sp[2];pProtectErase=sp[3];cmp=sc;lim=oldLim;
+  if(ai){prepAI();buildTex();draw()}
+ }
+}
 $('save').onclick=async function(){
  if(!base){$('empty').hidden=false;$('empty').querySelector('span').textContent='Pilih foto hasil AI dulu sebelum menyimpan.';return}
  var btn=$('save');if(btn.disabled)return;btn.disabled=true;$('hint').hidden=false;$('stage').classList.add('busy');
+ var mime=($('v24Format')&&$('v24Format').value)||'image/png';
  var list=queue.length?queue:[null];
  try{var out=[];
   for(var i=0;i<list.length;i++){$('hint').textContent='Memproses foto '+(i+1)+' dari '+list.length+', mohon tunggu...';await tick();
-   var bl=await exportOne(list[i],i==0);out.push({name:(list[i]?list[i].name.replace(/\.[^.]+$/,''):'foto')+'-disempurnakan.png',blob:bl})}
+   var bl=await exportOne(list[i],i==0);out.push({name:(list[i]?list[i].name.replace(/\.[^.]+$/,''):'foto')+'-disempurnakan.'+(mime==='image/jpeg'?'jpg':'png'),blob:bl})}
   lim=MAX;prepAI();buildTex();draw();if(tab3)drawOv();
   if(out.length==1)dl(out[0].blob,out[0].name);
   else{var fs=[];for(var k=0;k<out.length;k++)fs.push({name:out[k].name,data:new Uint8Array(await out[k].blob.arrayBuffer())});dl(zip(fs),'foto-disempurnakan.zip')}
@@ -1041,57 +1203,83 @@ $('save').onclick=async function(){
  $('stage').classList.remove('busy');btn.disabled=false};
 })();
 </script>
-<div class="pg" id="pg" hidden role="dialog" aria-modal="true" aria-label="Pembuat prompt profesional"><div class="pg-sheet">
-<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V23</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button class="theme-btn" id="pgClose" aria-label="Tutup">✕</button></div>
+<div aria-label="Pembuat prompt profesional" aria-modal="true" class="pg" hidden="" id="pg" role="dialog"><div class="pg-sheet">
+<div class="pg-top"><div><h2>✨ AI Smart Prompt Builder · V29</h2><p>Foto 1 = foto asli kamu, Foto 2 = referensi. AI Smart menyusun prompt dari tujuan edit dan analisis visual lokal. Foto dianalisis di HP, tidak diunggah oleh fitur ini.</p></div><button aria-label="Tutup" class="theme-btn" id="pgClose">✕</button></div>
 <div class="pg-grid">
-<label class="pg-drop" id="pgDa"><input type="file" accept="image/*" id="pgFa" hidden><span class="pg-tag">Foto 1 · Asli</span><img id="pgIa" alt=""><span>Ketuk untuk pilih foto asli</span></label>
-<label class="pg-drop" id="pgDb"><input type="file" accept="image/*" id="pgFb" hidden><span class="pg-tag">Foto 2 · Referensi</span><img id="pgIb" alt=""><span>Ketuk untuk pilih foto referensi</span></label>
+<label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
+<label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
 </div>
-<section class="pg-smart" aria-label="AI Smart Prompt Builder">
- <div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Atur tujuan edit, lalu sistem menyusun prompt secara otomatis berdasarkan foto dan pilihanmu.</small></div></div>
- <div class="pg-an">
-  <label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
-  <label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
-  <label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option value="balanced" selected>Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
-  <label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
- </div>
- <label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" rows="3" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi."></textarea></label>
- <button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Atur Otomatis &amp; Sempurnakan Prompt</button>
- <small class="pg-auto-hint">Cukup pilih tujuan edit. Pengaturan lanjutan akan disesuaikan otomatis; kamu tidak perlu mengatur satu per satu.</small>
- <div class="pg-smart-status" id="pgSmartStatus">Siap. Unggah foto asli dan foto referensi untuk analisis warna serta karakter visual.</div>
+<section aria-label="AI Smart Prompt Builder" class="pg-smart">
+<div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Atur tujuan edit, lalu sistem menyusun prompt secara otomatis berdasarkan foto dan pilihanmu.</small></div></div>
+<div class="pg-an">
+<label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
+<label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
+<label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
+<label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
+</div>
+<label class="pg-smart-note">Instruksi tambahan (opsional)<textarea class="pg-in" id="pgSmartEx" placeholder="Contoh: pertahankan wajah dan latar, ganti hanya kaos dan kacamata sesuai foto referensi." rows="3"></textarea></label>
+<button class="pri pg-auto-btn" id="pgAutoSetup" type="button">✦ Atur Otomatis &amp; Sempurnakan Prompt</button>
+<small class="pg-auto-hint">Cukup pilih tujuan edit. Pengaturan lanjutan akan disesuaikan otomatis; kamu tidak perlu mengatur satu per satu.</small>
+<div class="pg-smart-status" id="pgSmartStatus">Siap. Unggah foto asli dan foto referensi untuk analisis warna serta karakter visual.</div>
+<div class="v24-preset-wrap" id="v24PromptPresets">
+<strong>Quick Prompt Presets</strong>
+<div class="v24-preset-grid">
+<button class="chip" data-v24-preset="outfit" type="button">Ganti outfit presisi</button>
+<button class="chip" data-v24-preset="skin" type="button">Kulit natural</button>
+<button class="chip" data-v24-preset="iphone" type="button">Smartphone natural</button>
+<button class="chip" data-v24-preset="background" type="button">Ganti background</button>
+<button class="chip" data-v24-preset="multi" type="button">Multi-person edit</button>
+</div>
+<small>Pilih preset untuk mengisi tujuan dan instruksi tambahan. Kamu tetap bisa mengubahnya sebelum membuat prompt.</small>
+</div>
+
 </section>
-<section class="pg-v23" aria-label="Pengaturan V23 Ultra Realism">
- <div class="pg-v23-head"><strong>✦ V23 · Ultra Realism &amp; Identity Lock</strong><span class="pg-v23-tag">V23</span></div>
- <div class="pg-v23-grid">
-  <label>Skin texture<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detailed</option><option value="ultra" selected>Ultra · micro-detail</option></select></label>
-  <label>Camera realism<select class="pg-in" id="pgCameraRealism"><option value="smartphone" selected>Smartphone</option><option value="dslr">DSLR</option><option value="film">Analog film</option></select></label>
- </div>
- <div class="pg-h">Identity locks · bagian yang dipertahankan</div>
- <div class="pg-v23-locks">
-  <label><input type="checkbox" id="pgV23Face" checked> Face</label>
-  <label><input type="checkbox" id="pgV23Hands" checked> Hands</label>
-  <label><input type="checkbox" id="pgV23Body" checked> Body</label>
-  <label><input type="checkbox" id="pgV23Hair" checked> Hair</label>
-  <label><input type="checkbox" id="pgV23Light" checked> Light</label>
-  <label><input type="checkbox" id="pgV23Bg" checked> Background</label>
- </div>
- <div class="pg-v23-help">Ultra menambahkan detail pori, mikro-tekstur, rambut halus, dan ketidaksempurnaan kulit yang wajar—tanpa efek kulit plastik atau penajaman berlebihan. Kunci diterapkan ke prompt, bukan mengunci piksel secara otomatis.</div>
+<section aria-label="Pengaturan V23 Ultra Realism" class="pg-v23">
+<div class="pg-v23-head"><strong>✦ V23.3 · Original Pixel &amp; Texture Preservation</strong><span class="pg-v23-tag">V23.3</span></div>
+<div class="pg-v23-grid">
+<label>Skin texture<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detailed</option><option selected="" value="ultra">Ultra · micro-detail</option></select></label>
+<label>Camera realism<select class="pg-in" id="pgCameraRealism"><option selected="" value="smartphone">Smartphone</option><option value="dslr">DSLR</option><option value="film">Analog film</option></select></label>
+</div>
+<div class="pg-h">Identity locks · bagian yang dipertahankan</div>
+<div class="pg-v23-locks">
+<label><input checked="" id="pgV23Face" type="checkbox"/> Face</label>
+<label><input checked="" id="pgV23Hands" type="checkbox"/> Hands</label>
+<label><input checked="" id="pgV23Body" type="checkbox"/> Body</label>
+<label><input checked="" id="pgV23Hair" type="checkbox"/> Hair</label>
+<label><input checked="" id="pgV23Light" type="checkbox"/> Light</label>
+<label><input checked="" id="pgV23Bg" type="checkbox"/> Background</label>
+</div>
+<div class="pg-v23-help">Ultra menambahkan detail pori, mikro-tekstur, rambut halus, dan ketidaksempurnaan kulit yang wajar—tanpa efek kulit plastik atau penajaman berlebihan. Kunci diterapkan ke prompt, bukan mengunci piksel secara otomatis.</div>
+<div class="pg-v23-help" style="margin-top:12px;padding:10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)">
+<label style="display:flex;align-items:flex-start;gap:8px;color:var(--ink);font-size:12px;font-weight:650"><input checked="" id="pgPrecisionClothing" style="accent-color:var(--acc);width:16px;height:16px;flex:none;margin-top:1px" type="checkbox"/> Precision Clothing Edit · hanya ubah pakaian yang dipilih</label>
+<div style="margin:6px 0 0 24px">Melindungi wajah, kulit, rambut, tangan, pose, earphone/aksesori, background, dan batas pakaian agar tidak ikut dibuat ulang.</div>
+</div>
+<div class="pg-v23-help" style="margin-top:12px;padding:10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)">
+<strong style="display:block;margin-bottom:8px;color:var(--ink)">V23.3 · Original Pixel &amp; Texture Preservation</strong>
+<div class="pg-v23-locks">
+<label><input checked="" id="pgV33Skin" type="checkbox"/> Original skin texture</label>
+<label><input checked="" id="pgV33Geometry" type="checkbox"/> Face geometry</label>
+<label><input checked="" id="pgV33Camera" type="checkbox"/> Camera signature</label>
+<label><input checked="" id="pgV33Fabric" type="checkbox"/> Fabric realism</label>
+</div>
+<div style="margin-top:7px">Memprioritaskan detail foto asli dan membatasi rekonstruksi hanya pada area yang diedit. Ini instruksi prompt, bukan penguncian piksel otomatis.</div>
+</div>
 </section>
 <details class="pg-advanced"><summary>Pengaturan manual lanjutan (opsional)</summary>
 <h4 class="pg-h">Yang ingin diganti</h4><div class="pg-row" id="pgItems"></div>
 <h4 class="pg-h">Pengaturan</h4>
-<div class="pg-line"><b>Bahasa</b><div class="pg-row"><button class="mini" data-g="lang" data-v="en" aria-pressed="true">English (disarankan)</button><button class="mini" data-g="lang" data-v="id" aria-pressed="false">Indonesia</button></div></div>
-<div class="pg-line"><b>Panjang</b><div class="pg-row"><button class="mini" data-g="len" data-v="full" aria-pressed="true">Lengkap</button><button class="mini" data-g="len" data-v="short" aria-pressed="false">Ringkas</button></div></div>
-<div class="pg-line"><b>Kemiripan</b><div class="pg-row"><button class="mini" data-g="sim" data-v="exact" aria-pressed="true">Persis referensi</button><button class="mini" data-g="sim" data-v="insp" aria-pressed="false">Terinspirasi</button></div></div>
+<div class="pg-line"><b>Bahasa</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="lang" data-v="en">English (disarankan)</button><button aria-pressed="false" class="mini" data-g="lang" data-v="id">Indonesia</button></div></div>
+<div class="pg-line"><b>Panjang</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="len" data-v="full">Lengkap</button><button aria-pressed="false" class="mini" data-g="len" data-v="short">Ringkas</button></div></div>
+<div class="pg-line"><b>Kemiripan</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="sim" data-v="exact">Persis referensi</button><button aria-pressed="false" class="mini" data-g="sim" data-v="insp">Terinspirasi</button></div></div>
 <h4 class="pg-h">Analisis otomatis (bisa diedit)</h4>
-<input class="pg-in" id="pgCol" placeholder="Warna referensi, mis. navy blue, white"><div class="pg-sw" id="pgSw"></div>
+<input class="pg-in" id="pgCol" placeholder="Warna referensi, mis. navy blue, white"/><div class="pg-sw" id="pgSw"></div>
 <div class="pg-an">
 <label>Motif referensi<select class="pg-in" id="pgP"><option value="solid">Polos</option><option value="tex">Tekstur / motif halus</option><option value="busy">Motif / grafis ramai</option><option value="logo">Ada logo / tulisan</option></select></label>
-<label>Kecerahan foto asli<select class="pg-in" id="pgB"><option value="0">Redup</option><option value="1" selected>Sedang</option><option value="2">Terang</option></select></label>
-<label>Suhu warna foto asli<select class="pg-in" id="pgW"><option value="0">Hangat</option><option value="1" selected>Netral</option><option value="2">Dingin</option></select></label>
+<label>Kecerahan foto asli<select class="pg-in" id="pgB"><option value="0">Redup</option><option selected="" value="1">Sedang</option><option value="2">Terang</option></select></label>
+<label>Suhu warna foto asli<select class="pg-in" id="pgW"><option value="0">Hangat</option><option selected="" value="1">Netral</option><option value="2">Dingin</option></select></label>
 <label>Kontras foto asli<select class="pg-in" id="pgC"><option value="0">Lembut</option><option value="1">Kuat</option></select></label>
 </div>
-<h4 class="pg-h">Advanced · Pose & ekspresi</h4>
+<h4 class="pg-h">Advanced · Pose &amp; ekspresi</h4>
 <div class="pg-an">
 <label>Pose tubuh<select class="pg-in" id="pgPose"><option value="keep">Pertahankan pose foto 1</option><option value="ref">Ikuti pose foto 2</option><option value="standing">Berdiri natural</option><option value="sitting">Duduk natural</option><option value="back">Membelakangi kamera</option><option value="walking">Sedang berjalan</option><option value="custom">Ikuti instruksi detail</option></select></label>
 <label>Ekspresi wajah<select class="pg-in" id="pgExpr"><option value="keep">Pertahankan ekspresi asli</option><option value="neutral">Natural / netral</option><option value="smile">Senyum tipis natural</option><option value="serious">Serius / tenang</option><option value="custom">Sesuai detail tambahan</option></select></label>
@@ -1104,17 +1292,17 @@ $('save').onclick=async function(){
 </div>
 <h4 class="pg-h">Kunci perlindungan · bagian yang tidak boleh berubah</h4>
 <div class="pg-row pg-locks">
-<label><input type="checkbox" id="pgLockFace" checked> Wajah & identitas</label><label><input type="checkbox" id="pgLockBody" checked> Proporsi tubuh</label><label><input type="checkbox" id="pgLockHair" checked> Rambut / hijab</label><label><input type="checkbox" id="pgLockBg" checked> Background</label><label><input type="checkbox" id="pgLockClothes"> Pakaian lain</label><label><input type="checkbox" id="pgLockFrame" checked> Framing & kamera</label>
+<label><input checked="" id="pgLockFace" type="checkbox"/> Wajah &amp; identitas</label><label><input checked="" id="pgLockBody" type="checkbox"/> Proporsi tubuh</label><label><input checked="" id="pgLockHair" type="checkbox"/> Rambut / hijab</label><label><input checked="" id="pgLockBg" type="checkbox"/> Background</label><label><input id="pgLockClothes" type="checkbox"/> Pakaian lain</label><label><input checked="" id="pgLockFrame" type="checkbox"/> Framing &amp; kamera</label>
 </div>
-<h4 class="pg-h">Detail tambahan</h4><textarea class="pg-in" id="pgEx" rows="3" placeholder="Jelaskan posisi tangan, arah kepala, detail logo, suasana, atau perubahan spesifik..."></textarea>
+<h4 class="pg-h">Detail tambahan</h4><textarea class="pg-in" id="pgEx" placeholder="Jelaskan posisi tangan, arah kepala, detail logo, suasana, atau perubahan spesifik..." rows="3"></textarea>
 </details>
-<h4 class="pg-h">Prompt utama · otomatis</h4><div class="pg-row pg-prompt-tools"><label class="pg-manual"><input type="checkbox" id="pgManual"> Kunci edit manual (jangan timpa perubahan saya)</label><button class="mini" id="pgRegen" type="button">↻ Buat ulang prompt</button></div><textarea class="pg-in" id="pgOut" spellcheck="false"></textarea>
+<h4 class="pg-h">Prompt utama · otomatis</h4><div class="pg-row pg-prompt-tools"><label class="pg-manual"><input id="pgManual" type="checkbox"/> Kunci edit manual (jangan timpa perubahan saya)</label><button class="mini" id="pgRegen" type="button">↻ Buat ulang prompt</button></div><textarea class="pg-in" id="pgOut" spellcheck="false"></textarea>
 <div class="pg-meta" id="pgMeta"></div>
-<div class="pg-check good" id="pgQuality" aria-live="polite"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
-<h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" spellcheck="false" rows="4"></textarea>
-<div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" id="pgShare" hidden>Bagikan</button></div>
+<div aria-live="polite" class="pg-check good" id="pgQuality"><strong>✓ Pemeriksa kualitas prompt</strong><span>Memeriksa konsistensi pengaturan...</span></div>
+<h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" rows="4" spellcheck="false"></textarea>
+<div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" hidden="" id="pgShare">Bagikan</button></div>
 <div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
-<div class="pg-meta" id="pgHistoryOut" hidden></div>
+<div class="pg-meta" hidden="" id="pgHistoryOut"></div>
 <div class="pg-meta">Cara pakai: unggah Foto 1 dan Foto 2, pilih tujuan edit, lalu salin prompt utama dan negative prompt ke aplikasi AI editor. Analisis warna, kecerahan, kontras, dan pola sederhana dilakukan lokal di browser. Sistem tidak mengenali semua objek seperti model vision dan tidak menjalankan pengeditan gambar.</div>
 </div></div>
 <script>
@@ -1182,12 +1370,29 @@ function build(){
  if(S.len=='short'){
   var ps=$('pgPose').value,es=$('pgExpr').value,ag=$('pgAngle').value,fr=$('pgFrame').value,st=$('pgStyle').value,li=$('pgLight').value,le=$('pgLens').value,ra=$('pgRatio').value;
   var compact=t('Edit image 1 (my original photo) using image 2 as reference: ','Edit foto 1 (foto asli saya) dengan referensi foto 2: ')+keys.map(task).join('; ')+'. '+(col?t('Reference colors: ','Warna referensi: ')+col+(S.B?', '+pt:'')+'. ':'')+t('Preserve all selected identity locks: ','Pertahankan semua kunci identitas yang dipilih: ')+activeV23Locks(L).join(', ')+'. '+skinPrompt(L,skin)+' '+cameraPrompt(L,camera)+' '+({keep:t('Keep original pose. ','Pertahankan pose asli. '),ref:t('Match the pose from image 2 only. ','Ikuti pose foto 2 saja. '),standing:t('Natural standing pose. ','Pose berdiri natural. '),sitting:t('Natural sitting pose. ','Pose duduk natural. '),back:t('Subject facing away from camera. ','Subjek membelakangi kamera. '),walking:t('Natural walking pose. ','Pose berjalan natural. '),custom:''}[ps])+({keep:t('Keep original expression. ','Pertahankan ekspresi asli. '),neutral:t('Natural neutral expression. ','Ekspresi netral natural. '),smile:t('Subtle closed-mouth smile. ','Senyum tipis dengan mulut tertutup. '),serious:t('Calm expression. ','Ekspresi tenang. '),custom:''}[es])+({keep:'',eye:'Eye-level. ',low:'Low angle. ',high:'High angle. ',over:'Over-the-shoulder. ',close:'Close-up. ',wide:'Wide shot. '}[ag])+({keep:'',full:'Full-body framing. ',three:'Three-quarter framing. ',half:'Half-body framing. ',portrait:'Portrait close-up. '}[fr])+(camera==='smartphone'?'Authentic smartphone photography. ':camera==='dslr'?'Realistic DSLR photography. ':'Subtle analog film photography. ')+(($('pgV23Light').checked||li==='auto')?t('Preserve original lighting from image 1. ','Pertahankan pencahayaan asli foto 1. '):({day:'Natural daylight. ',gold:'Golden-hour lighting. ',soft:'Soft diffused lighting. ',studio:'Studio softbox lighting. ',back:'Natural backlight. ',moody:'Moody lighting. '}[li]||''))+({auto:'',wide:'Wide-angle lens. ',35:'35mm lens. ',50:'50mm lens. ',85:'85mm portrait lens. ',bokeh:'Shallow depth of field and natural bokeh. '}[le])+t('Keep framing and aspect ratio ','Pertahankan framing dan rasio ')+(ra=='source'?rt:ra)+'. '+t('Photorealistic, natural texture and lighting, no artifacts or watermark.','Fotorealistis, tekstur dan pencahayaan natural, tanpa artefak atau watermark.')+(ex?' '+ex:'');
+  if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&keys.length===1&&['top','jacket','pants','hat','shoes'].indexOf(keys[0])>=0)compact+=' '+t('PRECISION EDIT: Change only the selected garment pixels. Image 1 controls identity and the entire scene; image 2 is clothing reference only. Preserve face geometry, original skin texture, hands and fingers, pose, hair, accessories/earphone cables, background, lighting, shadows, grain and framing. Keep garment edges, neck/collar boundary, sleeves, arm contours and hand overlap natural. Do not regenerate any person or unselected area.','EDIT PRESISI: Ubah hanya piksel pakaian yang dipilih. Foto 1 menjadi acuan identitas dan seluruh adegan; foto 2 hanya referensi pakaian. Pertahankan geometri wajah, tekstur kulit asli, tangan dan jari, pose, rambut, aksesori/kabel earphone, background, pencahayaan, bayangan, grain, dan framing. Jaga batas pakaian, kerah/leher, lengan baju, kontur lengan, dan tumpang tindih tangan tetap natural. Jangan buat ulang orang atau area yang tidak dipilih.')+'.';
+  if($('pgV33Skin').checked)compact+=' '+t('Preserve source skin microtexture: retain the original pores, fine lines, tiny blemishes, natural sheen and uneven texture; do not smooth, beautify, synthesize pores or sharpen skin.','Pertahankan mikro-tekstur kulit sumber: pori, garis halus, noda kecil, kilau alami, dan tekstur tidak merata; jangan menghaluskan, mempercantik, membuat pori sintetis, atau mempertajam kulit.');
+  if($('pgV33Geometry').checked)compact+=' '+t('Strict face-geometry preservation: do not alter eye spacing, eyelids, eyebrows, nose width/shape, lips, jawline, cheek volume, ears or facial proportions.','Pertahankan geometri wajah secara ketat: jangan ubah jarak mata, kelopak, alis, lebar/bentuk hidung, bibir, rahang, volume pipi, telinga, atau proporsi wajah.');
+  if($('pgV33Camera').checked)compact+=' '+t('Preserve the original camera signature: same natural sensor noise, grain, white balance, exposure character, local contrast, edge softness and smartphone processing; no artificial HDR or denoising.','Pertahankan karakter kamera asli: noise sensor, grain, white balance, karakter exposure, kontras lokal, kelembutan tepi, dan pemrosesan smartphone yang sama; tanpa HDR buatan atau denoise berlebihan.');
+  if($('pgV33Fabric').checked&&clothingOnly)compact+=' '+t('Render only the replacement fabric with realistic weave, thickness, seams, folds, tension and contact shadows consistent with the original body pose.','Render hanya kain pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, dan bayangan kontak yang realistis sesuai pose tubuh asli.');
   var shortLocks=activeV23Locks(L);if($('pgLockFace').checked&&!$('pgV23Face').checked)shortLocks.push(t('face and identity','wajah dan identitas'));if($('pgLockBody').checked&&!$('pgV23Body').checked)shortLocks.push(t('body proportions','proporsi tubuh'));if($('pgLockHair').checked&&!$('pgV23Hair').checked&&!S.on.hair)shortLocks.push(t('hair or head covering','rambut atau penutup kepala'));if($('pgLockBg').checked&&!$('pgV23Bg').checked&&!S.on.bg)shortLocks.push(t('background','latar belakang'));if($('pgLockClothes').checked)shortLocks.push(t('other clothing','pakaian lain'));if(shortLocks.length)compact+=' '+t('Do not change: ','Jangan ubah: ')+shortLocks.join(', ')+'.';
   return compact;
  }
  P.push(t('Edit image 1 (my original photo) using image 2 as the reference.','Edit foto 1 (foto asli saya) dengan foto 2 sebagai referensi.'),'',t('TASK','TUGAS'),
   '- '+t('Use image 2 only as a visual reference for the selected edit. Do not copy its face, identity, body, background or any unselected attributes.','Gunakan foto 2 hanya sebagai referensi visual untuk bagian yang dipilih. Jangan menyalin wajah, identitas, tubuh, background, atau bagian lain yang tidak dipilih.'));
  keys.forEach(function(k){P.push('- '+task(k)+'. '+(S.sim=='exact'?t('Reproduce it as exactly as possible, including: ','Tiru semirip mungkin, termasuk: '):t('Use it as inspiration, keeping the same overall look and adapting: ','Jadikan inspirasi, pertahankan tampilan umumnya dan sesuaikan: '))+IT[k][3+L]+'.')});
+ var precision=$('pgPrecisionClothing')&&$('pgPrecisionClothing').checked;
+ var clothingOnly=precision&&keys.length===1&&['top','jacket','pants','hat','shoes'].indexOf(keys[0])>=0;
+ if(clothingOnly){
+  var target=IT[keys[0]][1+L];
+  P.push('',t('V23.2 PRECISION CLOTHING EDIT','V23.2 EDIT PAKAIAN PRESISI'),
+   '- '+t('Image 1 is the sole source of truth for the person and the photograph. Image 2 is a clothing-reference source only. Transfer only the selected garment design onto the corresponding garment area in image 1.','Foto 1 adalah satu-satunya sumber acuan untuk orang dan keseluruhan foto. Foto 2 hanya menjadi sumber referensi pakaian. Terapkan hanya desain pakaian yang dipilih ke area pakaian yang bersesuaian pada foto 1.'),
+   '- '+t('Edit mask: restrict every change to the visible fabric and garment components of the selected '+target+'. Do not expand the edit mask onto skin, face, ears, neck, hair, hands, fingers, arms, torso skin, accessories, earphones or their cables.','Masker edit: batasi seluruh perubahan hanya pada kain dan komponen pakaian '+target+' yang terlihat. Jangan perluas area edit ke kulit, wajah, telinga, leher, rambut, tangan, jari, lengan, kulit tubuh, aksesori, earphone, atau kabelnya.'),
+   '- '+t('Preserve the exact original face geometry, expression, skin tone and skin texture; preserve the original hand pose, finger count and anatomy, body shape, hair strands, head position, camera perspective, background, lighting, shadows, grain and image framing pixel-for-pixel wherever possible.','Pertahankan geometri wajah, ekspresi, warna dan tekstur kulit asli; pertahankan pose tangan, jumlah dan anatomi jari, bentuk tubuh, helai rambut, posisi kepala, perspektif kamera, background, pencahayaan, bayangan, grain, dan framing asli sedekat mungkin per piksel.'),
+   '- '+t('Keep garment boundaries physically plausible: preserve the original collar/neck boundary, sleeve openings, shoulder silhouette, arm contours, hand-to-clothing overlap, folds and contact shadows. Reconstruct only fabric hidden by the garment replacement, never reconstruct the person.','Jaga batas pakaian tetap masuk akal secara fisik: pertahankan batas kerah/leher, bukaan lengan, siluet bahu, kontur lengan, tumpang tindih tangan dengan pakaian, lipatan, dan bayangan kontak. Rekonstruksi hanya kain yang tertutup akibat penggantian pakaian, jangan merekonstruksi ulang orangnya.'),
+   '- '+t('Match the reference garment color, material, cut, collar, seams, buttons and print/logo placement while adapting its folds and perspective to the original pose in image 1. Do not copy the reference person or reference scene.','Cocokkan warna, bahan, potongan, kerah, jahitan, kancing, serta posisi sablon/logo pakaian referensi sambil menyesuaikan lipatan dan perspektif dengan pose asli foto 1. Jangan menyalin orang atau latar dari foto referensi.'));
+ }
+
  if(col||S.B){P.push('',t('REFERENCE DETAILS (image 2)','DETAIL REFERENSI (foto 2)'));if(col)P.push('- '+t('Dominant colors: ','Warna dominan: ')+col);P.push('- '+t('Pattern: ','Motif: ')+pt)}
  P.push('',t('KEEP UNCHANGED (image 1)','PERTAHANKAN (foto 1)'),
   '- '+t("The person's face, identity, skin tone, expression and body proportions",'Wajah, identitas, warna kulit, ekspresi, dan proporsi tubuh orang tersebut')+(keys.indexOf('pose')>=0||$('pgPose').value!='keep'?'':t(', pose', ', pose')),
@@ -1209,11 +1414,15 @@ function build(){
  '- '+(($('pgV23Light').checked||light==='auto')?t('Preserve the original light direction, exposure, white balance and shadow character from image 1; do not relight the subject.','Pertahankan arah cahaya, exposure, white balance, dan karakter bayangan asli foto 1; jangan mengubah pencahayaan subjek.'):{day:'Natural daylight.',gold:'Warm golden-hour sunlight.',soft:'Soft diffused lighting.',studio:'Professional softbox studio lighting.',back:'Natural backlighting.',moody:'Moody low-key lighting.'}[light]),
  '- '+({auto:t('Use a lens perspective consistent with image 1.','Gunakan perspektif lensa yang sesuai foto 1.'),wide:'Wide-angle perspective with natural proportions.',35:'Natural 35mm lens perspective.',50:'Standard 50mm lens perspective.',85:'85mm portrait lens perspective.',bokeh:'Shallow depth of field with natural optical bokeh.'}[lens]),
  '- '+t('Output aspect ratio: ','Rasio hasil: ')+(ratio=='source'?rt:ratio));
+ if($('pgV33Skin').checked)P.push('- '+t('V23.3 SOURCE SKIN PRESERVATION: retain the exact source skin character and microtexture—natural pores of varied size, fine lines, tiny blemishes, subtle facial hair and natural specular highlights. Do not airbrush, beautify, denoise, invent pore patterns, add fake freckles or apply crunchy sharpening. Skin detail must follow the original lighting and anatomy.','V23.3 PELESTARIAN KULIT SUMBER: pertahankan karakter dan mikro-tekstur kulit sumber—pori alami dengan ukuran bervariasi, garis halus, noda kecil, rambut wajah halus, dan pantulan cahaya alami. Jangan airbrush, mempercantik, denoise, membuat pola pori palsu, menambah bintik palsu, atau mempertajam berlebihan. Detail kulit harus mengikuti pencahayaan dan anatomi asli.'));
+ if($('pgV33Geometry').checked)P.push('- '+t('V23.3 FACE GEOMETRY LOCK: preserve the exact original facial geometry and proportions, including eye spacing and shape, eyelids, eyebrows, nose bridge and width, nostrils, lips, teeth visibility, cheek volume, jawline, chin, ears and expression. No face regeneration, beautification, symmetry correction or age change.','V23.3 KUNCI GEOMETRI WAJAH: pertahankan geometri dan proporsi wajah asli, termasuk jarak dan bentuk mata, kelopak, alis, batang dan lebar hidung, lubang hidung, bibir, tampilan gigi, volume pipi, rahang, dagu, telinga, dan ekspresi. Jangan regenerasi wajah, mempercantik, mengoreksi simetri, atau mengubah usia.'));
+ if($('pgV33Camera').checked)P.push('- '+t('V23.3 ORIGINAL CAMERA SIGNATURE: retain the source image’s authentic smartphone rendering, sensor noise, grain distribution, white balance, exposure roll-off, local contrast, natural edge softness and compression character. Do not add artificial HDR, excessive denoising, fake sharpness, cinematic relighting or a different lens look.','V23.3 KARAKTER KAMERA ASLI: pertahankan rendering smartphone, noise sensor, sebaran grain, white balance, transisi exposure, kontras lokal, kelembutan tepi alami, dan karakter kompresi dari foto sumber. Jangan menambahkan HDR buatan, denoise berlebihan, ketajaman palsu, pencahayaan sinematik, atau karakter lensa berbeda.'));
+ if($('pgV33Fabric').checked&&clothingOnly)P.push('- '+t('V23.3 FABRIC REALISM: render the replacement garment only with believable fabric weave, thickness, seams, stitching, folds, tension, drape and contact shadows. Fabric must conform to the original pose and body; preserve natural garment boundaries and do not spill onto skin, hands, earphone cables or background.','V23.3 REALISME KAIN: render hanya pakaian pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, jatuh kain, dan bayangan kontak yang meyakinkan. Kain harus mengikuti pose dan tubuh asli; pertahankan batas pakaian dan jangan meluber ke kulit, tangan, kabel earphone, atau background.'));
  var locks=activeV23Locks(L);if($('pgLockFace').checked&&locks.indexOf(t('face and personal identity','wajah dan identitas'))<0)locks.push(t('face, facial features and identity','wajah, fitur wajah, dan identitas'));if($('pgLockBody').checked&&locks.indexOf(t('body shape and proportions','bentuk dan proporsi tubuh'))<0)locks.push(t('body proportions and build','proporsi dan bentuk tubuh'));if($('pgLockHair').checked&&!S.on.hair&&locks.indexOf(t('hairstyle, hairline or head covering','gaya rambut, garis rambut, atau penutup kepala'))<0)locks.push(t('hairstyle or head covering','gaya rambut atau penutup kepala'));if($('pgLockBg').checked&&!S.on.bg&&locks.indexOf(t('original background and surroundings','background dan lingkungan asli'))<0)locks.push(t('original background and surroundings','background dan lingkungan asli'));if($('pgLockClothes').checked)locks.push(t('all clothing not explicitly selected for editing','semua pakaian yang tidak secara khusus dipilih untuk diedit'));if($('pgLockFrame').checked&&chosen('pgAngle')=='keep'&&chosen('pgFrame')=='keep')locks.push(t('original camera framing and viewpoint','framing dan sudut pandang kamera asli'));
  if(locks.length)P.push('',t('PROTECTION LOCKS','KUNCI PERLINDUNGAN'),'- '+t('Do not alter: ','Jangan mengubah: ')+locks.join(', ')+'.');
  P.push('',t('OUTPUT: one high-resolution edited version of image 1 only.','HASIL: satu versi foto 1 yang sudah diedit, resolusi tinggi.'));
  return P.join('\n')}
-function negative(){var L=S.lang=='id';return (L?'wajah berubah, identitas berbeda, perubahan yang tidak diminta, anatomi tidak wajar, jari berlebih atau menyatu, tangan cacat, anggota tubuh tambahan, proporsi tubuh berubah, mata tidak simetris, kulit plastik, tekstur terlalu halus, oversharpening, blur, noise berlebihan, bayangan tidak konsisten, pencahayaan palsu, tepi potongan, halo, objek tambahan, logo atau tulisan salah, watermark, artefak, kartun, ilustrasi, CGI, render 3D':'changed face, different identity, unintended edits, unnatural anatomy, extra or fused fingers, deformed hands, extra limbs, altered body proportions, asymmetrical eyes, plastic skin, over-smoothed texture, oversharpening, blur, excessive noise, inconsistent shadows, artificial lighting, cutout edges, halos, extra objects, incorrect logo or text, watermark, artifacts, cartoon, illustration, CGI, 3D render')+(L?', kulit lilin, pori-pori palsu, tekstur kulit berulang, kulit terlalu tajam, perubahan pencahayaan atau background yang tidak diminta':', waxy skin, fake pores, repeated skin texture, crunchy skin sharpening, unintended lighting or background changes')}
+function negative(){var L=S.lang=='id';return (L?'wajah berubah, identitas berbeda, perubahan yang tidak diminta, anatomi tidak wajar, jari berlebih atau menyatu, tangan cacat, anggota tubuh tambahan, proporsi tubuh berubah, mata tidak simetris, kulit plastik, tekstur terlalu halus, oversharpening, blur, noise berlebihan, bayangan tidak konsisten, pencahayaan palsu, tepi potongan, halo, objek tambahan, logo atau tulisan salah, watermark, artefak, kartun, ilustrasi, CGI, render 3D':'changed face, different identity, unintended edits, unnatural anatomy, extra or fused fingers, deformed hands, extra limbs, altered body proportions, asymmetrical eyes, plastic skin, over-smoothed texture, oversharpening, blur, excessive noise, inconsistent shadows, artificial lighting, cutout edges, halos, extra objects, incorrect logo or text, watermark, artifacts, cartoon, illustration, CGI, 3D render')+(L?', kulit lilin, pori-pori palsu, tekstur kulit berulang, kulit terlalu tajam, perubahan pencahayaan atau background yang tidak diminta, wajah atau tubuh dibuat ulang, perubahan area di luar pakaian, tepi pakaian meleleh, kain menutupi jari, kabel earphone terputus, kontur leher atau lengan rusak':', waxy skin, fake pores, repeated skin texture, crunchy skin sharpening, unintended lighting or background changes, regenerated face or body, edits outside the garment, melted garment edges, fabric covering fingers, broken earphone cables, damaged neck or arm contours, airbrushed skin, synthetic pore pattern, face geometry drift, altered eye spacing, reshaped nose or jaw, fake HDR, excessive denoising, artificial sharpening, plastic fabric, painted-on clothing')}
 function gen(){
  var v=build(),manual=$('pgManual')&&$('pgManual').checked;
  if(!manual)$('pgOut').value=v;
@@ -1247,6 +1456,7 @@ function applySmartGoal(){
 function getPromptConflicts(){
  var w=[],g=$('pgGoal').value,cam=$('pgCameraRealism').value,style=$('pgStyle').value,light=$('pgLight').value;
  if(g==='hair'&&$('pgV23Hair').checked)w.push('Kunci rambut otomatis dikecualikan karena rambut sedang dipilih untuk diedit.');
+ if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&['top','jacket','pants','hat','shoes'].indexOf(g)>=0)w.push('Precision Clothing Edit aktif: hanya area pakaian terpilih yang boleh berubah; bagian tubuh dan batas pakaian dilindungi.');
  if(g==='background'&&$('pgV23Bg').checked)w.push('Kunci background otomatis dikecualikan karena background sedang dipilih untuk diganti.');
  if($('pgV23Light').checked&&light!=='auto')w.push('Light Lock aktif: pilihan pencahayaan manual diabaikan agar cahaya foto asli tetap terjaga.');
  if((cam==='smartphone'&&['dslr','film'].includes(style))||(cam==='dslr'&&style==='film')||(cam==='film'&&['dslr','phone'].includes(style)))w.push('Camera Realism menjadi acuan utama; gaya kamera manual yang bertentangan diselaraskan otomatis.');
@@ -1264,6 +1474,11 @@ function qualityCheck(){
  if(!S.A)notes.push('Unggah Foto 1 agar rasio dan karakter foto asli dapat dianalisis.');
  if(!S.B)notes.push('Unggah Foto 2 agar warna dan pola referensi dapat dianalisis.');
  if($('pgSkinTexture').value==='ultra')notes.push('Skin Texture Ultra aktif dengan perlindungan terhadap pori palsu dan tekstur berulang.');
+ if($('pgV33Skin').checked)notes.push('V23.3 mempertahankan mikro-tekstur kulit sumber; bukan membuat pori sintetis.');
+ if($('pgV33Geometry').checked)notes.push('V23.3 mengunci geometri dan proporsi wajah asli.');
+ if($('pgV33Camera').checked)notes.push('V23.3 meminta karakter kamera, grain, white balance, dan noise asli dipertahankan.');
+ if($('pgV33Fabric').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('V23.3 menambahkan detail kain realistis hanya pada pakaian pengganti.');
+ if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('Precision Clothing Edit aktif: prompt membatasi edit ke area pakaian dan melindungi batas kulit, tangan, rambut, serta aksesori.');
  if($('pgV23Hands').checked)notes.push('Anatomi tangan dan jumlah lima jari diminta tetap konsisten.');
  if(w.length)notes=notes.concat(w);
  var el=$('pgQuality');if(!el)return;el.className='pg-check '+(w.length?'warn':'good');
@@ -1319,7 +1534,7 @@ $('pg').addEventListener('click',function(e){if(e.target===$('pg'))return close_
  else{var g=b.dataset.g;S[g]=b.dataset.v;[].forEach.call($('pg').querySelectorAll('[data-g="'+g+'"]'),function(x){x.setAttribute('aria-pressed',x===b)});if(g=='lang')fillCol()}
  gen()});
 document.addEventListener('keydown',function(e){if(e.key=='Escape'&&!$('pg').hidden)close_()});
-['pgEx','pgB','pgW','pgC','pgP','pgSkinTexture','pgCameraRealism','pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg','pgPose','pgExpr','pgAngle','pgFrame','pgStyle','pgLight','pgLens','pgRatio','pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'].forEach(function(id){$(id).addEventListener('input',gen);$(id).addEventListener('change',gen)});
+['pgEx','pgB','pgW','pgC','pgP','pgSkinTexture','pgCameraRealism','pgPrecisionClothing','pgV33Skin','pgV33Geometry','pgV33Camera','pgV33Fabric','pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg','pgPose','pgExpr','pgAngle','pgFrame','pgStyle','pgLight','pgLens','pgRatio','pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'].forEach(function(id){$(id).addEventListener('input',gen);$(id).addEventListener('change',gen)});
 $('pgCol').addEventListener('input',function(){S.dirty=true;gen()});
 $('pgCopy').onclick=function(){var v=$('pgOut').value,btn=this,ok=function(){btn.textContent='Tersalin ✓';setTimeout(function(){btn.textContent='Salin prompt'},1600)};
  function fb(){$('pgOut').select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Salin manual'}}
@@ -1341,6 +1556,189 @@ $('pgHistory').onclick=function(){
 };
 
 })();
+</script>
+
+<script>
+(function(){
+ 'use strict';
+ var $=function(id){return document.getElementById(id)};
+ var status=$('v24Status'),undo=[],redo=[],busy=false,limit=45;
+ // V26 keeps the established settings-history contract; mask/brush data remains separate from settings snapshots.
+ function say(msg){if(status)status.textContent=msg}
+ function controls(){return Array.prototype.slice.call(document.querySelectorAll('input,select,textarea')).filter(function(el){return el.id&&el.type!=='file'&&el.type!=='button'&&el.type!=='submit'&&el.type!=='reset'&&el.type!=='range' ? true : el.id&&el.type==='range'})}
+ function snap(){var o={};controls().forEach(function(el){o[el.id]={value:el.value,checked:!!el.checked}});return o}
+ function same(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+ function paint(){ $('v24Undo').disabled=!undo.length; $('v24Redo').disabled=!redo.length }
+ function remember(){if(busy)return;var n=snap(),last=undo.length?undo[undo.length-1]:null;if(last&&same(last,n))return;undo.push(n);if(undo.length>limit)undo.shift();redo=[];paint()}
+ function apply(o){busy=true;Object.keys(o||{}).forEach(function(id){var el=$(id),v=o[id];if(!el||!v)return;if(el.type==='checkbox'||el.type==='radio')el.checked=!!v.checked;else el.value=v.value;});busy=false;
+  ['input','change'].forEach(function(ev){controls().forEach(function(el){el.dispatchEvent(new Event(ev,{bubbles:true}))})});
+  if($('pgRegen'))$('pgRegen').click();
+  if($('v24Status'))say('Pengaturan dipulihkan. Periksa kembali pratinjau dan prompt.');
+ }
+ remember(); // initial state
+ document.addEventListener('change',function(e){if(e.target&&e.target.matches('input,select,textarea'))remember()},true);
+ $('v24Undo').onclick=function(){if(!undo.length)return;var cur=snap();redo.push(cur);var prev=undo.pop();apply(prev);paint();say('Undo: perubahan pengaturan sebelumnya dipulihkan.')};
+ $('v24Redo').onclick=function(){if(!redo.length)return;var cur=snap();undo.push(cur);var next=redo.pop();apply(next);paint();say('Redo: perubahan pengaturan dikembalikan.')};
+ document.addEventListener('keydown',function(e){var target=e.target;if(target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))return;var mac=/Mac|iPhone|iPad/.test(navigator.platform),mod=mac?e.metaKey:e.ctrlKey;if(!mod||e.altKey)return;var k=e.key.toLowerCase();if(k==='z'){e.preventDefault();(e.shiftKey?$('v24Redo'):$('v24Undo')).click()}else if(k==='y'){e.preventDefault();$('v24Redo').click()}});
+ function readFile(file){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result)};r.onerror=reject;r.readAsDataURL(file)})}
+ function dataBlob(url){return fetch(url).then(function(r){return r.blob()})}
+ function setFileInput(id,file){var el=$(id);if(!el||!file)return;try{var dt=new DataTransfer();dt.items.add(file);el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){throw new Error('Browser tidak mendukung pemulihan foto otomatis. Unggah ulang foto melalui tombol foto.')}}
+ $('v24SaveProject').onclick=async function(){
+  try{
+   var f1=$('f1')&&$('f1').files[0],f2=$('f2')&&$('f2').files[0];
+   var project={format:'penyempurna-foto-project',version:'29.0',createdAt:new Date().toISOString(),settings:snap(),images:{ai:f1?{name:f1.name,data:await readFile(f1)}:null,reference:f2?{name:f2.name,data:await readFile(f2)}:null},local:{theme:localStorage.getItem('pf_theme'),presets:localStorage.getItem('pf_presets'),promptHistory:localStorage.getItem('penyempurnaPromptHistory')||'[]'}};
+   var blob=new Blob([JSON.stringify(project)],{type:'application/json'}),a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='penyempurna-foto-project.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+   say('Proyek berhasil disimpan sebagai file JSON. Simpan file tersebut agar bisa dibuka kembali.');
+  }catch(e){say('Gagal menyimpan proyek: '+e.message)}
+ };
+ $('v24LoadProject').onclick=function(){$('v24ProjectFile').click()};
+ $('v24ProjectFile').onchange=async function(e){
+  var file=e.target.files&&e.target.files[0];if(!file)return;
+  try{
+   var project=JSON.parse(await file.text());if(project.format!=='penyempurna-foto-project'||!project.settings)throw new Error('File bukan proyek Penyempurna Foto yang valid.');
+   apply(project.settings);
+   if(project.local){
+    if(project.local.theme){
+     localStorage.setItem('pf_theme',project.local.theme);
+     document.documentElement.setAttribute('data-theme',project.local.theme);
+     var themeBtn=$('themeBtn');if(themeBtn)themeBtn.setAttribute('aria-label','Tema '+project.local.theme);
+     var themeIcon=$('themeIco');if(themeIcon)themeIcon.innerHTML=project.local.theme==='dark'?'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
+    if(project.local.presets){localStorage.setItem('pf_presets',project.local.presets);if(window.refreshPresets)window.refreshPresets();}
+    if(project.local.promptHistory)localStorage.setItem('penyempurnaPromptHistory',project.local.promptHistory);
+   }
+   if(project.images&&project.images.ai&&project.images.ai.data){var b1=await dataBlob(project.images.ai.data);setFileInput('f1',new File([b1],project.images.ai.name||'foto-asli.png',{type:b1.type||'image/png'}))}
+   if(project.images&&project.images.reference&&project.images.reference.data){var b2=await dataBlob(project.images.reference.data);setFileInput('f2',new File([b2],project.images.reference.name||'referensi.png',{type:b2.type||'image/png'}))}
+   undo=[];redo=[];remember();paint();say('Proyek berhasil dibuka. Foto, pengaturan, preset, dan prompt builder dipulihkan.');
+  }catch(err){say('Tidak dapat membuka proyek: '+err.message)}
+  e.target.value='';
+ };
+ var presetData={
+  outfit:{goal:'top',extra:'Ganti hanya pakaian yang dipilih sesuai referensi. Pertahankan identitas wajah, tekstur kulit asli, rambut, tangan, pose, aksesori, earphone dan kabel, pencahayaan, background, serta framing.'},
+  skin:{goal:'custom',extra:'Pertahankan tekstur kulit asli dengan pori alami, garis halus, dan ketidaksempurnaan kecil. Hindari airbrush, kulit plastik, pori sintetis, denoise, dan penajaman berlebihan.'},
+  iphone:{goal:'style',extra:'Pertahankan karakter foto smartphone alami: white balance realistis, detail natural, grain sensor halus, dynamic range wajar, tanpa HDR berlebihan atau efek kamera buatan.'},
+  background:{goal:'background',extra:'Ubah hanya background. Pertahankan orang, wajah, rambut, pakaian, tangan, pose, perspektif, dan pencahayaan subjek.'},
+  multi:{goal:'custom',extra:'Jika terdapat beberapa orang, edit hanya subjek dan bagian yang disebutkan. Pertahankan identitas, posisi, anatomi, pakaian lain, dan jarak antarorang; jangan menukar wajah atau anggota tubuh.'}
+ };
+ document.querySelectorAll('[data-v24-preset]').forEach(function(btn){btn.addEventListener('click',function(){
+  var d=presetData[btn.getAttribute('data-v24-preset')];if(!d)return;
+  if($('pgGoal'))$('pgGoal').value=d.goal;if($('pgSmartEx'))$('pgSmartEx').value=d.extra;
+  ['change','input'].forEach(function(ev){$('pgGoal').dispatchEvent(new Event(ev,{bubbles:true}));$('pgSmartEx').dispatchEvent(new Event(ev,{bubbles:true}))});
+  remember();say('Preset diterapkan. Sesuaikan instruksi bila perlu, lalu buat prompt.');
+ })});
+ // Smart export format and quality: PNG remains the default to preserve V23 behavior.
+ var save=$('save');if(save){save.textContent='Simpan PNG';save.addEventListener('click',function(){var f=$('v24Format');if(f&&f.value==='image/jpeg')save.textContent='Simpan JPG';else save.textContent='Simpan PNG'})}
+})();
+</script>
+
+<script id="simple-ui-setup">
+(function(){
+  const $=id=>document.getElementById(id);
+  function details(title, nodes, cls){
+    const d=document.createElement('details');
+    d.className='simple-details'+(cls?' '+cls:'');
+    const s=document.createElement('summary'); s.textContent=title; d.appendChild(s);
+    nodes.forEach(n=>{if(n)d.appendChild(n)});
+    return d;
+  }
+
+  // Instruksi singkat menggantikan paragraf pengantar yang panjang.
+  const guide=document.createElement('div');
+  guide.className='simple-guide';
+  guide.innerHTML='<strong>Cara pakai</strong><p>1. Pilih <b>Foto AI</b> · 2. Pilih <b>Foto asli</b> · 3. Tekan <b>Otomatis</b> · 4. Simpan hasilnya. Fitur lainnya bisa dibuka bila diperlukan.</p>';
+  const controls=document.querySelector('.controls-col');
+  const tabs=document.querySelector('.tabs');
+  if(controls && tabs) controls.insertBefore(guide,tabs.nextSibling);
+
+  // Preset cepat: mengatur gaya warna/lensa tanpa mengubah identitas atau tekstur inti.
+  const quick=document.createElement('section');
+  quick.className='v27-quick';
+  quick.innerHTML='<div class="v27-quick-head"><strong>Preset cepat</strong><small>Gaya sekali sentuh</small></div><div class="v27-quick-list" role="group" aria-label="Preset gaya foto"><button type="button" data-v27-preset="natural" aria-pressed="false">Natural</button><button type="button" data-v27-preset="bright" aria-pressed="false">Cerah</button><button type="button" data-v27-preset="warm" aria-pressed="false">Hangat</button><button type="button" data-v27-preset="cinema" aria-pressed="false">Sinematik</button><button type="button" data-v27-preset="mono" aria-pressed="false">Hitam putih</button></div><small class="v27-quick-note">Preset hanya mengubah gaya warna dan efek lensa. Tekstur, wajah, serta foto sumber tetap mengikuti pengaturan utama.</small>';
+  if(guide && guide.parentNode) guide.after(quick);
+  const quickValues={
+    natural:{fst:0,flm:0,vig:0,cab:0,edg:0,blm:0},
+    bright:{fst:1,flm:28,vig:5,cab:0,edg:0,blm:8},
+    warm:{fst:1,flm:58,vig:12,cab:0,edg:5,blm:10},
+    cinema:{fst:2,flm:62,vig:24,cab:0,edg:8,blm:12},
+    mono:{fst:4,flm:100,vig:12,cab:0,edg:0,blm:0}
+  };
+  quick.querySelectorAll('[data-v27-preset]').forEach(btn=>btn.addEventListener('click',()=>{
+    const values=quickValues[btn.dataset.v27Preset]; if(!values)return;
+    Object.entries(values).forEach(([id,value])=>{const el=$(id);if(el)el.value=value});
+    quick.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+    ['fst','flm','vig','cab','edg','blm'].forEach(id=>{const el=$(id);if(el){el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}});
+    const info=$('autoinfo');if(info){info.hidden=false;info.textContent='Preset '+btn.textContent+' diterapkan. Kamu masih bisa menekan Otomatis atau mengatur efek secara manual.'}
+  }));
+
+  // Sembunyikan fitur proyek/riwayat di dalam bagian opsional, bukan menghapusnya.
+  const project=$('v24Workflow');
+  if(project){
+    const d=document.createElement('details');
+    d.id='v24Workflow'; d.className='ctl simple-project';
+    const summary=document.createElement('summary'); summary.textContent='Proyek & riwayat (opsional)';
+    d.appendChild(summary);
+    Array.from(project.childNodes).forEach(n=>d.appendChild(n));
+    project.replaceWith(d);
+  }
+
+  // Foto asli: kontrol inti tetap terlihat; pengaturan detail tambahan bisa dibuka.
+  const ctl=$('ctl');
+  if(ctl){
+    const rows=Array.from(ctl.querySelectorAll('.row'));
+    const advancedIds=['sharp','detail','scale'];
+    const advanced=rows.filter(r=>r.querySelector('input') && advancedIds.includes(r.querySelector('input').id));
+    const wrap=details('Detail tambahan',advanced);
+    const heading=Array.from(ctl.querySelectorAll('h2')).find(h=>h.textContent.trim()==='Tekstur');
+    if(heading) heading.after(wrap);
+  }
+
+  // Efek lensa tidak ditampilkan sampai pengguna memang ingin mengaturnya.
+  const p4=$('p4');
+  if(p4){
+    const ctl4=p4.querySelector('.ctl');
+    const rows=Array.from(ctl4.querySelectorAll('.row'));
+    const advanced=rows.filter(r=>['vig','cab','edg','blm'].includes(r.querySelector('input')?.id));
+    const lensHeading=Array.from(ctl4.querySelectorAll('h2')).find(h=>h.textContent.trim()==='Lensa');
+    const wrap=details('Pengaturan lensa tambahan',advanced);
+    if(lensHeading){lensHeading.remove(); ctl4.appendChild(wrap);}
+  }
+
+  // Lindungi wajah: alat kuas dan pembersihan tetap tersedia dalam bagian opsional.
+  const p5=$('p5');
+  if(p5){
+    const ctl5=p5.querySelector('.ctl');
+    const sizeRow=ctl5.querySelector('#bps')?.closest('.row');
+    const actions=ctl5.querySelector('.act2');
+    const brushMode=ctl5.querySelector('.seg');
+    const wrap=details('Koreksi manual (opsional)',[brushMode,sizeRow,actions]);
+    ctl5.appendChild(wrap);
+  }
+
+  // Ekspor: tombol Simpan tetap utama. Format, kualitas, dan pembesaran tetap dapat diakses.
+  const bar=document.querySelector('.bar .export-row');
+  if(bar){
+    const labels=Array.from(bar.querySelectorAll(':scope > label'));
+    const more=document.createElement('details');
+    more.className='simple-export-more';
+    const summary=document.createElement('summary'); summary.textContent='Pengaturan simpan lainnya';
+    more.appendChild(summary);
+    labels.forEach(l=>more.appendChild(l));
+    bar.insertBefore(more,bar.firstChild);
+  }
+
+  // Nama tab dibuat lebih jelas tanpa mengubah ID atau perilaku tab.
+  const labels={t1:'Foto AI',t2:'Foto asli',t3:'Area kulit',t4:'Efek',t5:'Lindungi wajah'};
+  Object.keys(labels).forEach(id=>{const b=$(id);if(b){const s=b.querySelector('span');if(s)s.textContent=labels[id]}});
+
+  const empty=$('empty');
+  if(empty){const span=empty.querySelector('span');if(span)span.innerHTML='Mulai dengan memilih <b>Foto AI</b>, lalu <b>Foto asli</b>. Setelah itu tekan <b>Otomatis</b>.'}
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+}
 </script>
 </body>
 </html>
