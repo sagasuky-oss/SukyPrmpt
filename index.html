@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V32</title>
+<title>Penyempurna Foto — Studio V33</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -616,6 +616,54 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 }
 .stage:not(.has-img){position:relative!important;top:0!important}
 </style>
+
+
+<style id="v33-120hz-motion">
+/* V33: 120Hz-ready motion tuning. Actual FPS follows display/browser capability. */
+:root{
+  --motion-fast:120ms;
+  --motion-base:180ms;
+  --motion-smooth:cubic-bezier(.2,.8,.2,1);
+}
+/* Keep frequently animated UI on compositor-friendly properties. */
+.theme-btn,.stage,.mini,.tab-pill,.tabs button,.tabs svg,.drop,.drop .plus,
+.row input[type="range"]::-webkit-slider-thumb,.row input[type="range"]::-moz-range-thumb,
+.chip,.prow input,.row select,.empty,.empty-ico,.drop .th{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.theme-btn{transition:transform var(--motion-fast) var(--motion-smooth),background-color var(--motion-fast) ease,border-color var(--motion-fast) ease}
+.stage{transition:background-color var(--motion-base) ease,border-color var(--motion-base) ease,box-shadow var(--motion-base) ease}
+.mini,.chip{transition:transform var(--motion-fast) var(--motion-smooth),background-color var(--motion-fast) ease,color var(--motion-fast) ease,border-color var(--motion-fast) ease,box-shadow var(--motion-fast) ease}
+.tab-pill{transition:transform var(--motion-base) var(--motion-smooth);will-change:transform}
+.tabs button,.tabs svg{transition:color var(--motion-fast) ease,transform var(--motion-fast) var(--motion-smooth)}
+.drop{transition:transform var(--motion-fast) var(--motion-smooth),border-color var(--motion-fast) ease,background-color var(--motion-fast) ease}
+.drop .plus{transition:transform var(--motion-base) var(--motion-smooth)}
+section:not([hidden]){animation:panelIn 220ms var(--motion-smooth) both}
+@keyframes panelIn{from{opacity:0;transform:translate3d(0,7px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@media (prefers-reduced-motion: no-preference){
+  .ambient::before,.ambient::after{will-change:transform;transform:translateZ(0)}
+  .stage.busy .canvas-box::after{will-change:transform}
+}
+/* Do not spend frames animating a page the user cannot see. */
+html.v33-page-hidden .ambient::before,
+html.v33-page-hidden .ambient::after,
+html.v33-page-hidden .empty-ico,
+html.v33-page-hidden .stage.busy .canvas-box::after,
+html.v33-page-hidden .status-dot{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){
+  .tab-pill{will-change:auto}
+}
+</style>
+<script id="v33-motion-lifecycle">
+(function(){
+  function syncVisibility(){document.documentElement.classList.toggle('v33-page-hidden',document.visibilityState==='hidden')}
+  document.addEventListener('visibilitychange',syncVisibility,{passive:true});
+  window.addEventListener('pagehide',syncVisibility,{passive:true});
+  window.addEventListener('pageshow',syncVisibility,{passive:true});
+  syncVisibility();
+})();
+</script>
 
 </head>
 <body>
