@@ -736,6 +736,16 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
 @media(prefers-reduced-motion:reduce){.v35-preview *{transition:none!important}}
 </style>
 
+<style id="v38-prompt-css">
+.v24-preset-wrap{margin:0 0 12px}
+.v24-preset-grid{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.v24-preset-grid .chip{flex:0 0 auto;white-space:nowrap}
+.pg-act:has(#pgCopy){position:sticky;bottom:0;z-index:5;margin:10px -4px 0;padding:10px 4px calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,transparent,var(--bg-elev) 30%)}
+#photoInfo[hidden]{display:none!important}
+@media(max-width:560px){.pg-drop{aspect-ratio:1/1}}
+@media(max-width:430px){.pg-an{grid-template-columns:1fr!important}}
+.pg-open-editor{margin-top:8px}.pg-open-editor button{width:100%;min-height:46px;border-radius:16px;font-weight:700}.pg-open-editor small{display:block;margin-top:6px;color:var(--mute);font-size:11px;line-height:1.45}
+</style>
 </head>
 <body>
 <div aria-hidden="true" class="ambient"></div>
@@ -778,7 +788,7 @@ body[data-performance="lite"] .tabs button{transition:transform 100ms ease,backg
  <div class="v35-preview-tip" id="v35PreviewTip">Geser untuk mengatur bagian foto asli dan hasil penyempurnaan. Tombol Bandingkan akan aktif otomatis.</div>
 </div>
 </div>
-<div class="ctl" id="photoInfo" aria-live="polite" style="margin:0">
+<div class="ctl" id="photoInfo" hidden aria-live="polite" style="margin:0">
  <h2>Info foto</h2>
  <p class="note" id="photoInfoText">Pilih foto hasil AI untuk melihat ukuran dan detail file.</p>
 </div>
@@ -1357,6 +1367,7 @@ function exportLimit(img,factor){
 }
 function updatePhotoInfo(file){
  var el=$('photoInfoText');if(!el)return;
+ var card=$('photoInfo');if(card)card.hidden=!ai;
  if(!ai){el.textContent='Pilih foto hasil AI untuk melihat ukuran dan detail file.';return}
  var ow=ai.naturalWidth||ai.width,oh=ai.naturalHeight||ai.height,w=ow,h=oh;
  var size=file&&file.size?' · '+(file.size/1048576).toFixed(2)+' MB':'';
@@ -1410,12 +1421,23 @@ $('save').onclick=async function(){
 <label class="pg-drop" id="pgDa"><input accept="image/*" hidden="" id="pgFa" type="file"/><span class="pg-tag">Foto 1 · Asli</span><img alt="" id="pgIa"/><span>Ketuk untuk pilih foto asli</span></label>
 <label class="pg-drop" id="pgDb"><input accept="image/*" hidden="" id="pgFb" type="file"/><span class="pg-tag">Foto 2 · Referensi</span><img alt="" id="pgIb"/><span>Ketuk untuk pilih foto referensi</span></label>
 </div>
-<section aria-label="AI Smart Prompt Builder" class="pg-smart">
-<div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>AI Smart Prompt Builder</strong><small>Pilih apa yang ingin diubah. Detail teknis akan diatur otomatis oleh sistem.</small></div></div>
+<section aria-label="Pembuat Prompt Pintar" class="pg-smart">
+<div class="pg-smart-head"><span class="pg-smart-icon">✦</span><div><strong>Pembuat Prompt Pintar</strong><small>Pilih apa yang ingin diubah. Detail teknis akan diatur otomatis oleh sistem.</small></div></div>
+<div class="v24-preset-wrap" id="v24PromptPresets">
+<strong>Preset cepat</strong>
+<div class="v24-preset-grid">
+<button class="chip" data-v24-preset="outfit" type="button">Ganti outfit presisi</button>
+<button class="chip" data-v24-preset="skin" type="button">Kulit natural</button>
+<button class="chip" data-v24-preset="iphone" type="button">Smartphone natural</button>
+<button class="chip" data-v24-preset="background" type="button">Ganti background</button>
+<button class="chip" data-v24-preset="multi" type="button">Edit banyak orang</button>
+</div>
+<small>Ketuk satu preset untuk mengisi tujuan dan instruksi, lalu tekan Buat Prompt Otomatis.</small>
+</div>
 <div class="pg-an">
 <label>Tujuan edit<select class="pg-in" id="pgGoal"><option value="top">Ganti atasan / kaos</option><option value="jacket">Ganti jaket / outerwear</option><option value="pants">Ganti celana / bawahan</option><option value="fulloutfit">Ganti outfit lengkap</option><option value="hat">Ganti topi / hijab</option><option value="hair">Ubah gaya rambut</option><option value="glasses">Ganti kacamata</option><option value="shoes">Ganti sepatu</option><option value="accessory">Ganti aksesori lain</option><option value="pose">Ubah pose tubuh</option><option value="background">Ganti background</option><option value="color">Samakan warna / tone</option><option value="style">Ubah gaya fotografi</option><option value="custom">Kustom / pilih sendiri</option></select></label>
 <label>Penggunaan foto referensi<select class="pg-in" id="pgSmartSim"><option value="exact">Tiru sedekat mungkin</option><option value="insp">Jadikan inspirasi</option></select></label>
-<label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option></select></label>
+<label>Perlindungan foto asli<select class="pg-in" id="pgProtect"><option value="strong">Ketat — pertahankan hampir semua</option><option selected="" value="balanced">Seimbang — hanya ubah yang dipilih</option><option value="flex">Fleksibel — beri ruang penyesuaian</option><option value="custom">Kustom — diatur manual di bawah</option></select></label>
 <label>Bahasa prompt<select class="pg-in" id="pgSmartLang"><option value="en">English (umumnya kompatibel)</option><option value="id">Indonesia</option></select></label>
 <label>Kualitas hasil<select class="pg-in" id="pgQuality"><option value="natural">Natural</option><option value="detailed">Detail tinggi</option><option selected value="ultra">Ultra realistis</option></select></label>
 </div>
@@ -1428,54 +1450,42 @@ $('save').onclick=async function(){
 </section>
 
 <details class="pg-advanced"><summary>Pengaturan manual lanjutan (opsional)</summary>
-<div class="pg-meta">Preset cepat dan pengaturan detail tetap tersedia di sini jika kamu membutuhkannya.</div>
-<div class="v24-preset-wrap" id="v24PromptPresets">
-<strong>Quick Prompt Presets</strong>
-<div class="v24-preset-grid">
-<button class="chip" data-v24-preset="outfit" type="button">Ganti outfit presisi</button>
-<button class="chip" data-v24-preset="skin" type="button">Kulit natural</button>
-<button class="chip" data-v24-preset="iphone" type="button">Smartphone natural</button>
-<button class="chip" data-v24-preset="background" type="button">Ganti background</button>
-<button class="chip" data-v24-preset="multi" type="button">Multi-person edit</button>
-</div>
-<small>Pilih preset untuk mengisi tujuan dan instruksi tambahan. Kamu tetap bisa mengubahnya sebelum membuat prompt.</small>
-</div>
+<div class="pg-meta">Pengaturan detail untuk yang ingin mengatur sendiri.</div>
 <section aria-label="Pengaturan V23 Ultra Realism" class="pg-v23">
-<div class="pg-v23-head"><strong>✦ V23.3 · Original Pixel &amp; Texture Preservation</strong><span class="pg-v23-tag">V23.3</span></div>
+<div class="pg-v23-head"><strong>✦ Realisme &amp; kemiripan foto asli</strong></div>
 <div class="pg-v23-grid">
-<label>Skin texture<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detailed</option><option selected="" value="ultra">Ultra · micro-detail</option></select></label>
-<label>Camera realism<select class="pg-in" id="pgCameraRealism"><option selected="" value="smartphone">Smartphone</option><option value="dslr">DSLR</option><option value="film">Analog film</option></select></label>
+<label>Tekstur kulit<select class="pg-in" id="pgSkinTexture"><option value="natural">Natural</option><option value="detailed">Detail</option><option selected="" value="ultra">Ultra · mikro-detail</option></select></label>
+<label>Karakter kamera<select class="pg-in" id="pgCameraRealism"><option selected="" value="smartphone">Smartphone</option><option value="dslr">DSLR</option><option value="film">Film analog</option></select></label>
 </div>
-<div class="pg-h">Identity locks · bagian yang dipertahankan</div>
+<div class="pg-h">Kunci identitas · bagian yang dipertahankan</div>
 <div class="pg-v23-locks">
-<label><input checked="" id="pgV23Face" type="checkbox"/> Face</label>
-<label><input checked="" id="pgV23Hands" type="checkbox"/> Hands</label>
-<label><input checked="" id="pgV23Body" type="checkbox"/> Body</label>
-<label><input checked="" id="pgV23Hair" type="checkbox"/> Hair</label>
-<label><input checked="" id="pgV23Light" type="checkbox"/> Light</label>
-<label><input checked="" id="pgV23Bg" type="checkbox"/> Background</label>
+<label><input checked="" id="pgV23Face" type="checkbox"/> Wajah</label>
+<label><input checked="" id="pgV23Hands" type="checkbox"/> Tangan</label>
+<label><input checked="" id="pgV23Body" type="checkbox"/> Tubuh</label>
+<label><input checked="" id="pgV23Hair" type="checkbox"/> Rambut</label>
+<label><input checked="" id="pgV23Light" type="checkbox"/> Cahaya</label>
+<label><input checked="" id="pgV23Bg" type="checkbox"/> Latar</label>
 </div>
 <div class="pg-v23-help">Ultra menambahkan detail pori, mikro-tekstur, rambut halus, dan ketidaksempurnaan kulit yang wajar—tanpa efek kulit plastik atau penajaman berlebihan. Kunci diterapkan ke prompt, bukan mengunci piksel secara otomatis.</div>
 <div class="pg-v23-help" style="margin-top:12px;padding:10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)">
-<label style="display:flex;align-items:flex-start;gap:8px;color:var(--ink);font-size:12px;font-weight:650"><input checked="" id="pgPrecisionClothing" style="accent-color:var(--acc);width:16px;height:16px;flex:none;margin-top:1px" type="checkbox"/> Precision Clothing Edit · hanya ubah pakaian yang dipilih</label>
+<label style="display:flex;align-items:flex-start;gap:8px;color:var(--ink);font-size:12px;font-weight:650"><input checked="" id="pgPrecisionClothing" style="accent-color:var(--acc);width:16px;height:16px;flex:none;margin-top:1px" type="checkbox"/> Edit pakaian presisi · hanya ubah pakaian yang dipilih</label>
 <div style="margin:6px 0 0 24px">Melindungi wajah, kulit, rambut, tangan, pose, earphone/aksesori, background, dan batas pakaian agar tidak ikut dibuat ulang.</div>
 </div>
 <div class="pg-v23-help" style="margin-top:12px;padding:10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)">
-<strong style="display:block;margin-bottom:8px;color:var(--ink)">V23.3 · Original Pixel &amp; Texture Preservation</strong>
+<strong style="display:block;margin-bottom:8px;color:var(--ink)">Pertahankan detail foto asli</strong>
 <div class="pg-v23-locks">
-<label><input checked="" id="pgV34Skin" type="checkbox"/> Original skin texture</label>
-<label><input checked="" id="pgV34Geometry" type="checkbox"/> Face geometry</label>
-<label><input checked="" id="pgV34Camera" type="checkbox"/> Camera signature</label>
-<label><input checked="" id="pgV34Fabric" type="checkbox"/> Fabric realism</label>
+<label><input checked="" id="pgV34Skin" type="checkbox"/> Tekstur kulit asli</label>
+<label><input checked="" id="pgV34Geometry" type="checkbox"/> Bentuk wajah</label>
+<label><input checked="" id="pgV34Camera" type="checkbox"/> Karakter kamera asli</label>
+<label><input checked="" id="pgV34Fabric" type="checkbox"/> Kain realistis</label>
 </div>
 <div style="margin-top:7px">Memprioritaskan detail foto asli dan membatasi rekonstruksi hanya pada area yang diedit. Ini instruksi prompt, bukan penguncian piksel otomatis.</div>
 </div>
 </section>
-<h4 class="pg-h">Yang ingin diganti</h4><div class="pg-row" id="pgItems"></div>
+<h4 class="pg-h">Yang ingin diganti (boleh lebih dari satu)</h4><div class="pg-row" id="pgItems"></div>
 <h4 class="pg-h">Pengaturan</h4>
-<div class="pg-line"><b>Bahasa</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="lang" data-v="en">English (disarankan)</button><button aria-pressed="false" class="mini" data-g="lang" data-v="id">Indonesia</button></div></div>
+<div class="pg-meta">Bahasa prompt dan penggunaan foto referensi diatur di bagian atas.</div>
 <div class="pg-line"><b>Panjang</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="len" data-v="full">Lengkap</button><button aria-pressed="false" class="mini" data-g="len" data-v="short">Ringkas</button></div></div>
-<div class="pg-line"><b>Kemiripan</b><div class="pg-row"><button aria-pressed="true" class="mini" data-g="sim" data-v="exact">Persis referensi</button><button aria-pressed="false" class="mini" data-g="sim" data-v="insp">Terinspirasi</button></div></div>
 <h4 class="pg-h">Analisis otomatis (bisa diedit)</h4>
 <input class="pg-in" id="pgCol" placeholder="Warna referensi, mis. navy blue, white"/><div class="pg-sw" id="pgSw"></div>
 <div class="pg-an">
@@ -1507,6 +1517,7 @@ $('save').onclick=async function(){
 <h4 class="pg-h">Negative prompt · otomatis</h4><textarea class="pg-in" id="pgNeg" rows="4" spellcheck="false"></textarea>
 <div class="pg-act"><button class="pri" id="pgCopy">Salin prompt utama</button><button class="mini" id="pgCopyAll">Salin semua</button><button class="mini" hidden="" id="pgShare">Bagikan</button></div>
 <div class="pg-act"><button class="mini" id="pgSave">Simpan ke riwayat</button><button class="mini" id="pgHistory">Lihat riwayat</button></div>
+<div class="pg-open-editor"><button class="mini" id="pgToEditor" type="button">📥 Sudah dapat hasil? Buka di editor</button><input accept="image/*" hidden id="pgResultFile" type="file"/><small>Pilih foto hasil dari aplikasi AI. Foto 1 · Asli di atas ikut dimuat sebagai Foto asli.</small></div>
 <div class="pg-meta" hidden="" id="pgHistoryOut"></div>
 <div class="pg-meta">Cara pakai: unggah foto asli dan referensi, pilih tujuan edit, lalu buat dan salin prompt ke aplikasi AI editor. Analisis warna, kecerahan, kontras, dan pola sederhana dilakukan lokal di browser. Sistem tidak mengenali semua objek seperti model vision dan tidak menjalankan pengeditan gambar.</div>
 </div></div>
@@ -1727,7 +1738,7 @@ $('pgAutoSetup').addEventListener('click',autoConfigure);
 $('pgGoal').addEventListener('change',function(){ $('pgSmartStatus').classList.remove('done'); applySmartGoal(); });
 $('pgSmartSim').addEventListener('change',function(){S.sim=this.value;document.querySelectorAll('[data-g="sim"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.sim)});gen()});
 $('pgSmartLang').addEventListener('change',function(){S.lang=this.value;document.querySelectorAll('[data-g="lang"]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.lang)});fillCol();gen()});
-$('pgProtect').addEventListener('change',function(){var v=this.value,sets=v==='strong'?[1,1,1,1,1,1]:v==='balanced'?[1,1,1,1,0,1]:[1,1,0,0,0,0],ids=['pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'];ids.forEach(function(id,i){$(id).checked=!!sets[i]});['pgV23Face','pgV23Body','pgV23Hair','pgV23Bg'].forEach(function(id,i){$(id).checked=!!sets[[0,1,2,3][i]]});$('pgV23Hands').checked=!!sets[0];$('pgV23Light').checked=!!sets[3];gen()});
+$('pgProtect').addEventListener('change',function(){if(this.value==='custom'){gen();return}var v=this.value,sets=v==='strong'?[1,1,1,1,1,1]:v==='balanced'?[1,1,1,1,0,1]:[1,1,0,0,0,0],ids=['pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'];ids.forEach(function(id,i){$(id).checked=!!sets[i]});['pgV23Face','pgV23Body','pgV23Hair','pgV23Bg'].forEach(function(id,i){$(id).checked=!!sets[[0,1,2,3][i]]});$('pgV23Hands').checked=!!sets[0];$('pgV23Light').checked=!!sets[3];gen()});
 $('pgSmartEx').addEventListener('input',gen);
 $('pgManual').addEventListener('change',function(){if(!this.checked)gen();else $('pgMeta').textContent='Edit manual dikunci · perubahan pengaturan tidak akan menimpa prompt'});
 $('pgRegen').onclick=function(){$('pgManual').checked=false;gen();$('pgMeta').textContent='Prompt berhasil dibuat ulang · '+$('pgOut').value.length+' karakter'};
@@ -2003,6 +2014,50 @@ if('serviceWorker' in navigator && location.protocol!=='file:'){
   var f=$('v24Format'),q=$('v24JpegQuality'),row=q&&q.closest('label');
   function sync(){if(row)row.hidden=!(f&&f.value==='image/jpeg')}
   if(f){f.addEventListener('change',sync);sync()}
+})();
+</script>
+<script id="v38-open-in-editor">
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var btn=$('pgToEditor'),inp=$('pgResultFile');if(!btn||!inp)return;
+  function setFile(id,file){var el=$(id);if(!el)return false;var dt=new DataTransfer();dt.items.add(file);el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}));return true}
+  function note(t){var n=$('autoinfo');if(n){n.hidden=false;n.textContent=t}}
+  btn.addEventListener('click',function(){inp.click()});
+  inp.addEventListener('change',async function(){
+    var f=inp.files&&inp.files[0];if(!f)return;
+    var orig=null,ia=$('pgIa');
+    try{if(ia&&ia.getAttribute('src')){var r=await fetch(ia.src);var b=await r.blob();orig=new File([b],'foto-asli.'+((b.type||'image/jpeg').split('/')[1]||'jpg'),{type:b.type||'image/jpeg'})}}catch(e){orig=null}
+    setFile('f1',f);
+    $('pg').hidden=true;document.body.style.overflow='';
+    var t1=$('t1');if(t1)t1.click();
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(orig){setTimeout(function(){setFile('f2',orig);note('Hasil AI dan foto asli sudah dimuat. Tekan Otomatis untuk menyempurnakan.')},900)}
+    else note('Hasil AI sudah dimuat. Buka tab Foto asli untuk memilih foto asli, lalu tekan Otomatis.');
+    inp.value='';
+  });
+})();
+</script>
+<script id="v38-sync-settings">
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  // Item manual -> Tujuan edit menjadi Kustom
+  var items=$('pgItems'),goal=$('pgGoal');
+  if(items&&goal)items.addEventListener('click',function(e){
+    if(!e.target.closest('button[data-k]'))return;
+    if(goal.value!=='custom'){goal.value='custom';goal.dispatchEvent(new Event('change',{bubbles:true}))}
+  });
+  // Kunci manual -> Perlindungan foto asli ikut menyesuaikan
+  var L=['pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'];
+  var V=['pgV23Face','pgV23Body','pgV23Hair','pgV23Bg','pgV23Hands','pgV23Light'];
+  var P={strong:[1,1,1,1,1,1],balanced:[1,1,1,1,0,1],flex:[1,1,0,0,0,0]};
+  function expectV(a){return[a[0],a[1],a[2],a[3],a[0],a[3]]}
+  function same(ids,exp){return ids.every(function(id,i){var el=$(id);return el&&el.checked===!!exp[i]})}
+  function sync(){
+    var sel=$('pgProtect');if(!sel)return;var hit='custom';
+    Object.keys(P).forEach(function(k){if(same(L,P[k])&&same(V,expectV(P[k])))hit=k});
+    if(sel.value!==hit)sel.value=hit;
+  }
+  L.concat(V).forEach(function(id){var el=$(id);if(el)el.addEventListener('change',sync)});
 })();
 </script>
 </body>
