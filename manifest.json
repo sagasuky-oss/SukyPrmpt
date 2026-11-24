@@ -1,7 +1,7 @@
 {
-  "name": "Penyempurna Foto V33",
-  "short_name": "Foto V33",
-  "description": "Sempurnakan foto hasil AI agar tampak seperti foto asli.",
+  "name": "Penyempurna Foto V34",
+  "short_name": "Foto V34",
+  "description": "Sempurnakan foto dengan workspace adaptif dan mode performa Smooth atau Ringan.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",

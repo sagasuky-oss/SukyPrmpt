@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Penyempurna"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="icon" type="image/png" href="icon-192.png"/>
-<title>Penyempurna Foto — Studio V33</title>
+<title>Penyempurna Foto — Studio V34</title>
 <style>
 :root{
   --bg:#f2f4f3;--bg-elev:#ffffff;--panel:rgba(255,255,255,.82);--ink:#131a18;--mute:#5c6864;
@@ -619,7 +619,7 @@ details[open]>summary::after{content:'−';transform:rotate(180deg)}
 
 
 <style id="v33-120hz-motion">
-/* V33: 120Hz-ready motion tuning. Actual FPS follows display/browser capability. */
+/* V34: 120Hz-ready motion tuning. Actual FPS follows display/browser capability. */
 :root{
   --motion-fast:120ms;
   --motion-base:180ms;
@@ -665,6 +665,64 @@ html.v33-page-hidden .status-dot{animation-play-state:paused!important}
 })();
 </script>
 
+
+<style id="v34-ultra-smooth">
+/* V34: Adaptive visual workload. Smooth is the default; Lite reduces effects on weaker devices. */
+.v34-perf-btn{width:auto;min-width:76px;padding:0 9px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:700;white-space:nowrap}
+.v34-perf-btn[aria-pressed="true"]{background:var(--soft);border-color:var(--acc);color:var(--acc)}
+body[data-performance="lite"] .ambient{display:none}
+body[data-performance="lite"] .topbar,
+body[data-performance="lite"] .stage,
+body[data-performance="lite"] .bar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body[data-performance="lite"] .stage,
+body[data-performance="lite"] .tabs,
+body[data-performance="lite"] .ctl,
+body[data-performance="lite"] .drop,
+body[data-performance="lite"] .studio-intro,
+body[data-performance="lite"] .note,
+body[data-performance="lite"] .simple-guide,
+body[data-performance="lite"] .v27-quick{box-shadow:none!important}
+body[data-performance="lite"] *,
+body[data-performance="lite"] *::before,
+body[data-performance="lite"] *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+body[data-performance="lite"] .controls-col{animation:none!important}
+body[data-performance="lite"] .tab-pill,
+body[data-performance="lite"] .mini,
+body[data-performance="lite"] .chip,
+body[data-performance="lite"] .theme-btn,
+body[data-performance="lite"] .tabs button{transition:transform 100ms ease,background-color 100ms ease,color 100ms ease,border-color 100ms ease!important}
+@media(max-width:520px){.topbar-in{gap:6px}.tb-actions{gap:5px}.v34-perf-btn{min-width:68px;padding:0 7px}}
+@media(prefers-reduced-motion:reduce){.v34-perf-btn{transition:none!important}}
+</style>
+<script id="v34-adaptive-performance">
+(function(){
+  'use strict';
+  var key='penyempurnaPerformanceMode';
+  var btn=document.getElementById('v34PerfBtn');
+  var label=document.getElementById('v34PerfLabel');
+  if(!btn||!label)return;
+  var saved='';
+  try{saved=localStorage.getItem(key)||''}catch(e){}
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var lowMemory=typeof navigator.deviceMemory==='number'&&navigator.deviceMemory<=4;
+  var mode=(saved==='smooth'||saved==='lite')?saved:((reduced||lowMemory)?'lite':'smooth');
+  function apply(){
+    document.body.setAttribute('data-performance',mode);
+    var lite=mode==='lite';
+    btn.setAttribute('aria-pressed',String(lite));
+    btn.setAttribute('aria-label',lite?'Aktifkan mode Smooth':'Aktifkan mode performa ringan');
+    btn.title='Mode performa: '+(lite?'Ringan':'Smooth');
+    label.textContent=lite?'Ringan':'Smooth';
+  }
+  btn.addEventListener('click',function(){
+    mode=mode==='smooth'?'lite':'smooth';
+    try{localStorage.setItem(key,mode)}catch(e){}
+    apply();
+  });
+  apply();
+})();
+</script>
+
 </head>
 <body>
 <div aria-hidden="true" class="ambient"></div>
@@ -675,11 +733,12 @@ html.v33-page-hidden .status-dot{animation-play-state:paused!important}
 <svg viewbox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5v4M16.5 18.5h4"></path></svg>
 </div>
 <div>
-<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V30</span></h1>
+<h1>Penyempurna Foto <span style="font-size:10px;opacity:.65">V34</span></h1>
 <p>Studio restorasi foto • pemrosesan lokal di perangkat</p>
 </div>
 </div>
 <div class="tb-actions"><button aria-label="Buka pembuat prompt" class="theme-btn pgbtn" id="pgBtn" title="Pembuat prompt">✨ Prompt</button>
+<button aria-label="Aktifkan mode performa ringan" aria-pressed="false" class="theme-btn v34-perf-btn" id="v34PerfBtn" title="Mode performa: Smooth">⚡ <span id="v34PerfLabel">Smooth</span></button>
 <button aria-label="Ganti tema gelap atau terang" class="theme-btn" id="themeBtn" title="Ganti tema">
 <svg id="themeIco" viewbox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
 </button></div>
@@ -1378,10 +1437,10 @@ $('save').onclick=async function(){
 <div class="pg-v23-help" style="margin-top:12px;padding:10px;border:1px solid var(--lg-edge);border-radius:11px;background:var(--lg-b)">
 <strong style="display:block;margin-bottom:8px;color:var(--ink)">V23.3 · Original Pixel &amp; Texture Preservation</strong>
 <div class="pg-v23-locks">
-<label><input checked="" id="pgV33Skin" type="checkbox"/> Original skin texture</label>
-<label><input checked="" id="pgV33Geometry" type="checkbox"/> Face geometry</label>
-<label><input checked="" id="pgV33Camera" type="checkbox"/> Camera signature</label>
-<label><input checked="" id="pgV33Fabric" type="checkbox"/> Fabric realism</label>
+<label><input checked="" id="pgV34Skin" type="checkbox"/> Original skin texture</label>
+<label><input checked="" id="pgV34Geometry" type="checkbox"/> Face geometry</label>
+<label><input checked="" id="pgV34Camera" type="checkbox"/> Camera signature</label>
+<label><input checked="" id="pgV34Fabric" type="checkbox"/> Fabric realism</label>
 </div>
 <div style="margin-top:7px">Memprioritaskan detail foto asli dan membatasi rekonstruksi hanya pada area yang diedit. Ini instruksi prompt, bukan penguncian piksel otomatis.</div>
 </div>
@@ -1492,10 +1551,10 @@ function build(){
   var ps=$('pgPose').value,es=$('pgExpr').value,ag=$('pgAngle').value,fr=$('pgFrame').value,st=$('pgStyle').value,li=$('pgLight').value,le=$('pgLens').value,ra=$('pgRatio').value;
   var compact=t('Edit image 1 (my original photo) using image 2 as reference: ','Edit foto 1 (foto asli saya) dengan referensi foto 2: ')+keys.map(task).join('; ')+'. '+(col?t('Reference colors: ','Warna referensi: ')+col+(S.B?', '+pt:'')+'. ':'')+t('Preserve all selected identity locks: ','Pertahankan semua kunci identitas yang dipilih: ')+activeV23Locks(L).join(', ')+'. '+skinPrompt(L,skin)+' '+cameraPrompt(L,camera)+' '+({keep:t('Keep original pose. ','Pertahankan pose asli. '),ref:t('Match the pose from image 2 only. ','Ikuti pose foto 2 saja. '),standing:t('Natural standing pose. ','Pose berdiri natural. '),sitting:t('Natural sitting pose. ','Pose duduk natural. '),back:t('Subject facing away from camera. ','Subjek membelakangi kamera. '),walking:t('Natural walking pose. ','Pose berjalan natural. '),custom:''}[ps])+({keep:t('Keep original expression. ','Pertahankan ekspresi asli. '),neutral:t('Natural neutral expression. ','Ekspresi netral natural. '),smile:t('Subtle closed-mouth smile. ','Senyum tipis dengan mulut tertutup. '),serious:t('Calm expression. ','Ekspresi tenang. '),custom:''}[es])+({keep:'',eye:'Eye-level. ',low:'Low angle. ',high:'High angle. ',over:'Over-the-shoulder. ',close:'Close-up. ',wide:'Wide shot. '}[ag])+({keep:'',full:'Full-body framing. ',three:'Three-quarter framing. ',half:'Half-body framing. ',portrait:'Portrait close-up. '}[fr])+(camera==='smartphone'?'Authentic smartphone photography. ':camera==='dslr'?'Realistic DSLR photography. ':'Subtle analog film photography. ')+(($('pgV23Light').checked||li==='auto')?t('Preserve original lighting from image 1. ','Pertahankan pencahayaan asli foto 1. '):({day:'Natural daylight. ',gold:'Golden-hour lighting. ',soft:'Soft diffused lighting. ',studio:'Studio softbox lighting. ',back:'Natural backlight. ',moody:'Moody lighting. '}[li]||''))+({auto:'',wide:'Wide-angle lens. ',35:'35mm lens. ',50:'50mm lens. ',85:'85mm portrait lens. ',bokeh:'Shallow depth of field and natural bokeh. '}[le])+t('Keep framing and aspect ratio ','Pertahankan framing dan rasio ')+(ra=='source'?rt:ra)+'. '+t('Photorealistic, natural texture and lighting, no artifacts or watermark.','Fotorealistis, tekstur dan pencahayaan natural, tanpa artefak atau watermark.')+(ex?' '+ex:'');
   if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&keys.length===1&&['top','jacket','pants','hat','shoes'].indexOf(keys[0])>=0)compact+=' '+t('PRECISION EDIT: Change only the selected garment pixels. Image 1 controls identity and the entire scene; image 2 is clothing reference only. Preserve face geometry, original skin texture, hands and fingers, pose, hair, accessories/earphone cables, background, lighting, shadows, grain and framing. Keep garment edges, neck/collar boundary, sleeves, arm contours and hand overlap natural. Do not regenerate any person or unselected area.','EDIT PRESISI: Ubah hanya piksel pakaian yang dipilih. Foto 1 menjadi acuan identitas dan seluruh adegan; foto 2 hanya referensi pakaian. Pertahankan geometri wajah, tekstur kulit asli, tangan dan jari, pose, rambut, aksesori/kabel earphone, background, pencahayaan, bayangan, grain, dan framing. Jaga batas pakaian, kerah/leher, lengan baju, kontur lengan, dan tumpang tindih tangan tetap natural. Jangan buat ulang orang atau area yang tidak dipilih.')+'.';
-  if($('pgV33Skin').checked)compact+=' '+t('Preserve source skin microtexture: retain the original pores, fine lines, tiny blemishes, natural sheen and uneven texture; do not smooth, beautify, synthesize pores or sharpen skin.','Pertahankan mikro-tekstur kulit sumber: pori, garis halus, noda kecil, kilau alami, dan tekstur tidak merata; jangan menghaluskan, mempercantik, membuat pori sintetis, atau mempertajam kulit.');
-  if($('pgV33Geometry').checked)compact+=' '+t('Strict face-geometry preservation: do not alter eye spacing, eyelids, eyebrows, nose width/shape, lips, jawline, cheek volume, ears or facial proportions.','Pertahankan geometri wajah secara ketat: jangan ubah jarak mata, kelopak, alis, lebar/bentuk hidung, bibir, rahang, volume pipi, telinga, atau proporsi wajah.');
-  if($('pgV33Camera').checked)compact+=' '+t('Preserve the original camera signature: same natural sensor noise, grain, white balance, exposure character, local contrast, edge softness and smartphone processing; no artificial HDR or denoising.','Pertahankan karakter kamera asli: noise sensor, grain, white balance, karakter exposure, kontras lokal, kelembutan tepi, dan pemrosesan smartphone yang sama; tanpa HDR buatan atau denoise berlebihan.');
-  if($('pgV33Fabric').checked&&clothingOnly)compact+=' '+t('Render only the replacement fabric with realistic weave, thickness, seams, folds, tension and contact shadows consistent with the original body pose.','Render hanya kain pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, dan bayangan kontak yang realistis sesuai pose tubuh asli.');
+  if($('pgV34Skin').checked)compact+=' '+t('Preserve source skin microtexture: retain the original pores, fine lines, tiny blemishes, natural sheen and uneven texture; do not smooth, beautify, synthesize pores or sharpen skin.','Pertahankan mikro-tekstur kulit sumber: pori, garis halus, noda kecil, kilau alami, dan tekstur tidak merata; jangan menghaluskan, mempercantik, membuat pori sintetis, atau mempertajam kulit.');
+  if($('pgV34Geometry').checked)compact+=' '+t('Strict face-geometry preservation: do not alter eye spacing, eyelids, eyebrows, nose width/shape, lips, jawline, cheek volume, ears or facial proportions.','Pertahankan geometri wajah secara ketat: jangan ubah jarak mata, kelopak, alis, lebar/bentuk hidung, bibir, rahang, volume pipi, telinga, atau proporsi wajah.');
+  if($('pgV34Camera').checked)compact+=' '+t('Preserve the original camera signature: same natural sensor noise, grain, white balance, exposure character, local contrast, edge softness and smartphone processing; no artificial HDR or denoising.','Pertahankan karakter kamera asli: noise sensor, grain, white balance, karakter exposure, kontras lokal, kelembutan tepi, dan pemrosesan smartphone yang sama; tanpa HDR buatan atau denoise berlebihan.');
+  if($('pgV34Fabric').checked&&clothingOnly)compact+=' '+t('Render only the replacement fabric with realistic weave, thickness, seams, folds, tension and contact shadows consistent with the original body pose.','Render hanya kain pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, dan bayangan kontak yang realistis sesuai pose tubuh asli.');
   var shortLocks=activeV23Locks(L);if($('pgLockFace').checked&&!$('pgV23Face').checked)shortLocks.push(t('face and identity','wajah dan identitas'));if($('pgLockBody').checked&&!$('pgV23Body').checked)shortLocks.push(t('body proportions','proporsi tubuh'));if($('pgLockHair').checked&&!$('pgV23Hair').checked&&!S.on.hair)shortLocks.push(t('hair or head covering','rambut atau penutup kepala'));if($('pgLockBg').checked&&!$('pgV23Bg').checked&&!S.on.bg)shortLocks.push(t('background','latar belakang'));if($('pgLockClothes').checked)shortLocks.push(t('other clothing','pakaian lain'));if(shortLocks.length)compact+=' '+t('Do not change: ','Jangan ubah: ')+shortLocks.join(', ')+'.';
   return compact;
  }
@@ -1535,10 +1594,10 @@ function build(){
  '- '+(($('pgV23Light').checked||light==='auto')?t('Preserve the original light direction, exposure, white balance and shadow character from image 1; do not relight the subject.','Pertahankan arah cahaya, exposure, white balance, dan karakter bayangan asli foto 1; jangan mengubah pencahayaan subjek.'):{day:'Natural daylight.',gold:'Warm golden-hour sunlight.',soft:'Soft diffused lighting.',studio:'Professional softbox studio lighting.',back:'Natural backlighting.',moody:'Moody low-key lighting.'}[light]),
  '- '+({auto:t('Use a lens perspective consistent with image 1.','Gunakan perspektif lensa yang sesuai foto 1.'),wide:'Wide-angle perspective with natural proportions.',35:'Natural 35mm lens perspective.',50:'Standard 50mm lens perspective.',85:'85mm portrait lens perspective.',bokeh:'Shallow depth of field with natural optical bokeh.'}[lens]),
  '- '+t('Output aspect ratio: ','Rasio hasil: ')+(ratio=='source'?rt:ratio));
- if($('pgV33Skin').checked)P.push('- '+t('V23.3 SOURCE SKIN PRESERVATION: retain the exact source skin character and microtexture—natural pores of varied size, fine lines, tiny blemishes, subtle facial hair and natural specular highlights. Do not airbrush, beautify, denoise, invent pore patterns, add fake freckles or apply crunchy sharpening. Skin detail must follow the original lighting and anatomy.','V23.3 PELESTARIAN KULIT SUMBER: pertahankan karakter dan mikro-tekstur kulit sumber—pori alami dengan ukuran bervariasi, garis halus, noda kecil, rambut wajah halus, dan pantulan cahaya alami. Jangan airbrush, mempercantik, denoise, membuat pola pori palsu, menambah bintik palsu, atau mempertajam berlebihan. Detail kulit harus mengikuti pencahayaan dan anatomi asli.'));
- if($('pgV33Geometry').checked)P.push('- '+t('V23.3 FACE GEOMETRY LOCK: preserve the exact original facial geometry and proportions, including eye spacing and shape, eyelids, eyebrows, nose bridge and width, nostrils, lips, teeth visibility, cheek volume, jawline, chin, ears and expression. No face regeneration, beautification, symmetry correction or age change.','V23.3 KUNCI GEOMETRI WAJAH: pertahankan geometri dan proporsi wajah asli, termasuk jarak dan bentuk mata, kelopak, alis, batang dan lebar hidung, lubang hidung, bibir, tampilan gigi, volume pipi, rahang, dagu, telinga, dan ekspresi. Jangan regenerasi wajah, mempercantik, mengoreksi simetri, atau mengubah usia.'));
- if($('pgV33Camera').checked)P.push('- '+t('V23.3 ORIGINAL CAMERA SIGNATURE: retain the source image’s authentic smartphone rendering, sensor noise, grain distribution, white balance, exposure roll-off, local contrast, natural edge softness and compression character. Do not add artificial HDR, excessive denoising, fake sharpness, cinematic relighting or a different lens look.','V23.3 KARAKTER KAMERA ASLI: pertahankan rendering smartphone, noise sensor, sebaran grain, white balance, transisi exposure, kontras lokal, kelembutan tepi alami, dan karakter kompresi dari foto sumber. Jangan menambahkan HDR buatan, denoise berlebihan, ketajaman palsu, pencahayaan sinematik, atau karakter lensa berbeda.'));
- if($('pgV33Fabric').checked&&clothingOnly)P.push('- '+t('V23.3 FABRIC REALISM: render the replacement garment only with believable fabric weave, thickness, seams, stitching, folds, tension, drape and contact shadows. Fabric must conform to the original pose and body; preserve natural garment boundaries and do not spill onto skin, hands, earphone cables or background.','V23.3 REALISME KAIN: render hanya pakaian pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, jatuh kain, dan bayangan kontak yang meyakinkan. Kain harus mengikuti pose dan tubuh asli; pertahankan batas pakaian dan jangan meluber ke kulit, tangan, kabel earphone, atau background.'));
+ if($('pgV34Skin').checked)P.push('- '+t('V23.3 SOURCE SKIN PRESERVATION: retain the exact source skin character and microtexture—natural pores of varied size, fine lines, tiny blemishes, subtle facial hair and natural specular highlights. Do not airbrush, beautify, denoise, invent pore patterns, add fake freckles or apply crunchy sharpening. Skin detail must follow the original lighting and anatomy.','V23.3 PELESTARIAN KULIT SUMBER: pertahankan karakter dan mikro-tekstur kulit sumber—pori alami dengan ukuran bervariasi, garis halus, noda kecil, rambut wajah halus, dan pantulan cahaya alami. Jangan airbrush, mempercantik, denoise, membuat pola pori palsu, menambah bintik palsu, atau mempertajam berlebihan. Detail kulit harus mengikuti pencahayaan dan anatomi asli.'));
+ if($('pgV34Geometry').checked)P.push('- '+t('V23.3 FACE GEOMETRY LOCK: preserve the exact original facial geometry and proportions, including eye spacing and shape, eyelids, eyebrows, nose bridge and width, nostrils, lips, teeth visibility, cheek volume, jawline, chin, ears and expression. No face regeneration, beautification, symmetry correction or age change.','V23.3 KUNCI GEOMETRI WAJAH: pertahankan geometri dan proporsi wajah asli, termasuk jarak dan bentuk mata, kelopak, alis, batang dan lebar hidung, lubang hidung, bibir, tampilan gigi, volume pipi, rahang, dagu, telinga, dan ekspresi. Jangan regenerasi wajah, mempercantik, mengoreksi simetri, atau mengubah usia.'));
+ if($('pgV34Camera').checked)P.push('- '+t('V23.3 ORIGINAL CAMERA SIGNATURE: retain the source image’s authentic smartphone rendering, sensor noise, grain distribution, white balance, exposure roll-off, local contrast, natural edge softness and compression character. Do not add artificial HDR, excessive denoising, fake sharpness, cinematic relighting or a different lens look.','V23.3 KARAKTER KAMERA ASLI: pertahankan rendering smartphone, noise sensor, sebaran grain, white balance, transisi exposure, kontras lokal, kelembutan tepi alami, dan karakter kompresi dari foto sumber. Jangan menambahkan HDR buatan, denoise berlebihan, ketajaman palsu, pencahayaan sinematik, atau karakter lensa berbeda.'));
+ if($('pgV34Fabric').checked&&clothingOnly)P.push('- '+t('V23.3 FABRIC REALISM: render the replacement garment only with believable fabric weave, thickness, seams, stitching, folds, tension, drape and contact shadows. Fabric must conform to the original pose and body; preserve natural garment boundaries and do not spill onto skin, hands, earphone cables or background.','V23.3 REALISME KAIN: render hanya pakaian pengganti dengan tenunan, ketebalan, jahitan, lipatan, tarikan kain, jatuh kain, dan bayangan kontak yang meyakinkan. Kain harus mengikuti pose dan tubuh asli; pertahankan batas pakaian dan jangan meluber ke kulit, tangan, kabel earphone, atau background.'));
  var locks=activeV23Locks(L);if($('pgLockFace').checked&&locks.indexOf(t('face and personal identity','wajah dan identitas'))<0)locks.push(t('face, facial features and identity','wajah, fitur wajah, dan identitas'));if($('pgLockBody').checked&&locks.indexOf(t('body shape and proportions','bentuk dan proporsi tubuh'))<0)locks.push(t('body proportions and build','proporsi dan bentuk tubuh'));if($('pgLockHair').checked&&!S.on.hair&&locks.indexOf(t('hairstyle, hairline or head covering','gaya rambut, garis rambut, atau penutup kepala'))<0)locks.push(t('hairstyle or head covering','gaya rambut atau penutup kepala'));if($('pgLockBg').checked&&!S.on.bg&&locks.indexOf(t('original background and surroundings','background dan lingkungan asli'))<0)locks.push(t('original background and surroundings','background dan lingkungan asli'));if($('pgLockClothes').checked)locks.push(t('all clothing not explicitly selected for editing','semua pakaian yang tidak secara khusus dipilih untuk diedit'));if($('pgLockFrame').checked&&chosen('pgAngle')=='keep'&&chosen('pgFrame')=='keep')locks.push(t('original camera framing and viewpoint','framing dan sudut pandang kamera asli'));
  if(locks.length)P.push('',t('PROTECTION LOCKS','KUNCI PERLINDUNGAN'),'- '+t('Do not alter: ','Jangan mengubah: ')+locks.join(', ')+'.');
  P.push('',t('OUTPUT: one high-resolution edited version of image 1 only.','HASIL: satu versi foto 1 yang sudah diedit, resolusi tinggi.'));
@@ -1595,10 +1654,10 @@ function qualityCheck(){
  if(!S.A)notes.push('Unggah Foto 1 agar rasio dan karakter foto asli dapat dianalisis.');
  if(!S.B)notes.push('Unggah Foto 2 agar warna dan pola referensi dapat dianalisis.');
  if($('pgSkinTexture').value==='ultra')notes.push('Skin Texture Ultra aktif dengan perlindungan terhadap pori palsu dan tekstur berulang.');
- if($('pgV33Skin').checked)notes.push('V23.3 mempertahankan mikro-tekstur kulit sumber; bukan membuat pori sintetis.');
- if($('pgV33Geometry').checked)notes.push('V23.3 mengunci geometri dan proporsi wajah asli.');
- if($('pgV33Camera').checked)notes.push('V23.3 meminta karakter kamera, grain, white balance, dan noise asli dipertahankan.');
- if($('pgV33Fabric').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('V23.3 menambahkan detail kain realistis hanya pada pakaian pengganti.');
+ if($('pgV34Skin').checked)notes.push('V23.3 mempertahankan mikro-tekstur kulit sumber; bukan membuat pori sintetis.');
+ if($('pgV34Geometry').checked)notes.push('V23.3 mengunci geometri dan proporsi wajah asli.');
+ if($('pgV34Camera').checked)notes.push('V23.3 meminta karakter kamera, grain, white balance, dan noise asli dipertahankan.');
+ if($('pgV34Fabric').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('V23.3 menambahkan detail kain realistis hanya pada pakaian pengganti.');
  if($('pgPrecisionClothing')&&$('pgPrecisionClothing').checked&&['top','jacket','pants','hat','shoes'].indexOf($('pgGoal').value)>=0)notes.push('Precision Clothing Edit aktif: prompt membatasi edit ke area pakaian dan melindungi batas kulit, tangan, rambut, serta aksesori.');
  if($('pgV23Hands').checked)notes.push('Anatomi tangan dan jumlah lima jari diminta tetap konsisten.');
  if(w.length)notes=notes.concat(w);
@@ -1655,7 +1714,7 @@ $('pg').addEventListener('click',function(e){if(e.target===$('pg'))return close_
  else{var g=b.dataset.g;S[g]=b.dataset.v;[].forEach.call($('pg').querySelectorAll('[data-g="'+g+'"]'),function(x){x.setAttribute('aria-pressed',x===b)});if(g=='lang')fillCol()}
  gen()});
 document.addEventListener('keydown',function(e){if(e.key=='Escape'&&!$('pg').hidden)close_()});
-['pgEx','pgB','pgW','pgC','pgP','pgSkinTexture','pgCameraRealism','pgPrecisionClothing','pgV33Skin','pgV33Geometry','pgV33Camera','pgV33Fabric','pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg','pgPose','pgExpr','pgAngle','pgFrame','pgStyle','pgLight','pgLens','pgRatio','pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'].forEach(function(id){$(id).addEventListener('input',gen);$(id).addEventListener('change',gen)});
+['pgEx','pgB','pgW','pgC','pgP','pgSkinTexture','pgCameraRealism','pgPrecisionClothing','pgV34Skin','pgV34Geometry','pgV34Camera','pgV34Fabric','pgV23Face','pgV23Hands','pgV23Body','pgV23Hair','pgV23Light','pgV23Bg','pgPose','pgExpr','pgAngle','pgFrame','pgStyle','pgLight','pgLens','pgRatio','pgLockFace','pgLockBody','pgLockHair','pgLockBg','pgLockClothes','pgLockFrame'].forEach(function(id){$(id).addEventListener('input',gen);$(id).addEventListener('change',gen)});
 $('pgCol').addEventListener('input',function(){S.dirty=true;gen()});
 $('pgCopy').onclick=function(){var v=$('pgOut').value,btn=this,ok=function(){btn.textContent='Tersalin ✓';setTimeout(function(){btn.textContent='Salin prompt'},1600)};
  function fb(){$('pgOut').select();try{document.execCommand('copy');ok()}catch(e){btn.textContent='Salin manual'}}
